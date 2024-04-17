@@ -23,11 +23,9 @@ setup_logger()
 TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
 CUDA_VERSION = torch.__version__.split("+")[-1]
 
-<<<<<<< HEAD
-=======
+
 torch.cuda.empty_cache()
 
->>>>>>> f2f6cf8e0dc83c31f1f3f963246b5cae26163443
 directory = '02'
 dataset_dir = Path('02') / 'training_dataset'
 config_directory = Path('02') / 'model'
@@ -61,7 +59,7 @@ def main():
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
     cfg.SOLVER.MAX_ITER = 1000  # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
-    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64  # (default: 512)
+    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32  # (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 2
     # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
