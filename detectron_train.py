@@ -25,11 +25,11 @@ CUDA_VERSION = torch.__version__.split("+")[-1]
 
 directory = '01'
 dataset_dir = Path('01') / 'training_dataset'
-config_directory = '01\\model'
+config_directory = Path('01') / 'model'
 
 def main():
-    register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'ims'))
-    register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'ims'))
+    register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
+    register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
 
     train_metadata = MetadataCatalog.get("my_dataset_train")
     train_dataset_dicts = DatasetCatalog.get("my_dataset_train")
@@ -37,10 +37,10 @@ def main():
     val_metadata = MetadataCatalog.get("my_dataset_val")
     val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
 
-    if os.path.isdir(config_directory):
-        shutil.rmtree(config_directory)
-    os.mkdir(config_directory)
-    with open(os.path.join(config_directory, "train_metadata.json"), 'w') as json_file:
+    if os.path.isdir(str(config_directory)):
+        shutil.rmtree(str(config_directory))
+    os.mkdir(str(config_directory))
+    with open(os.path.join(str(config_directory), "train_metadata.json"), 'w') as json_file:
         json.dump(train_metadata.as_dict(), json_file)
 
     cfg = get_cfg()
@@ -65,7 +65,7 @@ def main():
 
     trainer.train()
 
-    with open(os.path.join(config_directory, 'metrics.json')) as metrics_file:
+    with open(os.path.join(str(config_directory), 'metrics.json')) as metrics_file:
         metrics = [json.loads(line) for line in metrics_file]
 
     plt.scatter([line['iteration'] for line in metrics if 'total_loss' in line],
@@ -76,10 +76,10 @@ def main():
     plt.xlabel('Iteration')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig(str(Path(config_directory) / 'train_curve.png'))
+    plt.savefig(str(config_directory / 'train_curve.png'))
 
-    config_yaml_path = os.path.join(config_directory, 'config.yaml')
-    with open(config_yaml_path, 'w') as file:
+    config_yaml_path = config_directory / 'config.yaml'
+    with open(str(config_yaml_path), 'w') as file:
         yaml.dump(cfg, file)
 
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
