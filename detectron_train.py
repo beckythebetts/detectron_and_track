@@ -23,9 +23,11 @@ setup_logger()
 TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
 CUDA_VERSION = torch.__version__.split("+")[-1]
 
-directory = '01'
-dataset_dir = Path('01') / 'training_dataset'
-config_directory = Path('01') / 'model'
+torch.cuda.empty_cache()
+
+directory = '02'
+dataset_dir = Path('02') / 'training_dataset'
+config_directory = Path('02') / 'model'
 
 def main():
     register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
@@ -44,6 +46,7 @@ def main():
         json.dump(train_metadata.as_dict(), json_file)
 
     cfg = get_cfg()
+    cfg.MODEL.DEVICE = "cuda"
     cfg.OUTPUT_DIR = str(config_directory)
     cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml"))
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml")
@@ -56,7 +59,7 @@ def main():
     cfg.SOLVER.MAX_ITER = 1000  # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64  # (default: 512)
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 2
     # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
