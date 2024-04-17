@@ -23,8 +23,11 @@ setup_logger()
 TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
 CUDA_VERSION = torch.__version__.split("+")[-1]
 
+<<<<<<< HEAD
+=======
 torch.cuda.empty_cache()
 
+>>>>>>> f2f6cf8e0dc83c31f1f3f963246b5cae26163443
 directory = '02'
 dataset_dir = Path('02') / 'training_dataset'
 config_directory = Path('02') / 'model'
