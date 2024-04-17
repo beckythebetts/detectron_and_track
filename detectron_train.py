@@ -44,7 +44,7 @@ def main():
         json.dump(train_metadata.as_dict(), json_file)
 
     cfg = get_cfg()
-    cfg.OUTPUT_DIR = config_directory
+    cfg.OUTPUT_DIR = str(config_directory)
     cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml"))
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml")
     cfg.DATASETS.TRAIN = ("my_dataset_train",)
