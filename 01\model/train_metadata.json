@@ -1,1 +1,0 @@
-{"name": "my_dataset_train", "json_file": "01/training_dataset/train/labels.json", "image_root": "01/training_dataset/train/ims", "evaluator_type": "coco", "thing_classes": ["amoeba"], "thing_dataset_id_to_contiguous_id": {"1": 0}}
