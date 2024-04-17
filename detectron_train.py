@@ -23,6 +23,11 @@ setup_logger()
 TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
 CUDA_VERSION = torch.__version__.split("+")[-1]
 
+<<<<<<< HEAD
+=======
+torch.cuda.empty_cache()
+
+>>>>>>> f2f6cf8e0dc83c31f1f3f963246b5cae26163443
 directory = '02'
 dataset_dir = Path('02') / 'training_dataset'
 config_directory = Path('02') / 'model'
@@ -44,6 +49,7 @@ def main():
         json.dump(train_metadata.as_dict(), json_file)
 
     cfg = get_cfg()
+    cfg.MODEL.DEVICE = "cuda"
     cfg.OUTPUT_DIR = str(config_directory)
     cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml"))
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml")
