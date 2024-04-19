@@ -10,12 +10,13 @@ from detectron2.data import MetadataCatalog, DatasetCatalog
 import numpy as np
 import os, json, cv2, random
 from pathlib import Path
+import shutil
 
 import SETTINGS
 
 directory = SETTINGS.DIRECTORY
 
-config_directory = directory / model
+config_directory = directory / 'model'
 with open(str(config_directory / 'train_metadata.json')) as json_file:
   train_metadata = json.load(json_file)
 cfg = get_cfg()
@@ -32,7 +33,7 @@ input_images_directory = str(directory / 'inference_dataset' / 'images')
 output_directory = (directory / 'inference_dataset' / 'masks')  # Replace this with the path to your desired output directo
 if output_directory.is_dir():
     shutil.rmtree(str(output_directory))
-output_dir.mkdir()
+output_directory.mkdir()
 output_directory = str(output_directory)
 
 masks = np.empty(0)
@@ -46,11 +47,11 @@ for image_filename in os.listdir(input_images_directory):
 
     # Create a dictionary to store the mask for each class with unique integer labels
     class_masks = {class_name: torch.zeros_like(outputs["instances"].pred_masks[0], dtype=torch.uint8, device=torch.device("cuda:0"))
-                   for class_name in train_metadata.thing_classes}
+                   for class_name in train_metadata['thing_classes']}
 
     # Assign a unique integer label to each object in the mask
     for i, pred_class in enumerate(outputs["instances"].pred_classes):
-        class_name = train_metadata.thing_classes[pred_class]
+        class_name = train_metadata['thing_classes'][pred_class]
         class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
                                       torch.tensor(i + 1, dtype=torch.float32),
                                       class_masks[class_name].to(dtype=torch.float32))
