@@ -15,8 +15,7 @@ import numpy as np
 import os, json, cv2, random, shutil
 from pathlib import Path
 import matplotlib.pyplot as plt
-
-import custom_trainer
+import yaml
 
 setup_logger()
 
