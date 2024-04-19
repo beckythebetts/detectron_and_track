@@ -75,6 +75,7 @@ def main():
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
     predictor = DefaultPredictor(cfg)
 
+    (directory / 'val_images').mkdir()
     for d in val_dataset_dicts:  # select number of images for display
         im = cv2.imread(d["file_name"])
         outputs = predictor(im)
