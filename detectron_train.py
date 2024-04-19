@@ -55,7 +55,7 @@ def main():
     cfg.DATASETS.TEST = ("my_dataset_val",)
     # cfg.TEST.EVAL_PERIOD = 100
     cfg.DATALOADER.NUM_WORKERS = 4
-    cfg.SOLVER.IMS_PER_BATCH = 1  # This is the real "batch size" commonly known to deep learning people
+    cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
     cfg.SOLVER.MAX_ITER = 1000  # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
@@ -64,7 +64,8 @@ def main():
     # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
-    trainer = custom_trainer.MyTrainer(cfg)
+    #trainer = custom_trainer.MyTrainer(cfg)
+    trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
 
     trainer.train()
