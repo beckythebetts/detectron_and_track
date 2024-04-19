@@ -17,6 +17,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import yaml
 
+import SETTINGS
+
 setup_logger()
 
 TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
@@ -25,7 +27,7 @@ CUDA_VERSION = torch.__version__.split("+")[-1]
 
 torch.cuda.empty_cache()
 
-directory = Path('02')
+directory = SETTINGS.DIRECTORY
 dataset_dir = directory / 'training_dataset'
 config_directory = directory / 'model'
 
@@ -74,19 +76,6 @@ def main():
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
     predictor = DefaultPredictor(cfg)
-
-    (directory / 'val_images').mkdir()
-    for d in val_dataset_dicts:  # select number of images for display
-        im = cv2.imread(d["file_name"])
-        outputs = predictor(im)
-        v = Visualizer(im[:, :, ::-1],
-                       metadata=val_metadata,
-                       scale=0.5,
-                       instance_mode=ColorMode.IMAGE_BW
-                       # remove the colors of unsegmented pixels. This option is only available for segmentation models
-                       )
-        out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-        cv2.imwrite(str(Path(directory) / 'val_images' / d["file_name"]), out.get_image()[:, :, ::-1])
 
     evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
     val_loader = build_detection_test_loader(cfg, "my_dataset_val")
