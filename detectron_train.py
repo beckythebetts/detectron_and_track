@@ -26,9 +26,9 @@ CUDA_VERSION = torch.__version__.split("+")[-1]
 
 torch.cuda.empty_cache()
 
-directory = '02'
-dataset_dir = Path('02') / 'training_dataset'
-config_directory = Path('02') / 'model'
+directory = Path('02')
+dataset_dir = directory / 'training_dataset'
+config_directory = directory / 'model'
 
 def main():
     register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
@@ -40,10 +40,10 @@ def main():
     val_metadata = MetadataCatalog.get("my_dataset_val")
     val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
 
-    if os.path.isdir(str(config_directory)):
+    if config_directory.is_dir():
         shutil.rmtree(str(config_directory))
-    os.mkdir(str(config_directory))
-    with open(os.path.join(str(config_directory), "train_metadata.json"), 'w') as json_file:
+    config_directory.mkdir()
+    with open(str(config_directory / "train_metadata.json"), 'w') as json_file:
         json.dump(train_metadata.as_dict(), json_file)
 
     cfg = get_cfg()
@@ -60,28 +60,13 @@ def main():
     cfg.SOLVER.MAX_ITER = 1000  # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32  # (default: 512)
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 2
-    # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = 2 # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
-    #trainer = custom_trainer.MyTrainer(cfg)
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
 
     trainer.train()
-
-    with open(os.path.join(str(config_directory), 'metrics.json')) as metrics_file:
-        metrics = [json.loads(line) for line in metrics_file]
-
-    plt.scatter([line['iteration'] for line in metrics if 'total_loss' in line],
-                [line['total_loss'] for line in metrics if 'total_loss' in line], marker='.', label='Training')
-    plt.scatter([line['iteration'] for line in metrics if 'validation_loss' in line],
-                [line['validation_loss'] for line in metrics if 'validation_loss' in line], marker='.',
-                label='Validation')
-    plt.xlabel('Iteration')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.savefig(str(config_directory / 'train_curve.png'))
 
     config_yaml_path = config_directory / 'config.yaml'
     with open(str(config_yaml_path), 'w') as file:
