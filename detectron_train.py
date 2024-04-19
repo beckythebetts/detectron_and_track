@@ -86,7 +86,7 @@ def main():
                        # remove the colors of unsegmented pixels. This option is only available for segmentation models
                        )
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-        cv2.imsave(str(Path(directory) / 'val_images' / d["file_name"]), out.get_image()[:, :, ::-1])
+        cv2.imwrite(str(Path(directory) / 'val_images' / d["file_name"]), out.get_image()[:, :, ::-1])
 
     evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
     val_loader = build_detection_test_loader(cfg, "my_dataset_val")
