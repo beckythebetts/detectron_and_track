@@ -80,7 +80,7 @@ def main():
 
     evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
     val_loader = build_detection_test_loader(cfg, "my_dataset_val")
-    print(inference_on_dataset(predictor.model, val_loader, evaluator))
+    print(inference_on_dataset(predictor.model, val_loader, evaluator), 2)
 
 if __name__ == '__main__':
     main()
