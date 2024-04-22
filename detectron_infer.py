@@ -13,72 +13,66 @@ from pathlib import Path
 import shutil
 
 import SETTINGS
-
-directory = SETTINGS.DIRECTORY
-
-config_directory = directory / 'model'
-with open(str(config_directory / 'train_metadata.json')) as json_file:
-  train_metadata = json.load(json_file)
-cfg = get_cfg()
-cfg.merge_from_file(str(config_directory / 'config.yaml'))
-cfg.MODEL.WEIGHTS = str(config_directory / 'model_final.pth') # path to the model we just trained
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5   # set a custom testing threshold
-cfg.MODEL.DEVICE = "cuda:0"
-predictor = DefaultPredictor(cfg)
+import utils
 
 
-# Directory path to the input images folder
-input_images_directory = str(directory / 'inference_dataset' / 'images')
 
-output_directory = (directory / 'inference_dataset' / 'masks')  # Replace this with the path to your desired output directo
-if output_directory.is_dir():
-    shutil.rmtree(str(output_directory))
-output_directory.mkdir()
-output_directory = str(output_directory)
+def main():
+    directory = SETTINGS.DIRECTORY
+    config_directory = directory / 'model'
 
-masks = np.empty(0)
-# Loop over the images in the input folder
-for image_filename in os.listdir(input_images_directory):
-    image_path = os.path.join(input_images_directory, image_filename)
-    new_im = cv2.imread(image_path)
+    with open(str(config_directory / 'train_metadata.json')) as json_file:
+      train_metadata = json.load(json_file)
+    cfg = get_cfg()
+    cfg.merge_from_file(str(config_directory / 'config.yaml'))
+    cfg.MODEL.WEIGHTS = str(config_directory / 'model_final.pth') # path to the model we just trained
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5   # set a custom testing threshold
+    cfg.MODEL.DEVICE = "cuda:0"
+    predictor = DefaultPredictor(cfg)
 
-    # Perform prediction on the new image
-    outputs = predictor(new_im)  # Format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+    input_images_directory = str(directory / 'inference_dataset' / 'images')
 
-    # Create a dictionary to store the mask for each class with unique integer labels
-    class_masks = {class_name: torch.zeros_like(outputs["instances"].pred_masks[0], dtype=torch.uint8, device=torch.device("cuda:0"))
-                   for class_name in train_metadata['thing_classes']}
+    output_directory = (directory / 'inference_dataset' / 'masks')  # Replace this with the path to your desired output directo
+    utils.remake_dir(output_directory)
+    for class_name in SETTINGS.CLASSES:
+        (output_dir / classname).mkdir()
+    if SETTINGS.SAVE_LABELLED_IMAGES:
+        labelled_directory = (directory / 'inference_dataset' / 'labelled_images')
+        utils.remake_dir(labelled_directory)
 
-    # Assign a unique integer label to each object in the mask
-    for i, pred_class in enumerate(outputs["instances"].pred_classes):
-        class_name = train_metadata['thing_classes'][pred_class]
-        class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
-                                      torch.tensor(i + 1, dtype=torch.float32),
-                                      class_masks[class_name].to(dtype=torch.float32))
-        # when running on gpu
-        # class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
-        #                                      i + 1,
-        #                                      class_masks[class_name])
-        # AND
-        # train_metadata['thing_classes'] -> train_metadata.thing_classes and torch.device("cpu") -> torch.device("cuda:0")
-        class_masks[class_name] = class_masks[class_name].to(dtype=torch.uint8)
+    #output_directory = str(output_directory)
 
-    # Save the masks for each class with unique integer labels
-    for class_name, class_mask in class_masks.items():
-        # Convert the tensor to a NumPy array and then to a regular (CPU) array
-        class_mask_np = class_mask.cpu().numpy()
+    masks = np.empty(0)
+    # Loop over the images in the input folder
+    for image_filename in os.listdir(input_images_directory):
+        image_path = os.path.join(input_images_directory, image_filename)
+        new_im = cv2.imread(image_path)
 
-        # Create the output filename with _class_name_result.png extension
-        class_filename = os.path.splitext(image_filename)[0] + f"_{class_name}_result.png"
-        class_output_path = os.path.join(output_directory, class_filename)
+        # Perform prediction on the new image
+        outputs = predictor(new_im)  # Format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
 
-        # Save the image with unique integer labels
-        cv2.imwrite(class_output_path, class_mask_np.astype(np.uint8))
-        #np.savetxt(class_output_path, class_mask_np, delimiter=',')
+        # Create a dictionary to store the mask for each class with unique integer labels
+        class_masks = {class_name: torch.zeros_like(outputs["instances"].pred_masks[0], dtype=torch.uint8, device=torch.device("cuda:0"))
+                       for class_name in train_metadata['thing_classes']}
 
-print("Segmentation of all images completed.")
+        # Assign a unique integer label to each object in the mask
+        for i, pred_class in enumerate(outputs["instances"].pred_classes):
+            class_name = train_metadata['thing_classes'][pred_class]
+            class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
+                                          torch.tensor(i + 1, dtype=torch.float32),
+                                          class_masks[class_name].to(dtype=torch.float32))
+            class_masks[class_name] = class_masks[class_name].to(dtype=torch.uint8)
 
+        for class_name, class_mask in class_masks.items():
+            class_mask_np = class_mask.cpu().numpy()
+            class_filename = os.path.splitext(image_filename)[0] + f"_{class_name}_result.png"
+            class_output_path = os.path.join(output_directory, class_filename)
+            cv2.imwrite(class_output_path, class_mask_np.astype(np.uint8))
 
+    print("Segmentation of all images completed.")
+
+if __name__ == '__main__':
+    main()
 
 
 

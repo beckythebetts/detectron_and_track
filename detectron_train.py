@@ -33,13 +33,13 @@ config_directory = directory / 'model'
 
 def main():
     register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
-    register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
+    #register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
 
     train_metadata = MetadataCatalog.get("my_dataset_train")
     train_dataset_dicts = DatasetCatalog.get("my_dataset_train")
 
-    val_metadata = MetadataCatalog.get("my_dataset_val")
-    val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
+    #val_metadata = MetadataCatalog.get("my_dataset_val")
+    #val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
 
     if config_directory.is_dir():
         shutil.rmtree(str(config_directory))
@@ -74,13 +74,13 @@ def main():
     with open(str(config_yaml_path), 'w') as file:
         yaml.dump(cfg, file)
 
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
-    predictor = DefaultPredictor(cfg)
-
-    evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
-    val_loader = build_detection_test_loader(cfg, "my_dataset_val")
-    print(inference_on_dataset(predictor.model, val_loader, evaluator), 2)
+    # cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+    # predictor = DefaultPredictor(cfg)
+    #
+    # evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
+    # val_loader = build_detection_test_loader(cfg, "my_dataset_val")
+    # print(inference_on_dataset(predictor.model, val_loader, evaluator), 2)
 
 if __name__ == '__main__':
     main()
