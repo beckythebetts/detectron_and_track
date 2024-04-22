@@ -32,10 +32,13 @@ def main():
     val_metadata = MetadataCatalog.get("my_dataset_val")
     val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
 
+    with open(str(config_directory / 'train_metadata.json')) as json_file:
+      train_metadata = json.load(json_file)
     cfg = get_cfg()
-    cfg.OUTPUT_DIR = str(config_directory)
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+    cfg.merge_from_file(str(config_directory / 'config.yaml'))
+    cfg.MODEL.WEIGHTS = str(config_directory / 'model_final.pth') # path to the model we just trained
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5   # set a custom testing threshold
+    cfg.MODEL.DEVICE = "cuda:0"
     predictor = DefaultPredictor(cfg)
 
     evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
