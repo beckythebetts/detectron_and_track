@@ -33,13 +33,13 @@ config_directory = directory / 'model'
 
 def main():
     register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
-    #register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
+    register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
 
     train_metadata = MetadataCatalog.get("my_dataset_train")
     train_dataset_dicts = DatasetCatalog.get("my_dataset_train")
 
-    #val_metadata = MetadataCatalog.get("my_dataset_val")
-    #val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
+    val_metadata = MetadataCatalog.get("my_dataset_val")
+    val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
 
     if config_directory.is_dir():
         shutil.rmtree(str(config_directory))
