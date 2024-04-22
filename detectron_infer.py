@@ -17,6 +17,40 @@ import utils
 
 
 
+def min_max_scale(image):
+    min = np.min(image)
+    max = np.max(image)
+    return (image - min) / (max - min)
+
+# def label_mask(mask1, mask2, im, save_path):
+#     am_mask, ye_mask, im = plt.imread(am_mask_tiff), plt.imread(ye_mask_tiff), plt.imread(im_tiff)
+#     plt.axis('off')
+#
+#     # split_masks =[np.where(mask == i+1, 1, 0) for i in range(0, np.max(mask)) if i in mask]
+#     # for single_mask in split_masks:
+#     #     for color_mask in color_masks.T:
+#     #         color_mask += np.random.uniform(low=0.1, high=1)*single_mask.T
+#     # plt.imshow(color_masks)
+#     # #plt.show()
+#     im = min_max_scale(im).T
+#     im_RGB = np.stack((im, im, im), axis=0)
+#     split_am_masks = [np.where(am_mask == i + 1, 1, 0) for i in range(0, np.max(am_mask)) if i in am_mask]
+#     split_ye_masks = [np.where(ye_mask == i + 1, 1, 0) for i in range(0, np.max(ye_mask)) if i in ye_mask]
+#     for single_mask in split_am_masks:
+#         outline=cv2.morphologyEx(single_mask.T.astype(np.uint8), cv2.MORPH_GRADIENT, np.ones((6, 6), np.uint8))
+#         im_RGB[0] = np.where(outline, 1, im_RGB[0])
+#         im_RGB[1] = np.where(outline, 0, im_RGB[1])
+#         im_RGB[2] = np.where(outline, 1, im_RGB[2])
+#     for single_mask in split_ye_masks:
+#         outline=cv2.morphologyEx(single_mask.T.astype(np.uint8), cv2.MORPH_GRADIENT, np.ones((6, 6), np.uint8))
+#         im_RGB[0] = np.where(outline, 0, im_RGB[0])
+#         im_RGB[1] = np.where(outline, 0, im_RGB[1])
+#         im_RGB[2] = np.where(outline, 1, im_RGB[2])
+#     plt.imshow(im_RGB.T)
+#     plt.show()
+#     print(np.min(im_RGB.T))
+#     Image.fromarray((im_RGB*255).T.astype(np.uint8)).save(save_path)
+
 def main():
     directory = SETTINGS.DIRECTORY
     config_directory = directory / 'model'
@@ -34,8 +68,8 @@ def main():
 
     output_directory = (directory / 'inference_dataset' / 'masks')  # Replace this with the path to your desired output directo
     utils.remake_dir(output_directory)
-    for class_name in SETTINGS.CLASSES:
-        (output_dir / classname).mkdir()
+    for class_name in trin_metadata['thing_classes']:
+        (output_dir / class_name).mkdir()
     if SETTINGS.SAVE_LABELLED_IMAGES:
         labelled_directory = (directory / 'inference_dataset' / 'labelled_images')
         utils.remake_dir(labelled_directory)
@@ -48,7 +82,6 @@ def main():
         image_path = os.path.join(input_images_directory, image_filename)
         new_im = cv2.imread(image_path)
 
-        # Perform prediction on the new image
         outputs = predictor(new_im)  # Format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
 
         # Create a dictionary to store the mask for each class with unique integer labels
@@ -65,8 +98,8 @@ def main():
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
-            class_filename = os.path.splitext(image_filename)[0] + f"_{class_name}_result.png"
-            class_output_path = os.path.join(output_directory, class_filename)
+            class_filename = os.path.splitext(image_filename)[0] + f"_labelled.png"
+            class_output_path = os.path.join(output_directory, class_name, class_filename)
             cv2.imwrite(class_output_path, class_mask_np.astype(np.uint8))
 
     print("Segmentation of all images completed.")
