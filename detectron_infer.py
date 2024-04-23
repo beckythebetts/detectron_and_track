@@ -73,7 +73,7 @@ def main():
             class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
                                           torch.tensor(i + 1, dtype=torch.float32),
                                           class_masks[class_name].to(dtype=torch.float32))
-            class_masks[class_name] = class_masks[class_name].to(dtype=torch.uint16)
+            class_masks[class_name] = class_masks[class_name].to(dtype=torch.int16)
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
