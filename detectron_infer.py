@@ -12,7 +12,7 @@ import os, json, cv2, random
 from pathlib import Path
 import shutil
 import matplotlib.pyplot as plt
-import Image
+from PIL import Image
 
 import SETTINGS
 import utils
@@ -31,7 +31,7 @@ def main():
     cfg.MODEL.DEVICE = "cuda:0"
     predictor = DefaultPredictor(cfg)
 
-    input_images_directory = str(directory / 'inference_dataset' / 'images')
+    input_images_directory = directory / 'inference_dataset' / 'images'
 
     output_directory = (directory / 'inference_dataset' / 'masks')  # Replace this with the path to your desired output directo
     utils.remake_dir(output_directory)
@@ -43,15 +43,16 @@ def main():
     masks = np.empty(0)
 
     for image_path in input_images_directory.glob('*'):
-        image = plt.imread(image_path)
+        image = cv2.imread(str(image_path))
 
-        outputs = predictor(new_im)["instances"]
+        outputs = predictor(image)["instances"]
 
         for pred_class in outputs.pred_classes:
-            full_mask = np.zeros(shape=image.shape)
+            full_mask = np.zeros(shape=(1, image.shape[0], image.shape[1]))
             class_indices = (outputs.pred_classes == pred_class).nonzero()
             for idx in class_indices:
-                full_mask += pred_mask[idx]
+                #print(type(outputs.pred_masks[idx]))
+                full_mask += outputs.pred_masks[idx].cpu().numpy()
             Image.fromarray(full_mask.astype(np.uint16)).save(output_directory / pred_class / str(image.stem+'_mask.tif'))
 
     # # Loop over the images in the input folder
