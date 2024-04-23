@@ -64,16 +64,16 @@ def main():
         outputs = predictor(new_im)  # Format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
 
         # Create a dictionary to store the mask for each class with unique integer labels
-        class_masks = {class_name: torch.zeros_like(outputs["instances"].pred_masks[0], dtype=torch.uint8, device=torch.device("cuda:0"))
+        class_masks = {class_name: torch.zeros_like(outputs["instances"].pred_masks[0], dtype=torch.uint16, device=torch.device("cuda:0"))
                        for class_name in train_metadata['thing_classes']}
 
         # Assign a unique integer label to each object in the mask
         for i, pred_class in enumerate(outputs["instances"].pred_classes):
             class_name = train_metadata['thing_classes'][pred_class]
             class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
-                                          torch.tensor(i + 1, dtype=torch.float32),
-                                          class_masks[class_name].to(dtype=torch.float32))
-            class_masks[class_name] = class_masks[class_name].to(dtype=torch.uint8)
+                                          torch.tensor(i + 1, dtype=torch.uint16),
+                                          class_masks[class_name].to(dtype=torch.uint16))
+            class_masks[class_name] = class_masks[class_name].to(dtype=torch.uint16)
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
