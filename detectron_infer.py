@@ -12,6 +12,7 @@ import os, json, cv2, random
 from pathlib import Path
 import shutil
 import matplotlib.pyplot as plt
+import Image
 
 import SETTINGS
 import utils
@@ -40,30 +41,43 @@ def main():
     #output_directory = str(output_directory)
 
     masks = np.empty(0)
-    # Loop over the images in the input folder
-    for image_filename in os.listdir(input_images_directory):
-        image_path = os.path.join(input_images_directory, image_filename)
-        new_im = cv2.imread(image_path)
 
-        outputs = predictor(new_im)  # Format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+    for image_path in input_images_directory.glob('*'):
+        image = plt.imread(image_path)
 
-        # Create a dictionary to store the mask for each class with unique integer labels
-        class_masks = {class_name: torch.zeros_like(outputs["instances"].pred_masks[0], dtype=torch.uint8, device=torch.device("cuda:0"))
-                       for class_name in train_metadata['thing_classes']}
+        outputs = predictor(new_im)["instances"]
 
-        # Assign a unique integer label to each object in the mask
-        for i, pred_class in enumerate(outputs["instances"].pred_classes):
-            class_name = train_metadata['thing_classes'][pred_class]
-            class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
-                                          torch.tensor(i + 1, dtype=torch.float32),
-                                          class_masks[class_name].to(dtype=torch.float32))
-            class_masks[class_name] = class_masks[class_name].to(dtype=torch.uint8)
+        for pred_class in outputs.pred_classes:
+            full_mask = np.zeros(shape=image.shape)
+            class_indices = (outputs.pred_classes == pred_class).nonzero()
+            for idx in class_indices:
+                full_mask += pred_mask[idx]
+            Image.fromarray(full_mask.astype(np.uint16)).save(output_directory / pred_class / str(image.stem+'_mask.tif'))
 
-        for class_name, class_mask in class_masks.items():
-            class_mask_np = class_mask.cpu().numpy()
-            class_filename = os.path.splitext(image_filename)[0] + f"_mask.png"
-            class_output_path = os.path.join(output_directory, class_name, class_filename)
-            cv2.imwrite(class_output_path, class_mask_np.astype(np.uint8))
+    # # Loop over the images in the input folder
+    # for image_filename in os.listdir(input_images_directory):
+    #     image_path = os.path.join(input_images_directory, image_filename)
+    #     new_im = cv2.imread(image_path)
+    #
+    #     outputs = predictor(new_im)  # Format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+    #
+    #     # Create a dictionary to store the mask for each class with unique integer labels
+    #     class_masks = {class_name: torch.zeros_like(outputs["instances"].pred_masks[0], dtype=torch.uint8, device=torch.device("cuda:0"))
+    #                    for class_name in train_metadata['thing_classes']}
+    #
+    #     # Assign a unique integer label to each object in the mask
+    #     for i, pred_class in enumerate(outputs["instances"].pred_classes):
+    #         class_name = train_metadata['thing_classes'][pred_class]
+    #         class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
+    #                                       torch.tensor(i + 1, dtype=torch.float32),
+    #                                       class_masks[class_name].to(dtype=torch.float32))
+    #         class_masks[class_name] = class_masks[class_name].to(dtype=torch.uint8)
+    #
+    #     for class_name, class_mask in class_masks.items():
+    #         class_mask_np = class_mask.cpu().numpy()
+    #         class_filename = os.path.splitext(image_filename)[0] + f"_mask.png"
+    #         class_output_path = os.path.join(output_directory, class_name, class_filename)
+    #         cv2.imwrite(class_output_path, class_mask_np.astype(np.uint8))
 
     print("Segmentation of all images completed.")
 

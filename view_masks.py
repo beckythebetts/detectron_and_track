@@ -43,4 +43,8 @@ def main():
     utils.remake_dir(labelled_directory)
 
     for image in image_directory.glob('*'):
-        save_mask2(masks_1 / )
+        save_mask2(masks_1 / str(image.stem+'_mask'+'.png'), masks_1 / str(image.stem+'_mask'+'.png'), image, labelled_directory / str(image.stem+'_labelled'+image.suffix))
+
+
+if __name__ == '__main__':
+    main()
