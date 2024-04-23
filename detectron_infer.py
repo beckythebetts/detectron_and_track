@@ -38,23 +38,6 @@ def main():
     for class_name in train_metadata['thing_classes']:
         (output_directory / class_name).mkdir()
 
-    # masks = np.empty(0)
-    #
-    # for image_path in input_images_directory.glob('*'):
-    #     image = cv2.imread(str(image_path))
-    #
-    #     outputs = predictor(image)["instances"]
-    #
-    #     class_masks = {class_name: torch.zeros_like(outputs.pred_masks[0], dtype=torch.uint8, device=device)
-    #                    for class_name in train_metadata.thing_classes}
-    #
-    #     for pred_class in outputs.pred_classes:
-    #         full_mask = np.zeros(shape=(1, image.shape[0], image.shape[1]))
-    #         class_indices = (outputs.pred_classes == pred_class).nonzero()
-    #         for idx in class_indices:
-    #             #print(type(outputs.pred_masks[idx]))
-    #             full_mask += outputs.pred_masks[idx].cpu().numpy()
-    #         Image.fromarray(full_mask.astype(np.uint16)).save(output_directory / pred_class / str(image.stem+'_mask.tif'))
 
     # Loop over the images in the input folder
     for image_filename in os.listdir(input_images_directory):
@@ -80,9 +63,6 @@ def main():
             image_name = Path(image_path).stem+'_mask.tif'
             Image.fromarray(class_mask_np.astype(np.uint16)).save(output_directory / class_name / image_name)
 
-            # class_filename = os.path.splitext(image_filename)[0] + f"_mask.png"
-            # class_output_path = os.path.join(output_directory, class_name, class_filename)
-            # cv2.imwrite(class_output_path, class_mask_np.astype(np.uint8))
 
     print("Segmentation of all images completed.")
 
