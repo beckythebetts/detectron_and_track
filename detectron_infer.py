@@ -77,9 +77,8 @@ def main():
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
-
-            Image.fromarray(class_mask_np.astype(np.uint16)).save(
-                output_directory / pred_class / str(image.stem + '_mask.tif'))
+            image_name = Path(image_path).stem+'_mask.tif'
+            Image.fromarray(class_mask_np.astype(np.uint16)).save(output_directory / class_name / image_name)
 
             # class_filename = os.path.splitext(image_filename)[0] + f"_mask.png"
             # class_output_path = os.path.join(output_directory, class_name, class_filename)
