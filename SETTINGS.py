@@ -1,9 +1,4 @@
 from pathlib import Path
 
-# GENERAL
 DIRECTORY = Path('02')
 
-# TRAINING
-
-# INFERENECE
-#SAVE_LABELLED_IMAGES = True
