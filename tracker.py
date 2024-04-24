@@ -108,7 +108,8 @@ class Tracker:
     def last_frame(self):
         frame = np.empty((1200, 1200))
         for cell in self.cells:
-            frame += cell.masks[-1, :, :]*cell.index
+            frame += np.concatenate((cell.masks[-1, :, :] * cell.index, np.zeros((1200, 1200), dtype=np.float32)),
+                                    axis=0)
         return frame
 
     def show_last_frame(self, index):
