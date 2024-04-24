@@ -22,7 +22,7 @@ class Masks:
     def save_masks(self, max_images=10):
         utils.remake_dir(self.dir / 'labelled_images')
         colours = np.random.uniform(0.5, 1.0, size=(len(self.categories), 3))
-        image_paths = list((self.dir / 'images').iterdir())[:max_images]
+        image_paths = list(sorted((self.dir / 'images').iterdir()))[:max_images]
 
         with Pool() as pool:
             results = pool.starmap(process_image,
