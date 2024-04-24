@@ -8,4 +8,4 @@ def remake_dir(path):
             print('Cancelled')
             return
         shutil.rmtree(path)
-    path.mkdir()
+    path.mkdir(parents=True)
