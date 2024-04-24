@@ -13,6 +13,8 @@ from pathlib import Path
 import shutil
 import matplotlib.pyplot as plt
 from PIL import Image
+import sys
+import glob
 
 import SETTINGS
 import utils
@@ -38,9 +40,11 @@ def main():
     for class_name in train_metadata['thing_classes']:
         (output_directory / class_name).mkdir()
 
-
+    num_images = len(input_images_directory.glob('*'))
     # Loop over the images in the input folder
-    for image_filename in os.listdir(input_images_directory):
+    for i, image_filename in enumerate(os.listdir(input_images_directory)):
+        sys.stdout.write(f'\rInference on image {i+1} / {num_images}')
+        sys.stdout.flush()
         image_path = os.path.join(input_images_directory, image_filename)
         new_im = cv2.imread(image_path)
 

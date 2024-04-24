@@ -67,8 +67,8 @@ def main():
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
 
-    #trainer.train()
-    launch(trainer.train(), 2)
+    trainer.train()
+    #launch(trainer.train(), 2)
 
     config_yaml_path = config_directory / 'config.yaml'
     with open(str(config_yaml_path), 'w') as file:
