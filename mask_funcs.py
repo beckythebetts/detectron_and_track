@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import torch
 
 
 def to_instance_mask(mask):
@@ -20,8 +21,11 @@ def to_masks(image_path, type):
         return to_instance_mask(np.where(seg_mask[:, :, 2] == mask_vals[type], 1, 0))
 
 
-def split_mask(mask_full):
-    masks = [np.where(mask_full == i+1, 1, 0) for i in range(0, np.max(mask_full)) if i+1 in mask_full]
+def split_mask(mask_full, use_torch=False):
+    if use_torch:
+        masks = [torch.where(mask_full == i + 1, 1, 0) for i in range(0, torch.max(mask_full)) if i + 1 in mask_full]
+    else:
+        masks = [np.where(mask_full == i + 1, 1, 0) for i in range(0, np.max(mask_full)) if i + 1 in mask_full]
     return masks
 
 
