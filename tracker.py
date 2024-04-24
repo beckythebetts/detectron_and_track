@@ -106,7 +106,7 @@ class Tracker:
 
 
     def last_frame(self):
-        frame = np.sum([cell.masks[-1, :, :]*cell.index for cell in self.cells], axis=0)
+        frame = np.sum([cell.masks[-1, :, :].cpu()*cell.index for cell in self.cells], axis=0)
         # frame = np.empty((1200, 1200))
         # for cell in self.cells:
         #     frame += cell.masks[-1, :, :]*cell.index
