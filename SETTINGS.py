@@ -1,4 +1,4 @@
 from pathlib import Path
 
-DIRECTORY = Path('02')
+DIRECTORY = Path('03')
 

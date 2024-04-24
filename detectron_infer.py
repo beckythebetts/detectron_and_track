@@ -40,7 +40,7 @@ def main():
     for class_name in train_metadata['thing_classes']:
         (output_directory / class_name).mkdir()
 
-    num_images = len(input_images_directory.glob('*'))
+    num_images = os.listdir(input_images_directory)
     # Loop over the images in the input folder
     for i, image_filename in enumerate(os.listdir(input_images_directory)):
         sys.stdout.write(f'\rInference on image {i+1} / {num_images}')
