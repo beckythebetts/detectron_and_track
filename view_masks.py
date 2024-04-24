@@ -57,7 +57,7 @@ def process_image(image_path, dir, categories, colours):
 def main():
     directory = SETTINGS.DIRECTORY
     masks = Masks(directory)
-    masks.save_masks()
+    masks.save_masks(SETTINGS.MAX_IMAGES)
 
 if __name__ == '__main__':
     main()
