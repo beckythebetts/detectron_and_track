@@ -5,6 +5,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import time
 import sys
+import torch
 
 from Cells import Cell
 import mask_funcs
@@ -32,29 +33,44 @@ class Tracker:
 
     def join_new_frame(self, index):
         if index > SETTINGS.TRACK_CLIP_LENGTH:
-            for cell in self.cells: cell.clip_track()
+            for cell in self.cells:
+                cell.clip_track()
+
         orig_new_mask = self.new_frame(index)
-        new_mask = orig_new_mask.copy()
-        old_masks = [cell.masks[-1] for cell in self.cells]
+        new_mask = torch.tensor(orig_new_mask, dtype=torch.float32).cuda()  # Convert to PyTorch tensor and move to GPU
+        old_masks = [torch.tensor(cell.masks[-1], dtype=torch.float32).cuda() for cell in
+                     self.cells]  # Convert to PyTorch tensors and move to GPU
+
         for i, old_cell_mask in enumerate(old_masks):
-            intersection = np.logical_and(old_cell_mask, new_mask != 0)
-            values = np.unique(new_mask[intersection], return_counts=True)
-            if len(values[0]) > 0:
-                max_value = values[0][np.argmax(values[1])]
-                new_cell_mask = np.where(np.equal(new_mask, max_value), 1.0, 0)
-                self.cells[i].masks = np.vstack((self.cells[i].masks, new_cell_mask[np.newaxis, :, :]))
-                new_mask = np.where(np.equal(new_mask, max_value), 0, new_mask)
+            intersection = torch.logical_and(old_cell_mask, new_mask != 0)
+            values, counts = torch.unique(new_mask[intersection], return_counts=True)
+            if len(values) > 0:
+                max_value = values[counts.argmax()]
+                new_cell_mask = torch.where(new_mask == max_value, torch.tensor(1.0, dtype=torch.float32).cuda(),
+                                            torch.tensor(0.0, dtype=torch.float32).cuda())
+                self.cells[i].masks = np.vstack(
+                    (self.cells[i].masks, new_cell_mask.cpu().numpy()))  # Convert back to NumPy array for storing
+                new_mask = torch.where(new_mask == max_value, torch.tensor(0.0, dtype=torch.float32).cuda(), new_mask)
                 self.cells[i].missing_count = 0
             else:
-                if self.cells[i].missing_count < SETTINGS.TRACK_CLIP_LENGTH and not np.logical_and(old_cell_mask, orig_new_mask>0).any():
-                    self.cells[i].masks = np.vstack((self.cells[i].masks, old_cell_mask[np.newaxis, :, :]))
+                if self.cells[i].missing_count < SETTINGS.TRACK_CLIP_LENGTH and not torch.logical_and(old_cell_mask,
+                                                                                                      orig_new_mask > 0).any():
+                    self.cells[i].masks = np.vstack(
+                        (self.cells[i].masks, old_cell_mask.cpu().numpy()))  # Convert back to NumPy array for storing
                     self.cells[i].missing_count += 1
                 else:
-                    self.cells[i].masks = np.vstack((self.cells[i].masks, np.zeros((1, 1200, 1200))))
+                    self.cells[i].masks = np.vstack(
+                        (self.cells[i].masks, np.zeros((1, 1200, 1200))))  # Keep as NumPy array
+
         for new_cell_mask in mask_funcs.split_mask(new_mask):
-            if not np.logical_and(new_cell_mask, self.last_frame()>0).any():
-                self.cells = np.append(self.cells, Cell(masks=np.vstack((np.zeros((len(self.cells[0].masks) - 1, 1200, 1200)), new_cell_mask[np.newaxis, :, :])), index=self.max_cell_index()+1, type=self.name))
-        mask = np.array([cell.missing_count < SETTINGS.TRACK_CLIP_LENGTH for cell in self.cells])
+            if not torch.logical_and(new_cell_mask, self.last_frame() > 0).any():
+                self.cells = np.append(self.cells, Cell(masks=torch.vstack((torch.zeros(
+                    (len(self.cells[0].masks) - 1, 1200, 1200), dtype=torch.float32).cuda(),
+                                                                            new_cell_mask.unsqueeze(0))),
+                                                        index=self.max_cell_index() + 1, type=self.name))
+
+        mask = torch.tensor([cell.missing_count < SETTINGS.TRACK_CLIP_LENGTH for cell in self.cells],
+                            dtype=torch.bool).cuda()
         self.cells = self.cells[mask]
 
     def run_tracking(self):
