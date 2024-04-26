@@ -41,8 +41,7 @@ class Tracker:
         orig_new_mask = self.new_frame(index).clone().detach().to(dtype=torch.float32, device='cuda')
 
         new_mask = orig_new_mask.clone()
-        #old_masks = [torch.tensor(cell.masks[-1], dtype=torch.float32).cuda() for cell in
-                     self.cells]
+        #old_masks = [torch.tensor(cell.masks[-1], dtype=torch.float32).cuda() for cell in self.cells]
         old_masks = [cell.masks[-1].clone().detach().to(dtype=torch.float32, device='cuda') for cell in self.cells]
 
         for i, old_cell_mask in enumerate(old_masks):
