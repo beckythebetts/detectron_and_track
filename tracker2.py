@@ -44,7 +44,7 @@ class Tracker:
             im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
             im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
             self.update_new_frame()
-            self.old_frame = self.new_frame()
+            self.old_frame = self.new_frame
 
 def main():
     my_tracker = Tracker('Amoeba')
