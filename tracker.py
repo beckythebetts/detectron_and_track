@@ -54,7 +54,7 @@ class Tracker:
                                             torch.tensor(0, dtype=torch.int16).cuda())
                 self.cells[i].masks = torch.vstack(
                     (self.cells[i].masks, torch.unsqueeze(new_cell_mask, 0)))  # Convert back to NumPy array for storing
-                new_mask = torch.where(new_mask == max_value, torch.tensor(0.0, dtype=torch.int16).cuda(), new_mask)
+                new_mask = torch.where(new_mask == max_value, torch.tensor(0, dtype=torch.int16).cuda(), new_mask)
                 self.cells[i].missing_count = 0
             else:
                 if self.cells[i].missing_count < SETTINGS.TRACK_CLIP_LENGTH and not torch.logical_and(old_cell_mask,
@@ -70,7 +70,7 @@ class Tracker:
             if not torch.logical_and(new_cell_mask, self.last_frame() > 0).any():
                 self.cells = np.append(self.cells, Cell(masks=torch.vstack((torch.zeros(
                     (len(self.cells[0].masks) - 1, 1200, 1200), dtype=torch.int16).cuda(),
-                                                                            new_cell_mask.unsqueeze(0))),
+                                                                            torch.unsqueeze(new_cell_mask, 0))),
                                                         index=self.max_cell_index() + 1, type=self.name))
 
         cells_to_keep = [cell.missing_count < SETTINGS.TRACK_CLIP_LENGTH for cell in self.cells]
