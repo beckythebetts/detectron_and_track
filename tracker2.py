@@ -35,7 +35,8 @@ class Tracker:
                 new_index = highest_index + 1
                 highest_index = newest_index
 
-            self.updated_new_frame += new_mask*new_index
+            updated_new_frame += new_mask*new_index
+        self.new_frame = updated_new_frame
 
     def track(self):
         for i in range(len(self.mask_ims)):
