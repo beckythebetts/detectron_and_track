@@ -37,7 +37,7 @@ class Tracker:
                 cell.clip_track()
 
         #orig_new_mask = self.new_frame(index).astype(np.float32)
-        orig_new_mask = torch.tensor(self.new_frame(index).astype(np.float32), dtype=torch.float32).cuda()
+        orig_new_mask = torch.tensor(self.new_frame(index), dtype=torch.float32).cuda()
         new_mask = torch.tensor(orig_new_mask, dtype=torch.float32).cuda()  # Convert to PyTorch tensor and move to GPU
         old_masks = [torch.tensor(cell.masks[-1], dtype=torch.float32).cuda() for cell in
                      self.cells]  # Convert to PyTorch tensors and move to GPU
