@@ -42,7 +42,7 @@ class Tracker:
 
         for i in range(len(self.mask_ims)):
             sys.stdout.write(
-                f'\rAdding frame {i + 1} / {len(self.mask_ims)}\t|\tLast frame took {last_time} s\t|\tAverage time per frame is {average} s')
+                f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
             sys.stdout.flush()
 
             self.new_frame = torch.tensor(plt.imread(self.mask_ims[i+1]).astype(np.int16)).cuda()
