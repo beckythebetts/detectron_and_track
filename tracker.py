@@ -66,7 +66,7 @@ class Tracker:
                         (self.cells[i].masks, torch.zeros((1, 1200, 1200)).cuda()))  # Keep as NumPy array
 
         for new_cell_mask in mask_funcs.split_mask(new_mask, use_torch=True):
-            if not torch.logical_and(new_cell_mask, torch.tensor(self.last_frame(), dtype=torch.float32).cuda() > 0).any():
+            if not torch.logical_and(new_cell_mask, self.last_frame() > 0).any():
                 self.cells = np.append(self.cells, Cell(masks=torch.vstack((torch.zeros(
                     (len(self.cells[0].masks) - 1, 1200, 1200), dtype=torch.float32).cuda(),
                                                                             new_cell_mask.unsqueeze(0))),
