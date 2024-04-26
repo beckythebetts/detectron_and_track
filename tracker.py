@@ -38,7 +38,7 @@ class Tracker:
 
         #orig_new_mask = self.new_frame(index).astype(np.float32)
         orig_new_mask = torch.tensor(self.new_frame(index), dtype=torch.float32).cuda()
-        new_mask = torch.tensor(orig_new_mask, dtype=torch.float32).cuda()  # Convert to PyTorch tensor and move to GPU
+        new_mask = orig_new_mask.clone()
         old_masks = [torch.tensor(cell.masks[-1], dtype=torch.float32).cuda() for cell in
                      self.cells]  # Convert to PyTorch tensors and move to GPU
 
@@ -70,8 +70,8 @@ class Tracker:
                                                                             new_cell_mask.unsqueeze(0))),
                                                         index=self.max_cell_index() + 1, type=self.name))
 
-        mask = [cell.missing_count < SETTINGS.TRACK_CLIP_LENGTH for cell in self.cells]
-        self.cells = self.cells[mask]
+        cells_to_keep = [cell.missing_count < SETTINGS.TRACK_CLIP_LENGTH for cell in self.cells]
+        self.cells = self.cells[cells_to_keep]
 
     def run_tracking(self):
         num_frames = len(self.mask_ims)
