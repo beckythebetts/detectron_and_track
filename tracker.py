@@ -30,7 +30,7 @@ class Tracker:
             return np.max([cell.index for cell in self.cells])
 
     def new_frame(self, index):
-        return torch.tensor(plt.imread(self.mask_ims[index]).astype(np.int16)).cuda()
+        return torch.tensor(plt.imread(self.mask_ims[index])).cuda()
 
     def join_new_frame(self, index):
         if index > SETTINGS.TRACK_CLIP_LENGTH:
