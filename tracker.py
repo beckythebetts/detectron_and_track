@@ -107,7 +107,7 @@ class Tracker:
 
     def last_frame(self):
         #frame = torch.sum([cell.masks[-1, :, :]*cell.index for cell in self.cells], axis=0)
-        frame = torch.empty((1200, 1200))
+        frame = torch.empty((1200, 1200)).cuda()
         for cell in self.cells:
             frame += cell.masks[-1, :, :]*cell.index
         return frame
