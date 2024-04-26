@@ -34,27 +34,29 @@ class Tracker:
 
     def join_new_frame(self, index):
         if index > SETTINGS.TRACK_CLIP_LENGTH:
+            num_frames = SETTINGS>TRACK_CLIP_LENGTH
             for cell in self.cells:
                 cell.clip_track()
-
+        else:
+            num_frames = index
         #orig_new_mask = self.new_frame(index).astype(np.float32)
         #orig_new_mask = torch.tensor(self.new_frame(index), dtype=torch.int16).cuda()
-        orig_new_mask = self.new_frame(index).clone().detach().to(device='cuda')
+        orig_new_mask = self.new_frame(index)
 
-        new_mask = orig_new_mask.clone()
+        new_mask = orig_new_mask.clone().detach().to(device='cuda')
         #old_masks = [torch.tensor(cell.masks[-1], dtype=torch.int16).cuda() for cell in self.cells]
-        old_masks = [cell.masks[-1].clone().detach().to(device='cuda') for cell in self.cells]
+        old_masks = [cell.masks[-1] for cell in self.cells]
 
         for i, old_cell_mask in enumerate(old_masks):
             intersection = torch.logical_and(old_cell_mask, new_mask != 0)
             values, counts = torch.unique(new_mask[intersection], return_counts=True)
             if len(values) > 0:
                 max_value = values[counts.argmax()]
-                new_cell_mask = torch.where(new_mask == max_value, torch.tensor(1).cuda(),
-                                            torch.tensor(0).cuda())
+                new_cell_mask = torch.where(new_mask == max_value, 1,
+                                            0)
                 self.cells[i].masks = torch.vstack(
-                    (self.cells[i].masks, torch.unsqueeze(new_cell_mask, 0)))  # Convert back to NumPy array for storing
-                new_mask = torch.where(new_mask == max_value, torch.tensor(0).cuda(), new_mask)
+                    (self.cells[i].masks, torch.unsqueeze(new_cell_mask, 0)))
+                new_mask = torch.where(new_mask == max_value, 0, new_mask)
                 self.cells[i].missing_count = 0
             else:
                 if self.cells[i].missing_count < SETTINGS.TRACK_CLIP_LENGTH and not torch.logical_and(old_cell_mask,
@@ -69,7 +71,7 @@ class Tracker:
         for new_cell_mask in mask_funcs.split_mask(new_mask, use_torch=True):
             if not torch.logical_and(new_cell_mask, self.last_frame() > 0).any():
                 self.cells = np.append(self.cells, Cell(masks=torch.vstack((torch.zeros(
-                    (len(self.cells[0].masks) - 1, 1200, 1200)).cuda(),
+                    (num_frames - 1, 1200, 1200)).cuda(),
                                                                             torch.unsqueeze(new_cell_mask, 0))),
                                                         index=self.max_cell_index() + 1, type=self.name))
 
@@ -100,7 +102,7 @@ class Tracker:
                 self.join_new_frame(i)
                 with open(SETTINGS.DIRECTORY / 'tracking' / (self.name + '_times.txt'), 'a') as f:
                     f.write(str(last_time)+'\n')
-            im = Image.fromarray((self.last_frame()).cpu().numpy().astype(np.uint16))
+            im = Image.fromarray((self.last_frame()).cpu().numpy().astype(np.int16))
             im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i)+'.tif'))
             if SETTINGS.VIEW_TRACKS:
                 self.show_last_frame(i)
