@@ -40,7 +40,7 @@ class Tracker:
     def track(self):
         for i in range(len(self.mask_ims)):
             self.new_frame = torch.tensor(plt.imread(self.mask_ims[i+1]).astype(np.int16)).cuda()
-            im = Image.fromarray((self.old_frame()).cpu().numpy().astype(np.int16))
+            im = Image.fromarray(self.old_frame().cpu().numpy().astype(np.int16))
             im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
             self.update_new_frame()
             self.old_frame = self.new_frame()
