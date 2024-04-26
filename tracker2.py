@@ -39,9 +39,6 @@ class Tracker:
         self.new_frame = updated_new_frame
 
     def track(self):
-        try:
-            os.remove(SETTINGS.DIRECTORY / 'tracking' / (self.name+'_times.txt'))
-
 
         for i in range(len(self.mask_ims)):
             try:
