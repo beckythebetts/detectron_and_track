@@ -104,7 +104,7 @@ class Tracker:
             if SETTINGS.VIEW_TRACKS:
                 self.show_last_frame(i)
             end_time = time.time()
-            gc.collect()
+            torch.cuda.empty_cache()
 
 
 
@@ -133,7 +133,8 @@ class Tracker:
 def main():
     gc.enable()
     amoeba_tracker = Tracker('Amoeba')
-    amoeba_tracker.run_tracking()
+    with torch.no_grad():
+        amoeba_tracker.run_tracking()
 # yeast_tracker = Tracker('yeast')
 # yeast_tracker.run_tracking()
 
