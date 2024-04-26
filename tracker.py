@@ -97,7 +97,7 @@ class Tracker:
                 self.join_new_frame(i)
                 with open(SETTINGS.DIRECTORY / 'tracking' / (self.name + '_times.txt'), 'a') as f:
                     f.write(str(last_time)+'\n')
-            im = Image.fromarray((self.last_frame()).astype(np.uint16))
+            im = Image.fromarray((self.last_frame()).cpu().nuppy().astype(np.uint16))
             im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i)+'.tif'))
             if SETTINGS.VIEW_TRACKS:
                 self.show_last_frame(i)
