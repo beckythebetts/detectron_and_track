@@ -25,7 +25,7 @@ class Tracker:
 
     def update_new_frame(self):
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
-        highest_index = torch.max(self.old_mask)
+        highest_index = torch.max(self.old_frame)
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
             intersection = torch.logical_and(new_mask, self.old_frame != 0)
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
