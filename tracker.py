@@ -60,8 +60,8 @@ class Tracker:
                         (self.cells[i].masks, torch.unsqueeze(old_cell_mask, 0)))  # Convert back to NumPy array for storing
                     self.cells[i].missing_count += 1
                 else:
-                    self.cells[i].masks = np.vstack(
-                        (self.cells[i].masks, np.zeros((1, 1200, 1200))))  # Keep as NumPy array
+                    self.cells[i].masks = torch.vstack(
+                        (self.cells[i].masks, torch.zeros((1, 1200, 1200))))  # Keep as NumPy array
 
         for new_cell_mask in mask_funcs.split_mask(new_mask, use_torch=True):
             if not torch.logical_and(new_cell_mask, torch.tensor(self.last_frame().astype(np.float32), dtype=torch.float32).cuda() > 0).any():
