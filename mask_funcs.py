@@ -23,7 +23,16 @@ def to_masks(image_path, type):
 
 def split_mask(mask_full, use_torch=False):
     if use_torch:
-        masks = torch.tensor([torch.where(mask_full == i + 1, 1, 0) for i in range(0, int(torch.max(mask_full))) if i + 1 in mask_full])
+        #masks = torch.tensor([torch.where(mask_full == i + 1, 1, 0) for i in range(0, int(torch.max(mask_full))) if i + 1 in mask_full])
+        masks = []
+        max_val = int(torch.max(mask_full))
+
+        for i in range(1, max_val + 1):
+            if i in mask_full:
+                mask = torch.where(mask_full == i, 1, 0)
+                masks.append(mask)
+
+        masks = torch.stack(masks)
     else:
         masks = [[np.where(mask_full == i + 1, 1, 0)] for i in range(0, np.max(mask_full)) if i + 1 in mask_full]
     return masks
