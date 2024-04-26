@@ -42,7 +42,7 @@ class Tracker:
 
         new_mask = orig_new_mask.clone()
         #old_masks = [torch.tensor(cell.masks[-1], dtype=torch.float32).cuda() for cell in self.cells]
-        old_masks = [cell.masks[-1].clone().detach().to(dtype=torch.uint16, device='cuda') for cell in self.cells]
+        old_masks = [cell.masks[-1].clone().detach().to(dtype=torch.int16, device='cuda') for cell in self.cells]
 
         for i, old_cell_mask in enumerate(old_masks):
             intersection = torch.logical_and(old_cell_mask, new_mask != 0)
