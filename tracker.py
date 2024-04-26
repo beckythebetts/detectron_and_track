@@ -49,8 +49,8 @@ class Tracker:
                 max_value = values[counts.argmax()]
                 new_cell_mask = torch.where(new_mask == max_value, torch.tensor(1.0, dtype=torch.float32).cuda(),
                                             torch.tensor(0.0, dtype=torch.float32).cuda())
-                self.cells[i].masks = np.vstack(
-                    (self.cells[i].masks, new_cell_mask.cpu().numpy()[np.newaxis,:, :]))  # Convert back to NumPy array for storing
+                self.cells[i].masks = torch.vstack(
+                    (self.cells[i].masks, torch.unsqueeze(new_cell_mask, 0)))  # Convert back to NumPy array for storing
                 new_mask = torch.where(new_mask == max_value, torch.tensor(0.0, dtype=torch.float32).cuda(), new_mask)
                 self.cells[i].missing_count = 0
             else:
