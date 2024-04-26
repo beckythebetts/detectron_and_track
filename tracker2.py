@@ -49,7 +49,7 @@ class Tracker:
                 last_time = ' - '
                 average = ' - '
             sys.stdout.write(
-                f'\rAdding frame {i + 1} / {num_frames}\t|\tLast frame took {last_time} s\t|\tAverage time per frame is {average} s')
+                f'\rAdding frame {i + 1} / {len(self.mask_ims)}\t|\tLast frame took {last_time} s\t|\tAverage time per frame is {average} s')
             sys.stdout.flush()
             start_time = time.time()
 
