@@ -33,7 +33,7 @@ class Tracker:
                 new_index = indexes[torch.argmax(counts)]
             else:
                 new_index = highest_index + 1
-                highest_index = newest_index
+                highest_index = new_index
 
             updated_new_frame += new_mask*new_index
         self.new_frame = updated_new_frame
