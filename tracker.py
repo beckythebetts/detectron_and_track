@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import time
 import sys
 import torch
+import gc
 
 from Cells import Cell
 import mask_funcs
@@ -103,6 +104,7 @@ class Tracker:
             if SETTINGS.VIEW_TRACKS:
                 self.show_last_frame(i)
             end_time = time.time()
+            gc.collect()
 
 
 
@@ -129,6 +131,7 @@ class Tracker:
         plt.show()
 
 def main():
+    gc.enable()
     amoeba_tracker = Tracker('Amoeba')
     amoeba_tracker.run_tracking()
 # yeast_tracker = Tracker('yeast')
