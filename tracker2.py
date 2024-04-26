@@ -7,6 +7,7 @@ import time
 import sys
 import torch
 import gc
+import cv2
 
 from Cells import Cell
 import mask_funcs
@@ -18,7 +19,6 @@ class Tracker:
     def __init__(self, name):
         self.name = name
         self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'inference_dataset' / 'masks' / self.name).iterdir()])
-        #self.index = 1
         self.old_frame = torch.tensor(plt.imread(self.mask_ims[0]).astype(np.int16)).cuda()
         self.new_frame = torch.tensor(plt.imread(self.mask_ims[1]).astype(np.int16)).cuda()
         utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
@@ -39,17 +39,22 @@ class Tracker:
         self.new_frame = updated_new_frame
 
     def track(self):
-
-        for i in range(len(self.mask_ims)):
+        cv2.imwrite(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'), self.old_frame.cpu().numpy().astype(np.int16))
+        # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
+        # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
+        for i in range(1, len(self.mask_ims)):
             sys.stdout.write(
-                f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
+                f'\rAdding frame {i } / {len(self.mask_ims)}')
             sys.stdout.flush()
 
-            self.new_frame = torch.tensor(plt.imread(self.mask_ims[i+1]).astype(np.int16)).cuda()
-            im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
-            im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
+            self.new_frame = torch.tensor(plt.imread(self.mask_ims[i + 1]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
+            cv2.imwrite(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'),
+                        self.old_frame.cpu().numpy().astype(np.int16))
+            # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
+            # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
+
 
 def main():
     my_tracker = Tracker('Amoeba')
