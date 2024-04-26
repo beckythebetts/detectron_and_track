@@ -70,8 +70,7 @@ class Tracker:
                                                                             new_cell_mask.unsqueeze(0))),
                                                         index=self.max_cell_index() + 1, type=self.name))
 
-        mask = torch.tensor([cell.missing_count < SETTINGS.TRACK_CLIP_LENGTH for cell in self.cells],
-                            dtype=torch.bool).cuda()
+        mask = [cell.missing_count < SETTINGS.TRACK_CLIP_LENGTH for cell in self.cells]
         self.cells = self.cells[mask]
 
     def run_tracking(self):
