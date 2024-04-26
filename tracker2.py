@@ -29,7 +29,7 @@ class Tracker:
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
             intersection = torch.logical_and(new_mask, self.old_frame != 0)
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
-            if indexes > 0 and torch.max(counts) > 0.5*torch.sum(new_mask):
+            if len(indexes) > 0 and torch.max(counts) > 0.5*torch.sum(new_mask):
                 new_index = indexes[torch.argmax(counts)]
             else:
                 new_index = highest_index + 1
