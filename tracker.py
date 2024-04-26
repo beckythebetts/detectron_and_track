@@ -56,8 +56,8 @@ class Tracker:
             else:
                 if self.cells[i].missing_count < SETTINGS.TRACK_CLIP_LENGTH and not torch.logical_and(old_cell_mask,
                                                                                                       orig_new_mask > 0).any():
-                    self.cells[i].masks = np.vstack(
-                        (self.cells[i].masks, old_cell_mask.cpu().numpy()[np.newaxis, :, :]))  # Convert back to NumPy array for storing
+                    self.cells[i].masks = torch.vstack(
+                        (self.cells[i].masks, torch.unsqueeze(old_cell_mask, 0)))  # Convert back to NumPy array for storing
                     self.cells[i].missing_count += 1
                 else:
                     self.cells[i].masks = np.vstack(
