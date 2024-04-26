@@ -18,7 +18,7 @@ class Tracker:
     def __init__(self, name):
         self.name = name
         self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'inference_dataset' / 'masks' / self.name).iterdir()])
-        self.cells = [Cell(masks=mask[np.newaxis, :, :], index=i+1, type=self.name) for i, mask in enumerate(mask_funcs.split_mask(self.new_frame(0), use_torch=True))]
+        self.cells = [Cell(masks=torch.unsqueeze(mask, 0), index=i+1, type=self.name) for i, mask in enumerate(mask_funcs.split_mask(self.new_frame(0), use_torch=True))]
         utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
         if SETTINGS.VIEW_TRACKS:
             utils.remake_dir(SETTINGS.DIRECTORY / 'tracking_view' / self.name)
