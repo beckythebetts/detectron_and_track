@@ -50,7 +50,7 @@ class Tracker:
             values, counts = torch.unique(new_mask[intersection], return_counts=True)
             if len(values) > 0:
                 max_value = values[counts.argmax()]
-                new_cell_mask = torch.where(new_mask == max_value, torch.tensor(1.0, dtype=torch.int16).cuda(),
+                new_cell_mask = torch.where(new_mask == max_value, torch.tensor(1, dtype=torch.int16).cuda(),
                                             torch.tensor(0, dtype=torch.int16).cuda())
                 self.cells[i].masks = torch.vstack(
                     (self.cells[i].masks, torch.unsqueeze(new_cell_mask, 0)))  # Convert back to NumPy array for storing
