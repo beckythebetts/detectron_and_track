@@ -42,12 +42,12 @@ class Tracker:
         cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif')), self.old_frame.cpu().numpy().astype(np.int16))
         # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
         # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
-        for i in range(1, len(self.mask_ims)):
+        for i in range(len(self.mask_ims)-1):
             sys.stdout.write(
-                f'\rAdding frame {i } / {len(self.mask_ims)}')
+                f'\rAdding frame {i} / {len(self.mask_ims)}')
             sys.stdout.flush()
 
-            self.new_frame = torch.tensor(plt.imread(self.mask_ims[i + 1]).astype(np.int16)).cuda()
+            self.new_frame = torch.tensor(plt.imread(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
             cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif')),
