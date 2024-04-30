@@ -26,8 +26,8 @@ class Tracker:
 
 
     def update_new_frame(self):
-        print(torch.max(self.new_frame))
-        print(self.new_frame)
+        # print(torch.max(self.new_frame))
+        # print(self.new_frame)
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
         highest_index = torch.max(self.old_frame)
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
@@ -77,16 +77,16 @@ class Tracker:
             mask = torch.tensor(utils.read_tiff(tracked_masks[i]).astype(np.int16)).cuda()
             image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(images[i]).astype(np.int16)).cuda())
             im_rgb = torch.stack((image, image, image), axis=0)
-            print(mask.shape)
+            # print(mask.shape)
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
             for j in range(torch.max(mask)+1):
                 if j+1 in mask:
                     single_mask = torch.where(mask==j+1, 1, 0)
-                    print(single_mask.shape)
+                    #print(single_mask.shape)
                     expanded_mask = F.max_pool2d(single_mask.float(), kernel_size=3, stride=1, padding=1) > 0
-                    print(expanded_mask.shape)
+                    #print(expanded_mask.shape)
                     outline = (expanded_mask.byte() - single_mask).bool()
-                    print(outline.shape)
+                    #print(outline.shape)
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, torch.ones(size=outline.shape)*colours[j, c], im_rgb[c])
             Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / (str(i)+'.jpg'))
