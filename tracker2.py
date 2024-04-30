@@ -41,7 +41,7 @@ class Tracker:
         self.new_frame = updated_new_frame
 
     def track(self):
-        Print('----------\nTRACKING\n----------')
+        print('----------\nTRACKING\n----------')
         utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
         #cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif')), self.old_frame.cpu().numpy().astype(np.int16))
         im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
