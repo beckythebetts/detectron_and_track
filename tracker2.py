@@ -57,10 +57,11 @@ class Tracker:
             # cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif')),
             #             self.old_frame.cpu().numpy().astype(np.int16))
             im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
+            print(np.shape(im))
             im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
 
     def show_tracks(self):
-        print('----------\nDisplaying\n----------')
+        print('\n----------\nDISPLAYING\n----------')
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracking' / self.name).iterdir()])
         view_track_dir = SETTINGS.DIRECTORY / 'tracking' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
