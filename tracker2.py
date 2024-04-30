@@ -89,12 +89,12 @@ class Tracker:
 
 
 def main():
-    # my_tracker = Tracker('Amoeba')
-    # if SETTINGS.TRACK:
-    #     my_tracker.track()
-    # if SETTINGS.VIEW_TRACKS:
-    #     my_tracker.show_tracks()
-    test = plt.imread('03/000.tif')
-    print(np.shape(test))
+    my_tracker = Tracker('Amoeba')
+    if SETTINGS.TRACK:
+        my_tracker.track()
+    if SETTINGS.VIEW_TRACKS:
+        my_tracker.show_tracks()
+    # test = plt.imread('03/000.tif')
+    # print(np.shape(test))
 if __name__ == '__main__':
     main()
