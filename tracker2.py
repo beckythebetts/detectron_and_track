@@ -74,7 +74,7 @@ class Tracker:
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
             for j in range(torch.max(mask)+1):
                 if j+1 in mask:
-                    single_mask = torch.where(mask==j+1, 1, 0)
+                    single_mask = torch.where(mask==j+1, int(1), int(0))
                     expanded_mask = F.max_pool2d(single_mask, kernel_size=3, stride=1, padding=1) > 0
                     outline = dilated_tensor.byte() - single_mask
                     for c in range(3):
