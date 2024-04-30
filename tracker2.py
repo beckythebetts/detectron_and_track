@@ -23,7 +23,7 @@ class Tracker:
         self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / 'images').iterdir()])
         self.old_frame = torch.tensor(plt.imread(self.mask_ims[0]).astype(np.int16)).cuda()
         self.new_frame = torch.tensor(plt.imread(self.mask_ims[1]).astype(np.int16)).cuda()
-        utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
+
 
     def update_new_frame(self):
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
@@ -41,6 +41,7 @@ class Tracker:
         self.new_frame = updated_new_frame
 
     def track(self):
+        utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
         cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif')), self.old_frame.cpu().numpy().astype(np.int16))
         # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
         # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
