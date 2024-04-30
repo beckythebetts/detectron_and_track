@@ -79,11 +79,11 @@ class Tracker:
             im_rgb = torch.stack((image, image, image), axis=0)
             #print(mask.shape)
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
-            for j in range(torch.max(mask)+1):
+            for j in range(torch.max(mask)):
                 if j+1 in mask:
                     single_mask = torch.where(mask==j+1, 1, 0)
                     #print(single_mask.shape)
-                    expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(1), kernel_size=3, stride=1, padding=1) > 0
+                    expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(1), kernel_size=10, stride=1, padding=1) > 0
                     #print(expanded_mask.shape)
                     outline = (expanded_mask.byte().squeeze() - single_mask).bool()
                     #print(outline.shape)
