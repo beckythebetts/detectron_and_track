@@ -45,7 +45,6 @@ class Tracker:
     def track(self):
         print('----------\nTRACKING\n----------')
         utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
-        #cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif')), self.old_frame.cpu().numpy().astype(np.int16))
         im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
         im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
         for i in range(1, len(self.mask_ims)):
@@ -56,12 +55,6 @@ class Tracker:
             self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
-            # cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif')),
-            #             self.old_frame.cpu().numpy().astype(np.int16))
-            # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
-            # print(np.shape(im))
-            # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
-
             utils.save_tiff(self.old_frame.cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
 
     def show_tracks(self):
