@@ -69,7 +69,7 @@ class Tracker:
         view_track_dir = SETTINGS.DIRECTORY / 'tracking' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
         total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
-        colours = np.random.uniform(0, 1, size=(total_num_cells+1, 3))
+        colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3)).cuda())
         for i in range(len(self.tracked_masks)):
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
