@@ -87,7 +87,7 @@ def main():
     if SETTINGS.TRACK:
         my_tracker.track()
     if SETTINGS.VIEW_TRACKS:
-        my_tracker.show(tracks)
+        my_tracker.show_tracks()
 
 if __name__ == '__main__':
     main()
