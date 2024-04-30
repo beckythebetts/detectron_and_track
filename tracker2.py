@@ -55,7 +55,7 @@ class Tracker:
             self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
-            utils.save_tiff(self.old_frame.cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
+            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
 
     def show_tracks(self):
         print('\n----------\nDISPLAYING\n----------')

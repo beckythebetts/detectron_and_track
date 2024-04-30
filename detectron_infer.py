@@ -68,7 +68,7 @@ def main():
             Image.fromarray(class_mask_np.astype(np.uint16)).save(output_directory / class_name / image_name)
 
 
-    print("Segmentation of all images completed.")
+    print("\nSegmentation of all images completed.")
 
 if __name__ == '__main__':
     main()
