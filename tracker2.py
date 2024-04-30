@@ -62,7 +62,7 @@ class Tracker:
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracking' / self.name).iterdir()])
         view_track_dir = SETTINGS.DIRECTORY / 'tracking' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
-        total_num_cells = np.max(plt.imread(sorted([track for track in self.tracked_masks.iterdir()])[-1]))
+        total_num_cells = np.max(plt.imread(self.tracked_masks[-1]))
         colors = np.random.uniform(0, 1, size=(total_num_cells+1, 3))
         for i in range(len(self.tracked_masks)):
             sys.stdout.write(
