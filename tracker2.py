@@ -83,10 +83,11 @@ class Tracker:
                 if j+1 in mask:
                     single_mask = torch.where(mask==j+1, 1, 0)
                     #print(single_mask.shape)
-                    expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(0), kernel_size=9, stride=1, padding=4) > 0
-                    #print(expanded_mask.shape)
-                    outline = (expanded_mask.byte().squeeze() - single_mask).bool()
-                    #print(outline.shape)
+                    # expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(0), kernel_size=9, stride=1, padding=4) > 0
+                    # #print(expanded_mask.shape)
+                    # outline = (expanded_mask.byte().squeeze() - single_mask).bool()
+                    # #print(outline.shape)
+                    outline = mask_funcs.mask_outline(single_mask, 3)
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, colours[j, c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)

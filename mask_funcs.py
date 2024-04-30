@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import torch
+import torch.nn.functional as F
 
 
 def to_instance_mask(mask):
@@ -52,4 +53,10 @@ def cal_iou(mask1, mask2):
     union = np.logical_or(mask1, mask2)
     result = np.sum(intersection) / np.sum(union)
     return result
+
+def mask_outline(mask, thickness):
+    expanded_mask = F.max_pool2d(mask.float().unsqueeze(0), kernel_size=2*thickness+1, stride=1, padding=thickness) > 0
+    # print(expanded_mask.shape)
+    outline = (expanded_mask.byte().squeeze() - mask).bool()
+    return outline
 
