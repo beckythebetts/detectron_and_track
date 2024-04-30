@@ -88,7 +88,7 @@ class Tracker:
                     outline = (expanded_mask.byte().squeeze() - single_mask).bool()
                     #print(outline.shape)
                     for c in range(3):
-                        im_rgb[c] = torch.where(outline, torch.ones(size=outline.shape)*colours[j, c], im_rgb[c])
+                        im_rgb[c] = torch.where(outline, torch.ones(size=outline.shape).cuda()*colours[j, c], im_rgb[c])
             Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / (str(i)+'.jpg'))
 
 
