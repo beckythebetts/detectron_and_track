@@ -5,7 +5,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import time
 import sys
-import torch
+#import torch
 import gc
 import cv2
 import torch.nn.functional as F
@@ -21,8 +21,8 @@ class Tracker:
         self.name = name
         self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'inference_dataset' / 'masks' / self.name).iterdir()])
         self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / 'images').iterdir()])
-        self.old_frame = torch.tensor(cv2.imread(str(self.mask_ims[0])).astype(np.int16)).cuda()
-        self.new_frame = torch.tensor(cv2.imread(str(self.mask_ims[1])).astype(np.int16)).cuda()
+        self.old_frame = torch.tensor(plt.imread(self.mask_ims[0]).astype(np.int16)).cuda()
+        self.new_frame = torch.tensor(plt.imread(self.mask_ims[1]).astype(np.int16)).cuda()
 
 
     def update_new_frame(self):
@@ -41,35 +41,37 @@ class Tracker:
         self.new_frame = updated_new_frame
 
     def track(self):
+        Print('----------\nTRACKING\n----------')
         utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
-        cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif')), self.old_frame.cpu().numpy().astype(np.int16))
-        # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
-        # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
-        for i in range(len(self.mask_ims)):
+        #cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif')), self.old_frame.cpu().numpy().astype(np.int16))
+        im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
+        im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
+        for i in range(1, len(self.mask_ims)):
             sys.stdout.write(
                 f'\rAdding frame {i+1} / {len(self.mask_ims)}')
             sys.stdout.flush()
 
-            self.new_frame = torch.tensor(cv2.imread(str(self.mask_ims[i])).astype(np.int16)).cuda()
+            self.new_frame = torch.tensor(plt.imread(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
-            cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif')),
-                        self.old_frame.cpu().numpy().astype(np.int16))
-            # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
-            # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
+            # cv2.imwrite(str(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif')),
+            #             self.old_frame.cpu().numpy().astype(np.int16))
+            im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
+            im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
 
     def show_tracks(self):
+        print('----------\nDisplaying\n----------')
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracking' / self.name).iterdir()])
         view_track_dir = SETTINGS.DIRECTORY / 'tracking' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
-        total_num_cells = np.max(cv2.imread(str(self.tracked_masks[-1])))
+        total_num_cells = np.max(plt.imread(self.tracked_masks[-1]))
         colours = np.random.uniform(0, 1, size=(total_num_cells+1, 3))
         for i in range(len(self.tracked_masks)):
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
             sys.stdout.flush()
-            mask = torch.tensor(cv2.imread(str(self.tracked_masks[i])).astype(np.int16)).cuda()
-            image = utils.torch_min_max_scale(torch.tensor(cv2.imread(str(self.images[i])).astype(np.int16)).cuda())
+            mask = torch.tensor(plt.imread(self.tracked_masks[i]).astype(np.int16)).cuda()
+            image = utils.torch_min_max_scale(torch.tensor(plt.imread(self.images[i]).astype(np.int16)).cuda())
             im_rgb = torch.stack((image, image, image), axis=0)
             print(mask.shape)
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
@@ -87,11 +89,12 @@ class Tracker:
 
 
 def main():
-    my_tracker = Tracker('Amoeba')
-    if SETTINGS.TRACK:
-        my_tracker.track()
-    if SETTINGS.VIEW_TRACKS:
-        my_tracker.show_tracks()
-
+    # my_tracker = Tracker('Amoeba')
+    # if SETTINGS.TRACK:
+    #     my_tracker.track()
+    # if SETTINGS.VIEW_TRACKS:
+    #     my_tracker.show_tracks()
+    test = plt.imread('03/000.tif')
+    print(np.shape(test))
 if __name__ == '__main__':
     main()
