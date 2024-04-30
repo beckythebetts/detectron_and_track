@@ -75,7 +75,7 @@ class Tracker:
                 f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
             sys.stdout.flush()
             mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
-            image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)[np.newaxis,:]).cuda())
+            image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
             im_rgb = torch.stack((image, image, image), axis=0)
             # print(mask.shape)
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
@@ -83,9 +83,9 @@ class Tracker:
                 if j+1 in mask:
                     single_mask = torch.where(mask==j+1, 1, 0)
                     #print(single_mask.shape)
-                    expanded_mask = F.max_pool2d(single_mask.float(), kernel_size=3, stride=1, padding=1) > 0
+                    expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(), kernel_size=3, stride=1, padding=1) > 0
                     #print(expanded_mask.shape)
-                    outline = (expanded_mask.byte() - single_mask).bool()
+                    outline = (expanded_mask.byte().squeeze() - single_mask).bool()
                     #print(outline.shape)
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, torch.ones(size=outline.shape)*colours[j, c], im_rgb[c])
