@@ -8,7 +8,7 @@ import sys
 import torch
 import gc
 import cv2
-import torch.nn.functinal as F
+import torch.nn.functional as F
 
 from Cells import Cell
 import mask_funcs
