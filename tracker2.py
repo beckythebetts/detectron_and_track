@@ -8,6 +8,7 @@ import sys
 import torch
 import gc
 import cv2
+import torch.nn.functinal as F
 
 from Cells import Cell
 import mask_funcs
@@ -19,6 +20,7 @@ class Tracker:
     def __init__(self, name):
         self.name = name
         self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'inference_dataset' / 'masks' / self.name).iterdir()])
+        self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / 'images').iterdir()])
         self.old_frame = torch.tensor(plt.imread(self.mask_ims[0]).astype(np.int16)).cuda()
         self.new_frame = torch.tensor(plt.imread(self.mask_ims[1]).astype(np.int16)).cuda()
         utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
@@ -56,17 +58,32 @@ class Tracker:
             # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
 
     def show_tracks(self):
-        track_dir = SETTINGS.DIRECTORY / 'tracking' / self.name
+        self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracking' / self.name).iterdir()])
         view_track_dir = SETTINGS.DIRECTORY / 'tracking' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
-        for tracked_mask in track_dir.iterdir():
-
-
+        total_num_cells = np.max(plt.imread(sorted([track for track in track_dir.iterdir()])[-1]))
+        colors = np.random.uniform(0, 1, size=(total_num_cells+1, 3))
+        for i in range(len(self.tracked_masks)):
+            mask = torch.tensor(plt.imread(tracked_mask[i]).astype(np.uint16)).cuda()
+            image = utils.torch_min_max_scale(torch.tensor(plt.imread(self.images[i]).astype(np.uint16)).cuda())
+            image_rgb = torch.stack((image, image, image), axis=0)
+            #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
+            for j in range(torch.max(mask)+1):
+                if j+1 in mask:
+                    single_mask = torch.where(mask==j+1, 1, 0)
+                    expanded_mask = F.max_pool2d(single_mask, kernel_size=3, stride=1, padding=1) > 0
+                    outline = dilated_tensor.byte() - single_mask
+                    for c in range(3):
+                        im_RGB[c] = torch.where(outline, colours[j, c], im_RGB[c])
+            Image.fromarray((im_RGB*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / (str(i)+'.jpg'))
 
 
 def main():
     my_tracker = Tracker('Amoeba')
-    my_tracker.track()
+    if SETTINGS.TRACK:
+        my_tracker.track()
+    if SETTINGS.VIEW_TRACKS:
+        my_tracker.show(tracks)
 
 if __name__ == '__main__':
     main()
