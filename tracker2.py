@@ -89,6 +89,7 @@ class Tracker:
                     #print(outline.shape)
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, colours[j, c], im_rgb[c])
+                        print(np.shape(im_rgb[c]), np.shape(im_rgb))
             Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / (str(i)+'.jpg'))
 
 
