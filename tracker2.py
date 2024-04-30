@@ -83,7 +83,7 @@ class Tracker:
                 if j+1 in mask:
                     single_mask = torch.where(mask==j+1, 1, 0)
                     #print(single_mask.shape)
-                    expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(), kernel_size=3, stride=1, padding=1) > 0
+                    expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(1), kernel_size=3, stride=1, padding=1) > 0
                     #print(expanded_mask.shape)
                     outline = (expanded_mask.byte().squeeze() - single_mask).bool()
                     #print(outline.shape)
