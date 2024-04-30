@@ -26,6 +26,7 @@ class Tracker:
 
 
     def update_new_frame(self):
+        print(self.new_frame)
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
         highest_index = torch.max(self.old_frame)
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
