@@ -64,6 +64,9 @@ class Tracker:
         total_num_cells = np.max(plt.imread(sorted([track for track in track_dir.iterdir()])[-1]))
         colors = np.random.uniform(0, 1, size=(total_num_cells+1, 3))
         for i in range(len(self.tracked_masks)):
+            sys.stdout.write(
+                f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
+            sys.stdout.flush()
             mask = torch.tensor(plt.imread(tracked_mask[i]).astype(np.uint16)).cuda()
             image = utils.torch_min_max_scale(torch.tensor(plt.imread(self.images[i]).astype(np.uint16)).cuda())
             image_rgb = torch.stack((image, image, image), axis=0)
