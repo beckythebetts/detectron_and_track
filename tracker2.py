@@ -68,7 +68,7 @@ class Tracker:
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
             sys.stdout.flush()
-            mask = torch.tensor(plt.imread(tracked_mask[i]).astype(np.uint16)).cuda()
+            mask = torch.tensor(plt.imread(self.tracked_masks[i]).astype(np.uint16)).cuda()
             image = utils.torch_min_max_scale(torch.tensor(plt.imread(self.images[i]).astype(np.uint16)).cuda())
             image_rgb = torch.stack((image, image, image), axis=0)
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
