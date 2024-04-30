@@ -61,6 +61,7 @@ class Tracker:
             # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
             # print(np.shape(im))
             # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
+
             utils.save_tiff(self.old_frame.cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
 
     def show_tracks(self):
@@ -68,8 +69,9 @@ class Tracker:
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracking' / self.name).iterdir()])
         view_track_dir = SETTINGS.DIRECTORY / 'tracking' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
-        total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
-        colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
+        #total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
+        #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
+        colour_dict = {}
         for i in range(len(self.tracked_masks)):
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
@@ -81,15 +83,12 @@ class Tracker:
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
             for j in range(torch.max(mask)):
                 if j+1 in mask:
+                    if j+1 not in my_dict.keys():
+                        my_dict[j+1] = torch.tensor(np.random.uniform(0.3, 1, size=3)).cuda()
                     single_mask = torch.where(mask==j+1, 1, 0)
-                    #print(single_mask.shape)
-                    # expanded_mask = F.max_pool2d(single_mask.float().unsqueeze(0), kernel_size=9, stride=1, padding=4) > 0
-                    # #print(expanded_mask.shape)
-                    # outline = (expanded_mask.byte().squeeze() - single_mask).bool()
-                    # #print(outline.shape)
                     outline = mask_funcs.mask_outline(single_mask, 3)
                     for c in range(3):
-                        im_rgb[c] = torch.where(outline, colours[j, c], im_rgb[c])
+                        im_rgb[c] = torch.where(outline, colours[j+1][c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)
             Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / (str(i)+'.jpg'))
 
