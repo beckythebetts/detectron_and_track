@@ -34,7 +34,7 @@ class Tracker:
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
             if len(indexes) > 0 and torch.max(counts) > 0.5*torch.sum(new_mask):
                 new_index = indexes[torch.argmax(counts)]
-                self.old_frame = torch.where(self.old_frame==indexes[torch.max(counts)], 0, self.old_frame)
+                self.old_frame = torch.where(self.old_frame==indexes[torch.argmax(counts)], 0, self.old_frame)
             else:
                 new_index = self.max_index + 1
                 self.max_index = new_index
