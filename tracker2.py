@@ -48,7 +48,7 @@ class Tracker:
         # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
         # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
         utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16),
-                        SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
+                        SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(0) + '.tif'))
 
         for i in range(1, len(self.mask_ims)):
             sys.stdout.write(
@@ -58,7 +58,7 @@ class Tracker:
             self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
-            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(i) + '.tif'))
+            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
 
     def show_tracks(self):
         print('\n----------\nDISPLAYING\n----------')
@@ -86,7 +86,7 @@ class Tracker:
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, colour_dict[j+1][c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)
-            Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / (str(i)+'.jpg'))
+            Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
 
 def main():
