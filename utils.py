@@ -7,7 +7,7 @@ import imageio
 
 def remake_dir(path):
     if path.is_dir():
-        check = input(f'Delete directory {str(path)}? [y,n]')
+        check = input(f'Delete directory {str(path)}? [y,n] ')
         if check.lower() != 'y':
             raise SystemExit(0)
         shutil.rmtree(path)
