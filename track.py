@@ -23,23 +23,33 @@ class Tracker:
         self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / 'images').iterdir()])
         self.old_frame = torch.tensor(utils.read_tiff(self.mask_ims[0]).astype(np.int16)).cuda()
         self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
+        self.max_index = torch.max(self.old_frame)
+        self.missing_cells = {} #key = index of missing cell, value = num frames missing for
 
 
     def update_new_frame(self):
-        # print(torch.max(self.new_frame))
-        # print(self.new_frame)
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
-        highest_index = torch.max(self.old_frame)
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
             intersection = torch.logical_and(new_mask, self.old_frame != 0)
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
             if len(indexes) > 0 and torch.max(counts) > 0.5*torch.sum(new_mask):
                 new_index = indexes[torch.argmax(counts)]
+                self.old_frame = torch.where(self.old_frame==indexes[torch.max(counts)], 0, self.old_frame)
             else:
-                new_index = highest_index + 1
-                highest_index = new_index
-
+                new_index = self.max_index + 1
+                self.max_index = new_index
             updated_new_frame += new_mask*int(new_index)
+        old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
+        for key in old_mask_dict:
+            if key in self.missing_cells:
+                self.missing_cells[key] += 1
+            else:
+                self.missing_cells[key] = 0
+            if self.missing_cells[key] < SETTINGS.FRAME_MEMORY:
+                updated_new_mask = torch.where(old_mask_dict[key]==1, key, updated_new_mask)
+            else:
+                del self.missing_cells[key]
+
         self.new_frame = updated_new_frame
 
     def track(self):
@@ -95,7 +105,7 @@ def main():
         my_tracker.track()
     if SETTINGS.VIEW_TRACKS:
         my_tracker.show_tracks()
-    # test = cv2.imread('03/000.tif')
-    # print(np.shape(test))
+
+
 if __name__ == '__main__':
     main()

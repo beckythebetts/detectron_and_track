@@ -22,21 +22,27 @@ def to_masks(image_path, type):
         return to_instance_mask(np.where(seg_mask[:, :, 2] == mask_vals[type], 1, 0))
 
 
-def split_mask(mask_full, use_torch=False):
+def split_mask(mask_full, use_torch=False, return_indices=False):
+    # Return indices=True only works if ue_troch=True
     if use_torch:
         #masks = torch.tensor([torch.where(mask_full == i + 1, 1, 0) for i in range(0, int(torch.max(mask_full))) if i + 1 in mask_full])
         masks = []
         max_val = int(torch.max(mask_full))
-
+        masks_dict = {}
         for i in range(1, max_val + 1):
             if i in mask_full:
                 mask = torch.where(mask_full == i, 1, 0)
-                masks.append(mask)
-
+                if return_indices:
+                    masks_dict[i] = mask
+                else:
+                    masks.append(mask)
         masks = torch.stack(masks)
     else:
         masks = [[np.where(mask_full == i + 1, 1, 0)] for i in range(0, np.max(mask_full)) if i + 1 in mask_full]
-    return masks
+    if return_indices:
+        return masks_dict
+    else:
+        return masks
 
 
 def circle_equ(x, y, centre, radius):
