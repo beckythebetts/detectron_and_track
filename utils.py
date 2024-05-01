@@ -9,8 +9,7 @@ def remake_dir(path):
     if path.is_dir():
         check = input(f'Delete directory {str(path)}? [y,n]')
         if check.lower() != 'y':
-            print('Cancelled')
-            return
+            raise SystemExit(0)
         shutil.rmtree(path)
     path.mkdir(parents=True)
 
