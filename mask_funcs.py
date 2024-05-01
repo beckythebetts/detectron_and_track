@@ -36,7 +36,8 @@ def split_mask(mask_full, use_torch=False, return_indices=False):
                     masks_dict[i] = mask
                 else:
                     masks.append(mask)
-        masks = torch.stack(masks)
+        if not return_indices:
+            masks = torch.stack(masks)
     else:
         masks = [[np.where(mask_full == i + 1, 1, 0)] for i in range(0, np.max(mask_full)) if i + 1 in mask_full]
     if return_indices:
