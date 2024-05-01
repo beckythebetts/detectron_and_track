@@ -3,6 +3,7 @@ import shutil
 import torch
 from PIL import Image
 import numpy as np
+import imageio
 
 def remake_dir(path):
     if path.is_dir():
@@ -29,8 +30,9 @@ def read_tiff(path):
     return np.array(im)
 
 def save_tiff(array, path):
-    im = Image.fromarray(array)
-    im.save(path)
+    imageio.imwrite(str(path), array)
+    # im = Image.fromarray(array)
+    # im.save(path)
 
 if __name__ == '__main__':
     array = read_tiff(Path('03') / 't0000_mask.tif')
