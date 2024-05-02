@@ -45,7 +45,7 @@ class Tracker:
                 self.missing_cells[key] += 1
             else:
                 self.missing_cells[key] = 0
-            if self.missing_cells[key] < SETTINGS.FRAME_MEMORY:
+            if self.missing_cells[key] < 1:
                 updated_new_frame = torch.where(old_mask_dict[key]==1, key, updated_new_frame)
             else:
                 del self.missing_cells[key]
