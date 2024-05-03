@@ -57,7 +57,7 @@ class Tracker:
             if missing_index in self.missing_cells:
                 self.missing_cells[missing_index].missing_count += 1
             else:
-                self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index], 0)
+                self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
             if self.missing_cells[missing_index] >= SETTINGS.FRAME_MEMORY:
                 del self.missing_cells[missing_index]
 
