@@ -37,7 +37,6 @@ class Tracker:
             self.old_frame += self.missing_cells[missing_index].mask*missing_index
 
     def update_new_frame(self):
-
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
         self.add_missing_masks()
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
@@ -58,6 +57,7 @@ class Tracker:
             self.missing_cells[missing_index].missing_count += 1
             if self.missing_cells[missing_index].missing_count >= SETTINGS.FRAME_MEMORY:
                 del self.missing_cells[missing_index]
+                print('deleted ', missing_index)
 
         old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
         print(len(old_mask_dict))
