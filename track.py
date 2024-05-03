@@ -33,8 +33,9 @@ class Tracker:
         self.missing_cells = {} # key is cell index, value is MissingCell class
 
     def add_missing_masks(self):
-        for missing_index in self.missing_cells:
-            self.old_frame += self.missing_cells[missing_index].mask*missing_index
+        for missing_index in self.missing_cells.keys():
+            self.old_frame = torch.where(self.missing_cells[missing_index], missing_index, self.old_frame)
+            #self.old_frame += self.missing_cells[missing_index].mask*missing_index
 
     def update_new_frame(self):
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
@@ -80,22 +81,11 @@ class Tracker:
             sys.stdout.write(
                 f'\rAdding frame {i+1} / {len(self.mask_ims)}')
             sys.stdout.flush()
-            new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
 
-            # Update the new frame
-            self.new_frame = new_frame
+            self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
-
-            # Save the updated frame
-            utils.save_tiff(self.new_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16),
-                            SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
-
-            # Update the old frame for the next iteration
-            self.old_frame = new_frame
-            # self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
-            # self.update_new_frame()
-            # self.old_frame = self.new_frame
-            # utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
+            self.old_frame = self.new_frame
+            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
 
     def show_tracks(self):
         print('\n----------\nDISPLAYING\n----------')
