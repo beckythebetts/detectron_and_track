@@ -62,7 +62,7 @@ class Tracker:
         old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
         print(len(old_mask_dict))
         for missing_index in old_mask_dict.keys():
-            if missing_index not in self.missing_cells:
+            if missing_index not in self.missing_cells.keys():
                 self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
 
         self.new_frame = updated_new_frame
