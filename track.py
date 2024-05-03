@@ -52,15 +52,16 @@ class Tracker:
                 self.max_index = new_index
             updated_new_frame += new_mask*int(new_index)
 
-        old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
-        for missing_index in old_mask_dict:
-            if missing_index in self.missing_cells:
-                self.missing_cells[missing_index].missing_count += 1
-            else:
-                self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
-        for mising_index in self.missing_cells:
+        for missing_index in self.missing_cells:
+            self.missing_cells[missing_index].missing_count += 1
             if self.missing_cells[missing_index].missing_count >= SETTINGS.FRAME_MEMORY:
                 del self.missing_cells[missing_index]
+
+        old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
+        for missing_index in old_mask_dict:
+            if missing_index not in self.missing_cells:
+                self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
+
 
         self.new_frame = updated_new_frame
 
