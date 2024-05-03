@@ -80,11 +80,22 @@ class Tracker:
             sys.stdout.write(
                 f'\rAdding frame {i+1} / {len(self.mask_ims)}')
             sys.stdout.flush()
+            new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
 
-            self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
+            # Update the new frame
+            self.new_frame = new_frame
             self.update_new_frame()
-            self.old_frame = self.new_frame
-            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
+
+            # Save the updated frame
+            utils.save_tiff(self.new_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16),
+                            SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
+
+            # Update the old frame for the next iteration
+            self.old_frame = new_frame
+            # self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
+            # self.update_new_frame()
+            # self.old_frame = self.new_frame
+            # utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
 
     def show_tracks(self):
         print('\n----------\nDISPLAYING\n----------')
