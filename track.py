@@ -44,7 +44,7 @@ class Tracker:
             # mask to check against = old_mask + missing_cell_masks
             intersection = torch.logical_and(new_mask, self.old_frame != 0)
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
-            if len(indexes) > 0 and torch.max(counts) > 0.5*torch.sum(new_mask):
+            if len(indexes) > 0 and torch.max(counts) > 0.2*torch.sum(new_mask):
                 new_index = indexes[torch.argmax(counts)]
                 self.old_frame = torch.where(self.old_frame==indexes[torch.argmax(counts)], 0, self.old_frame)
             else:
