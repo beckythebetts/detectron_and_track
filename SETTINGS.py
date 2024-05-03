@@ -14,6 +14,6 @@ MAX_IMAGES = 50
 THRESHOLD = 0.5
 TRACK_CLIP_LENGTH = 3
 FRAME_MEMORY = 5
-TRACK = False
+TRACK = True
 VIEW_TRACKS = True # Save labelled tracked images
 
