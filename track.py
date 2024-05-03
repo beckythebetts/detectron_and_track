@@ -37,8 +37,7 @@ class Tracker:
             self.old_frame += self.missing_cells[missing_index].mask*missing_index
 
     def update_new_frame(self):
-        print(len(self.missing_cells.keys()))
-        print(len(mask_funcs.split_mask(self.new_frame, use_torch=True)))
+
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
         self.add_missing_masks()
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
@@ -64,6 +63,8 @@ class Tracker:
         for missing_index in old_mask_dict.keys():
             if missing_index not in self.missing_cells:
                 self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
+            else:
+                print(missing_index)
 
         self.new_frame = updated_new_frame
 
