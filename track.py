@@ -50,7 +50,7 @@ class Tracker:
                 self.max_index = new_index
             updated_new_frame += new_mask*int(new_index)
 
-        old_mask_dict = mask_funcs.split_mask(self.old_mask, use_torch=True, return_indices=True)
+        old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
         for missing_index in old_mask_dict:
             if missing_index in self.missing_cells:
                 self.missing_cells[missing_index].missing_count += 1
