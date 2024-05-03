@@ -52,7 +52,7 @@ class Tracker:
                 self.max_index = new_index
             updated_new_frame += new_mask*int(new_index)
 
-        for missing_index in self.missing_cells:
+        for missing_index in list(self.missing_cells.keys()):
             self.missing_cells[missing_index].missing_count += 1
             if self.missing_cells[missing_index].missing_count >= SETTINGS.FRAME_MEMORY:
                 del self.missing_cells[missing_index]
