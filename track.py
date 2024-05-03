@@ -48,7 +48,7 @@ class Tracker:
             if len(indexes) > 0 and torch.max(counts) > 0.2*torch.sum(new_mask):
                 new_index = indexes[torch.argmax(counts)]
                 self.old_frame = torch.where(self.old_frame==indexes[torch.argmax(counts)], 0, self.old_frame)
-                if int(new_index) in self.missing_cells:
+                if new_index in self.missing_cells:
                     del self.missing_cells[new_index]
             else:
                 new_index = self.max_index + 1
