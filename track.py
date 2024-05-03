@@ -32,27 +32,25 @@ class Tracker:
         self.max_index = torch.max(self.old_frame)
         self.missing_cells = {} # key is cell index, value is MissingCell class
 
-    def add_old_missing_masks(self):
-        mask = self.old_frame.clone()
+    def add_missing_masks(self):
         for missing_index in self.missing_cells:
-            mask += self.missing_cells[missing_index].mask*missing_index
-        return mask
+            self.old_frame += self.missing_cells[missing_index].mask*missing_index
 
     def update_new_frame(self):
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
-        mask_to_check = self.add_old_missing_masks()
+        self.add_missing_masks()
         for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
             # mask to check against = old_mask + missing_cell_masks
             intersection = torch.logical_and(new_mask, self.old_frame != 0)
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
             if len(indexes) > 0 and torch.max(counts) > 0.5*torch.sum(new_mask):
                 new_index = indexes[torch.argmax(counts)]
-                mask_to_check = torch.where(mask_to_check==indexes[torch.argmax(counts)], 0, mask_to_check)
+                self.old_frame = torch.where(self.old_frame==indexes[torch.argmax(counts)], 0, self.old_frame)
                 new_index = self.max_index + 1
                 self.max_index = new_index
             updated_new_frame += new_mask*int(new_index)
 
-        old_mask_dict = mask_funcs.split_mask(mask_to_check, use_torch=True, return_indices=True)
+        old_mask_dict = mask_funcs.split_mask(self.old_mask, use_torch=True, return_indices=True)
         for missing_index in old_mask_dict:
             if missing_index in self.missing_cells:
                 self.missing_cells[missing_index].missing_count += 1
