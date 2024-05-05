@@ -119,11 +119,12 @@ class Tracker:
 
 def main():
     trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
-    my_tracker = Tracker('Amoeba')
     if SETTINGS.TRACK:
-        my_tracker.track()
+        for tracker in trackers:
+            tracker.track()
     if SETTINGS.VIEW_TRACKS:
-        my_tracker.show_tracks()
+        for tracker in trackers:
+            tracker.show_tracks()
 
 
 if __name__ == '__main__':
