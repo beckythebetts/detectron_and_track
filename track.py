@@ -46,7 +46,7 @@ class Tracker:
             # mask to check against = old_mask + missing_cell_masks
             intersection = torch.logical_and(new_mask, self.old_frame != 0)
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
-            if len(indexes) > 0 and torch.max(counts) > 0.2*torch.sum(new_mask):
+            if len(indexes) > 0 and torch.max(counts) > SETTINGS.OVERLAP_THRESHOLD*torch.sum(new_mask):
                 new_index = indexes[torch.argmax(counts)]
                 self.old_frame = torch.where(self.old_frame==indexes[torch.argmax(counts)], 0, self.old_frame)
                 if new_index in self.missing_cells:
@@ -64,7 +64,6 @@ class Tracker:
                 del self.missing_cells[missing_index]
 
         old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
-        #print('old ', len(old_mask_dict))
         for missing_index in old_mask_dict.keys():
             if missing_index not in self.missing_cells.keys():
                 self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
