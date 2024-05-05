@@ -34,7 +34,7 @@ class Tracker:
 
     def add_missing_masks(self):
         for missing_index in self.missing_cells.keys():
-            if missing_index not in self.old_frame():
+            if missing_index not in self.old_frame:
                 self.old_frame = torch.where(self.missing_cells[missing_index].mask.bool(), missing_index, self.old_frame)
             #self.old_frame += self.missing_cells[missing_index].mask*missing_index
 
