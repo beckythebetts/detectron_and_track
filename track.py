@@ -25,7 +25,7 @@ class Tracker:
 
     def __init__(self, name):
         self.name = name
-        self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'inference_dataset' / 'masks' / self.name).iterdir()])
+        self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'semented' / self.name).iterdir()])
         self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / 'images').iterdir()])
         self.old_frame = torch.tensor(utils.read_tiff(self.mask_ims[0]).astype(np.int16)).cuda()
         self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
@@ -70,12 +70,12 @@ class Tracker:
         self.new_frame = updated_new_frame
 
     def track(self):
-        print('----------\nTRACKING\n----------')
-        utils.remake_dir(SETTINGS.DIRECTORY / 'tracking' / self.name)
+        print('----------\nTRACKING - ', self.name, '\n----------')
+        utils.remake_dir(SETTINGS.DIRECTORY / 'tracked' / self.name)
         # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
         # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
         utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16),
-                        SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(0) + '.tif'))
+                        SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(0) + '.tif'))
 
         for i in range(1, len(self.mask_ims)):
             sys.stdout.write(
@@ -85,12 +85,12 @@ class Tracker:
             self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
-            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:04}".format(i) + '.tif'))
+            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
 
     def show_tracks(self):
-        print('\n----------\nDISPLAYING\n----------')
-        self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracking' / self.name).iterdir()])
-        view_track_dir = SETTINGS.DIRECTORY / 'tracking' / (self.name+'_view')
+        print('\n----------\nSHOWING TRACKS - ', self.name, '\n----------')
+        self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
+        view_track_dir = SETTINGS.DIRECTORY / 'tracked' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
         #total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
         #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
@@ -118,6 +118,7 @@ class Tracker:
 
 
 def main():
+    trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
     my_tracker = Tracker('Amoeba')
     if SETTINGS.TRACK:
         my_tracker.track()

@@ -38,7 +38,7 @@ def main():
     cfg.merge_from_file(str(config_directory / 'config.yaml'))
     cfg.MODEL.WEIGHTS = str(config_directory / 'model_final.pth') # path to the model we just trained
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5   # set a custom testing threshold
-    cfg.MODEL.DEVICE = "cuda:0"
+    cfg.MODEL.DEVICE = "cuda:0,1"
     predictor = DefaultPredictor(cfg)
 
     evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
