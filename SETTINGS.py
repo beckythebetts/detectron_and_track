@@ -8,6 +8,9 @@ gc.enable()
 DIRECTORY = Path('03')
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 
+# EPI THRESHOLDING
+THRESHOLD = 6000
+
 # TRACKING
 OVERLAP_THRESHOLD = 0.5
 FRAME_MEMORY = 3
