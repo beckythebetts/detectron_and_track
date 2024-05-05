@@ -67,7 +67,7 @@ class Tracker:
             if missing_index not in self.missing_cells.keys():
                 self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
             else:
-                print('yeast ', missing index, 'already seen')
+                print('yeast ', missing_index, 'already seen')
         print(len(self.missing_cells))
         self.new_frame = updated_new_frame
 
