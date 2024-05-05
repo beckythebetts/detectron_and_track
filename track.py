@@ -66,6 +66,8 @@ class Tracker:
         for missing_index in old_mask_dict.keys():
             if missing_index not in self.missing_cells.keys():
                 self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
+            else:
+                print('yeast ', missing index, 'already seen')
         print(len(self.missing_cells))
         self.new_frame = updated_new_frame
 
@@ -95,9 +97,10 @@ class Tracker:
         #total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
         #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
         colour_dict = {}
-        for i in range(len(self.tracked_masks)):
+        num_frames = len(self.tracked_masks)
+        for i in range(num_frames):
             sys.stdout.write(
-                f'\rAdding frame {i + 1} / {len(self.mask_ims)}')
+                f'\rAdding frame {i + 1} / {num_frames}')
             sys.stdout.flush()
             mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
             image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
