@@ -59,8 +59,9 @@ class Tracker:
         for missing_index in list(self.missing_cells.keys()):
             self.missing_cells[missing_index].missing_count += 1
             if self.missing_cells[missing_index].missing_count >= SETTINGS.FRAME_MEMORY:
+                if missig_index in self.old_frame:
+                    self.old_frame = torch.where(self.old_frame==missing_index, 0, self.old_frame)
                 del self.missing_cells[missing_index]
-                #print('deleted ', missing_index)
 
         old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
         #print('old ', len(old_mask_dict))
@@ -68,7 +69,6 @@ class Tracker:
             if missing_index not in self.missing_cells.keys():
                 self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
             else:
-                print('yeast ', missing_index, 'already seen')
         print(len(self.missing_cells))
         self.new_frame = updated_new_frame
 
