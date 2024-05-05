@@ -20,7 +20,7 @@ import yaml
 import SETTINGS
 
 setup_logger()
-
+os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
 def main():
     directory = SETTINGS.DIRECTORY
     dataset_dir = directory / 'training_dataset'

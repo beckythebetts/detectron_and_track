@@ -23,7 +23,7 @@ setup_logger()
 
 TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
 CUDA_VERSION = torch.__version__.split("+")[-1]
-
+os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
 
 torch.cuda.empty_cache()
 
