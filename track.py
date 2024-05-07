@@ -26,7 +26,7 @@ class Tracker:
     def __init__(self, name):
         self.name = name
         self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'segmented' / self.name).iterdir()])
-        self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / 'images').iterdir()])
+        self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / self.name).iterdir()])
         self.old_frame = torch.tensor(utils.read_tiff(self.mask_ims[0]).astype(np.int16)).cuda()
         self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
         self.max_index = torch.max(self.old_frame)
