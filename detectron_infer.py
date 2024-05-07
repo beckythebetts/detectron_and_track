@@ -22,7 +22,7 @@ import utils
 os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
 
 def main():
-    print('----------\nSEGMENTING - ', SETTINGS.CLASSES['phase'], '\n----------')
+    print('--------------------\nSEGMENTING - ', SETTINGS.CLASSES['phase'], '\n--------------------')
     directory = SETTINGS.DIRECTORY
     config_directory = directory / 'model'
 
