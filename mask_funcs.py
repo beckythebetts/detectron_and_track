@@ -67,3 +67,10 @@ def mask_outline(mask, thickness):
     outline = (expanded_mask.byte().squeeze() - mask).bool()
     return outline
 
+def centre(mask):
+    coords = torch.nonzero(mask)
+    len = coords.shape[0]
+    x_mean = torch.sum(coords[:, 1]) / len
+    y_mean = torch.sum(coords[:, 0]) / len
+    return x_mean, y_mean
+
