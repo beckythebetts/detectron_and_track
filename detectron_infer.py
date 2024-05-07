@@ -37,10 +37,10 @@ def main():
 
     input_images_directory = directory / 'inference_dataset' / 'phase'
 
-    output_directory = (directory / 'segmented')  # Replace this with the path to your desired output directo
+    output_directory = (directory / 'segmented' / 'phase')  # Replace this with the path to your desired output directo
     utils.remake_dir(output_directory)
-    for class_name in train_metadata['thing_classes']:
-        (output_directory / class_name).mkdir()
+    # for class_name in train_metadata['thing_classes']:
+    #     (output_directory / class_name).mkdir()
 
     num_images = len(os.listdir(input_images_directory))
     # Loop over the images in the input folder
@@ -67,7 +67,7 @@ def main():
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
             image_name = Path(image_path).stem+'_mask.tif'
-            Image.fromarray(class_mask_np.astype(np.uint16)).save(output_directory / class_name / image_name)
+            Image.fromarray(class_mask_np.astype(np.uint16)).save(output_directory / image_name)
 
 if __name__ == '__main__':
     main()
