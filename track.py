@@ -87,7 +87,7 @@ class Tracker:
             self.old_frame = self.new_frame
             utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
 
-    def show_tracks(self):
+    def show_tracks(self, num_frames=None):
         print('\n--------------------\nSHOWING TRACKS - ', self.name, '\n--------------------')
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
         view_track_dir = SETTINGS.DIRECTORY / 'tracked' / (self.name+'_view')
@@ -95,8 +95,9 @@ class Tracker:
         #total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
         #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
         colour_dict = {}
-        num_frames = len(self.tracked_masks)
-        for i in range(100):
+        if num_frames is None:
+            num_frames = len(self.tracked_masks)
+        for i in range(num_frames):
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {num_frames}')
             sys.stdout.flush()
@@ -127,7 +128,7 @@ def main():
             tracker.track()
     if SETTINGS.VIEW_TRACKS:
         for tracker in trackers:
-            tracker.show_tracks()
+            tracker.show_tracks(100)
 
     # test_tracker = Tracker('epi')
     # #test_tracker.track()
