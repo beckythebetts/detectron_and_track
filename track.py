@@ -116,7 +116,7 @@ class Tracker:
             im_rgb = im_rgb.permute(1, 2, 0)
             #Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
             print(im_rgb.shape)
-            utils.save_tiff((im_rgb*255).cpu().numpy(), view_track_dir / ("{0:04}".format(i) + '.png'))
+            utils.save_tiff((im_rgb*255).cpu().numpy().astype(np.int32), view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
 
 def main():
