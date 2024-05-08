@@ -96,12 +96,13 @@ class Tracker:
         #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
         colour_dict = {}
         num_frames = len(self.tracked_masks)
-        for i in range(num_frames):
+        for i in range(100):
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {num_frames}')
             sys.stdout.flush()
             mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
-            image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
+            #image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
+            image = torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda()
             im_rgb = torch.stack((image, image, image), axis=0)
             #print(mask.shape)
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
@@ -120,17 +121,17 @@ class Tracker:
 
 
 def main():
-    # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
-    # if SETTINGS.TRACK:
-    #     for tracker in trackers:
-    #         tracker.track()
-    # if SETTINGS.VIEW_TRACKS:
-    #     for tracker in trackers:
-    #         tracker.show_tracks()
+    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
+    if SETTINGS.TRACK:
+        for tracker in trackers:
+            tracker.track()
+    if SETTINGS.VIEW_TRACKS:
+        for tracker in trackers:
+            tracker.show_tracks()
 
-    test_tracker = Tracker('epi')
-    #test_tracker.track()
-    test_tracker.show_tracks()
+    # test_tracker = Tracker('epi')
+    # #test_tracker.track()
+    # test_tracker.show_tracks()
 
     # test = utils.read_tiff('03/inference_dataset/epi/t0000.tif')
     # utils.save_tiff(test, 'TEST.png')
