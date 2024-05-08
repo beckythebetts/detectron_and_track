@@ -118,17 +118,17 @@ class Tracker:
 
 
 def main():
-    #trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
-    # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
-    # if SETTINGS.TRACK:
-    #     for tracker in trackers:
-    #         tracker.track()
-    # if SETTINGS.VIEW_TRACKS:
-    #     for tracker in trackers:
-    #         tracker.show_tracks()
-    test_tracker = Tracker('epi')
-    test_tracker.track()
-    test_tracker.show_tracks()
+    trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
+    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
+    if SETTINGS.TRACK:
+        for tracker in trackers:
+            tracker.track()
+    if SETTINGS.VIEW_TRACKS:
+        for tracker in trackers:
+            tracker.show_tracks()
+    # test_tracker = Tracker('epi')
+    # test_tracker.track()
+    # test_tracker.show_tracks()
 
 
 if __name__ == '__main__':
