@@ -25,7 +25,7 @@ class SplitMask:
 
     def __init__(self, mask_full):
         self.mask_full = mask_full
-        self.i = 1
+        self.i = 0
         self.max = torch.max(self.mask_full)
     def __iter__(self):
         return self
