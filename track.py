@@ -118,7 +118,7 @@ class Tracker:
 
 
 def main():
-    trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
+    #trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
     trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
     if SETTINGS.TRACK:
         for tracker in trackers:
