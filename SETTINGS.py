@@ -1,6 +1,6 @@
 from pathlib import Path
 
-DIRECTORY = Path('03_test')
+DIRECTORY = Path('03')
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 
 # EPI THRESHOLDING

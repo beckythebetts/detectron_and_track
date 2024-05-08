@@ -13,8 +13,9 @@ def main():
     images_dir = SETTINGS.DIRECTORY / 'inference_dataset' / 'epi'
     segmented_dir = SETTINGS.DIRECTORY / 'segmented' / 'epi'
     utils.remake_dir(segmented_dir)
-    num_frames = len([im for im in images_dir.iterdir()])
-    for i, image in enumerate(images_dir.iterdir()):
+    images = sorted([im for im in images_dir.iterdir()])
+    num_frames = len(images)
+    for i, image in enumerate(images):
         sys.stdout.write(
             f'\rAdding frame {i + 1} / {num_frames}')
         sys.stdout.flush()
