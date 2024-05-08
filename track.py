@@ -10,7 +10,7 @@ import gc
 import cv2
 import torch.nn.functional as F
 
-from Cells import Cell
+#from Cells import Cell
 import mask_funcs
 import SETTINGS
 import utils
