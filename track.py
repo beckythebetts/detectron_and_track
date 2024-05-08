@@ -129,7 +129,7 @@ def main():
     #         tracker.show_tracks()
 
     test_tracker = Tracker('epi')
-    test_tracker.track()
+    #test_tracker.track()
     test_tracker.show_tracks()
 
     # test = utils.read_tiff('03/inference_dataset/epi/t0000.tif')
