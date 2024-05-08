@@ -25,12 +25,18 @@ class SplitMask:
 
     def __init__(self, mask_full):
         self.mask_full = mask_full
-        self.i = 0
+        self.i = 1
+        self.max = torch.max(self.mask_full)
     def __iter__(self):
         return self
     def __next__(self):
-        self.i += 1
-        return torch.where(self.mask_full==self.i, 1, 0), self.i
+        if self.i <= self.max:
+            while self.i not in self.mask_full:
+                self.i += 1
+            return torch.where(self.mask_full == self.i, 1, 0), self.i
+            self.i += 1
+        else:
+            raise StopIteration
 
 def split_mask(mask_full, use_torch=False, return_indices=False):
     # Return indices=True only works if use_troch=True
