@@ -108,7 +108,7 @@ class Tracker:
             for j in range(torch.max(mask)):
                 if j+1 in mask:
                     if j+1 not in colour_dict.keys():
-                        colour_dict[j+1] = torch.tensor(np.random.uniform(0.3, 1, size=3)).cuda()
+                        colour_dict[j+1] = torch.tensor(np.random.uniform(0, 2**(16)-1, size=3)).cuda()
                     single_mask = torch.where(mask==j+1, 1, 0)
                     outline = mask_funcs.mask_outline(single_mask, 3)
                     for c in range(3):
@@ -116,11 +116,11 @@ class Tracker:
             im_rgb = im_rgb.permute(1, 2, 0)
             #Image.fromarray((im_rgb*(2**16-1)).cpu().numpy().astype(np.uint16)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
             #print(im_rgb.shape)
-            utils.save_tiff((im_rgb*(2**16-1)).cpu().numpy().astype(np.uint16), view_track_dir / ("{0:04}".format(i) + '.jpg'))
+            utils.save_tiff((im_rgb/(2**8)).cpu().numpy().astype(np.uint8), view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
 
 def main():
-    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
+    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()][1:1]
     if SETTINGS.TRACK:
         for tracker in trackers:
             tracker.track()
