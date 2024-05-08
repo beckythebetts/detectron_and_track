@@ -64,7 +64,7 @@ def create_circle(centre, radius, array_shape=(1024, 1024)):
     circle = circle_equ(np.arange(0, array_shape[0], 1), np.arange(0, array_shape[1], 1)[:, np.newaxis], centre, radius)
     return circle
 
-def torch_circle(centre, radius, array_shape=(1200, 1200))
+def torch_circle(centre, radius, array_shape=(1200, 1200)):
     circle = circle_equ(torch.arange(0, array_shape[0], 1), torch.arange(0, array_shape[1], 1).unsqueeze(0), centre, radius)
     return circle
 
