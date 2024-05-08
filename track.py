@@ -114,7 +114,7 @@ class Tracker:
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, colour_dict[j+1][c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)
-            Image.fromarray((im_rgb*255).cpu().numpy().astype(np.int8)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
+            Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
             #print(im_rgb.shape)
             #utils.save_tiff((im_rgb).cpu().numpy().astype(np.float32), view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
