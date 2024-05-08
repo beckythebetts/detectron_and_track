@@ -5,7 +5,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import time
 import sys
-import torch
+#import torch
 import gc
 import cv2
 import torch.nn.functional as F
@@ -114,11 +114,11 @@ class Tracker:
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, colour_dict[j+1][c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)
-            Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
+            #Image.fromarray((im_rgb*255).cpu().numpy().astype(np.uint8)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
+            utils.save_tiff((im_rgb*255).cpu().numpy().astype(np.uint16), view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
 
 def main():
-    #trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
     trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
     if SETTINGS.TRACK:
         for tracker in trackers:
@@ -126,10 +126,13 @@ def main():
     if SETTINGS.VIEW_TRACKS:
         for tracker in trackers:
             tracker.show_tracks()
+
     # test_tracker = Tracker('epi')
     # test_tracker.track()
     # test_tracker.show_tracks()
 
+    # test = utils.read_tiff('03/inference_dataset/epi/t0000.tif')
+    # utils.save_tiff(test, 'TEST.png')
 
 if __name__ == '__main__':
     main()

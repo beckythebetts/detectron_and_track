@@ -9,7 +9,7 @@ THRESHOLD = 6000
 # TRACKING
 OVERLAP_THRESHOLD = 0.5
 FRAME_MEMORY = 3
-TRACK = True
+TRACK = False
 VIEW_TRACKS = True # Save labelled tracked images
 
 # ******* DIRECTORY STRUCTURE ********
