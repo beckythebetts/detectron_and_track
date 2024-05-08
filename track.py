@@ -42,7 +42,7 @@ class Tracker:
         updated_new_frame = torch.zeros((1200, 1200)).cuda()
         self.add_missing_masks()
         #print('new ', len(mask_funcs.split_mask(self.new_frame, use_torch=True)))
-        for new_mask in mask_funcs.split_mask(self.new_frame, use_torch=True):
+        for new_mask, mask_index in mask_funcs.SplitMask(self.new_frame):
             # mask to check against = old_mask + missing_cell_masks
             intersection = torch.logical_and(new_mask, self.old_frame != 0)
             indexes, counts = torch.unique(self.old_frame[intersection], return_counts=True)
@@ -63,14 +63,14 @@ class Tracker:
                     self.old_frame = torch.where(self.old_frame==missing_index, 0, self.old_frame)
                 del self.missing_cells[missing_index]
 
-        old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
-        for missing_index in old_mask_dict.keys():
+        #old_mask_dict = mask_funcs.split_mask(self.old_frame, use_torch=True, return_indices=True)
+        for missing_mask, missing_index in mask_funcs.SplitMask(self.old_frame):
             if missing_index not in self.missing_cells.keys():
-                self.missing_cells[missing_index] = MissingCell(old_mask_dict[missing_index])
+                self.missing_cells[missing_index] = MissingCell(missing_mask)
         self.new_frame = updated_new_frame
 
     def track(self):
-        print('----------\nTRACKING - ', self.name, '\n----------')
+        print('\n--------------------\nTRACKING - ', self.name, '\n--------------------')
         utils.remake_dir(SETTINGS.DIRECTORY / 'tracked' / self.name)
         # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
         # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
@@ -88,7 +88,7 @@ class Tracker:
             utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
 
     def show_tracks(self):
-        print('\n----------\nSHOWING TRACKS - ', self.name, '\n----------')
+        print('\n--------------------\nSHOWING TRACKS - ', self.name, '\n--------------------')
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
         view_track_dir = SETTINGS.DIRECTORY / 'tracked' / (self.name+'_view')
         utils.remake_dir(view_track_dir)
@@ -119,7 +119,7 @@ class Tracker:
 
 def main():
     #trackers = [Tracker(cell_type) for cell_type in SETTINGS.CLASSES.values()]
-    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
+    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()][1]
     if SETTINGS.TRACK:
         for tracker in trackers:
             tracker.track()
