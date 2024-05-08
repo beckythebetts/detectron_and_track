@@ -31,9 +31,9 @@ class SplitMask:
         return self
     def __next__(self):
         if self.i <= self.max:
+            self.i += 1
             while self.i not in self.mask_full:
                 self.i += 1
-            self.i += 1
             return torch.where(self.mask_full == self.i, 1, 0), self.i
         else:
             raise StopIteration
