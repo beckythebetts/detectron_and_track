@@ -120,17 +120,17 @@ class Tracker:
 
 
 def main():
-    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()][1:1]
-    if SETTINGS.TRACK:
-        for tracker in trackers:
-            tracker.track()
-    if SETTINGS.VIEW_TRACKS:
-        for tracker in trackers:
-            tracker.show_tracks()
+    # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
+    # if SETTINGS.TRACK:
+    #     for tracker in trackers:
+    #         tracker.track()
+    # if SETTINGS.VIEW_TRACKS:
+    #     for tracker in trackers:
+    #         tracker.show_tracks()
 
-    # test_tracker = Tracker('epi')
-    # test_tracker.track()
-    # test_tracker.show_tracks()
+    test_tracker = Tracker('epi')
+    test_tracker.track()
+    test_tracker.show_tracks()
 
     # test = utils.read_tiff('03/inference_dataset/epi/t0000.tif')
     # utils.save_tiff(test, 'TEST.png')
