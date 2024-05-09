@@ -18,7 +18,7 @@ class Cell:
     def write_features(self):
         self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
         for mask_path in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir():
-            full_mask = torch.tensor(utils.read_tiff(mask_path)).cuda()
+            full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
             if self.index in full_mask:
                 self.index_exists = True
                 self.mask = torch.where(full_mask==self.index, 1, 0)
