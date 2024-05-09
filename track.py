@@ -128,7 +128,7 @@ def main():
             tracker.track()
     if SETTINGS.VIEW_TRACKS:
         for tracker in trackers:
-            tracker.show_tracks(100)
+            tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
 
     # test_tracker = Tracker('epi')
     # #test_tracker.track()
