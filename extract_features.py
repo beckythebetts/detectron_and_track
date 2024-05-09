@@ -24,7 +24,7 @@ class Cell:
                 self.mask = torch.where(full_mask==self.index, 1, 0)
                 self.centre = self.cell_centre()
                 epi_frame = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
-                print(epi_frame)
+                print(torch.unique(epi_frame))
                 dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
                 new_row = '\n' + '\t'.join(str(self.cell_centre()), str(self.speed()), str(self.area()), str(self.circularity()), str(self.overlap()), str(dist), str(index_of_nearest))
                 with open(self.file, 'a') as f:
