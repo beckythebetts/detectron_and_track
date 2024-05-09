@@ -1,8 +1,8 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DIRECTORY = Path('03_test')
-CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
+DIRECTORY = Path('Mac')
+CLASSES = {'phase': 'Macrophage'}
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 6000
@@ -10,9 +10,9 @@ THRESHOLD = 6000
 # ******* TRACKING *******
 OVERLAP_THRESHOLD = 0.2
 FRAME_MEMORY = 3
-TRACK = False
+TRACK = True
 VIEW_TRACKS = True # Save labelled tracked images
-NUM_FRAMES_TO_VIEW = 100 # Set as None to view all (slow)
+NUM_FRAMES_TO_VIEW = None # Set as None to view all (slow)
 
 # ******* DIRECTORY STRUCTURE ********
 # - 'training_dataset'
@@ -25,5 +25,6 @@ NUM_FRAMES_TO_VIEW = 100 # Set as None to view all (slow)
 # - 'inference_datset'
 #       - 'epi' (tiffs)
 #       - 'phase' (jpegs)
+# *ALL IMAGES 8-BIT*
 
 
