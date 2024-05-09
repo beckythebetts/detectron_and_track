@@ -36,7 +36,7 @@ class Cell:
 
     def speed(self):
         x_1, y_1 = self.centre
-        x_0, y_0 = mask_funcs.centre(self.last_mask)
+        x_0, y_0 = mask_funcs.find_centre(self.last_mask)
         return ((x_1-x_0)**2 + (y_1-y_0)**2)**0.5
 
     def area(self):
