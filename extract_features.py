@@ -1,4 +1,6 @@
+import SETTINGS
 import torch
+import utils
 from skimage import measure
 import numpy as np
 
@@ -6,10 +8,24 @@ import mask_funcs
 
 class Cell:
 
-    def __init__(self, index, mask, last_mask):
+    def __init__(self, index):
         self.index = index
-        self.mask = mask
-        self.last_mask = last_mask
+        self.file = SETTINGS.DIRECTORY / 'features' / ("{0:04}".format(self.index) + '.txt')
+        with open(self.file, 'w') as f:
+            f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
+        self.index_exists = False
+    def write_features(self):
+        self.last_mask = torch.tensor(utils.read_tiff(mask_path)).cuda()
+        for mask_path in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir():
+            full_mask = torch.tensor(utils.read_tiff(mask_path)).cuda()
+            if self.index in full_mask:
+                self.index_exists = True
+                self.mask = torch.where(full_mask==self.index, 1, 0)
+                dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name)))
+                new_row = '\n' + '\t'.join(str(self.centre()), str(self.speed()), str(self.area()), str(self.circularity()), str(self.overlap()), str(dist), str(index_of_nearest))
+                with open(self.file, 'a') as f:
+                    f.write(new_row)
+                self.last_mask = self.mask.clone()
 
     def centre(self):
         self.centre = mask_funcs.centre(self.mask)
@@ -45,3 +61,22 @@ class Cell:
             else:
                 dist += 1
         return dist, index_of_nearest
+
+def main():
+    print('\n--------------------\nEXTRACTING FEATURES\n--------------------')
+
+    utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+    reached_max_index = False
+    cell_index = 1
+    while not reached_max_index:
+        sys.stdout.write(f'\rCell {cell_index}')
+        sys.stdout.flush()
+        cell = Cell(index)
+        cell.write_features()
+        if not cell.index_exists:
+            reached_max_index=True
+        print(f'Completed, {cell_index} cells')
+
+
+if __name__ == '__main__':
+    main()

@@ -1,8 +1,8 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DIRECTORY = Path('Mac')
-CLASSES = {'phase': 'Macrophage'}
+DIRECTORY = Path('03_test')
+CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 6000
