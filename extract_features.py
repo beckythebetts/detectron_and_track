@@ -29,7 +29,7 @@ class Cell:
                 self.last_mask = self.mask.clone()
 
     def centre(self):
-        self.centre = mask_funcs.centre(self.mask)
+        self.centre = mask_funcs.find_centre(self.mask)
         return self.centre
 
     def speed(self):
