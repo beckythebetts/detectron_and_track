@@ -72,11 +72,11 @@ def main():
     while not reached_max_index:
         sys.stdout.write(f'\rCell {cell_index}')
         sys.stdout.flush()
-        cell = Cell(index)
+        cell = Cell(cell_index)
         cell.write_features()
         if not cell.index_exists:
             reached_max_index=True
-        print(f'Completed, {cell_index} cells')
+        print(f'Completed, {cell_index-1} cells')
 
 
 if __name__ == '__main__':
