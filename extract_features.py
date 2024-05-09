@@ -76,7 +76,8 @@ def main():
         cell.write_features()
         if not cell.index_exists:
             reached_max_index=True
-        print(f'Completed, {cell_index-1} cells')
+        cell_index += 1
+    print(f'Completed, {cell_index-1} cells')
 
 
 if __name__ == '__main__':
