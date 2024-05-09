@@ -58,7 +58,7 @@ class Cell:
         while index_of_nearest is None:
             sys.stdout.write(f'\rDistance {dist}')
             sys.stdout.flush()
-            circle_mask = mask_funcs.torch_circle(self.centre, 0)
+            circle_mask = mask_funcs.torch_circle(self.centre, dist)
             intersection = torch.logical_and(circle_mask, other_frame>0)
             unique_values, counts = torch.unique(other_frame[intersection], return_counts=True)
             if len(unique_values) > 0:
