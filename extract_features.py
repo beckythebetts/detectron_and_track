@@ -44,7 +44,7 @@ class Cell:
 
     def circularity(self):
         perimeter = measure.perimeter(self.mask.cpu().numpy())
-        return 4*np.pi*self.area() / (measure.perimeter(self.mask.cpu().nump())**2)
+        return 4*np.pi*self.area() / (measure.perimeter(self.mask.cpu().numpy())**2)
 
     def overlap(self):
         intersection = torch.logical_and(self.mask, self.last_mask)
