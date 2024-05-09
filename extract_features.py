@@ -48,7 +48,7 @@ class Cell:
 
     def overlap(self):
         intersection = torch.logical_and(self.mask, self.last_mask)
-        union = torch.logical_or(self.mask, self.old_mask)
+        union = torch.logical_or(self.mask, self.last_mask)
         return intersection / union
 
     def nearest(self, other_frame):
