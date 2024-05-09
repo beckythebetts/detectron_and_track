@@ -40,12 +40,11 @@ class Cell:
         return ((x_1-x_0)**2 + (y_1-y_0)**2)**0.5
 
     def area(self):
-        self.area = torch.sum(self.mask)
-        return self.area
+        return torch.sum(self.mask)
 
     def circularity(self):
         perimeter = measure.perimeter(self.mask.cpu().numpy())
-        return 4*np.pi*self.area() / (measure.perimeter(self.masks)**2)
+        return 4*np.pi*self.area() / (measure.perimeter(self.mask)**2)
 
     def overlap(self):
         intersection = torch.logical_and(self.mask, self.last_mask)
