@@ -16,13 +16,13 @@ class Cell:
             f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
         self.index_exists = False
     def write_features(self):
-        self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif')).cuda()
+        self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
         for mask_path in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir():
             full_mask = torch.tensor(utils.read_tiff(mask_path)).cuda()
             if self.index in full_mask:
                 self.index_exists = True
                 self.mask = torch.where(full_mask==self.index, 1, 0)
-                dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name)))
+                dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)))
                 new_row = '\n' + '\t'.join(str(self.centre()), str(self.speed()), str(self.area()), str(self.circularity()), str(self.overlap()), str(dist), str(index_of_nearest))
                 with open(self.file, 'a') as f:
                     f.write(new_row)
