@@ -26,7 +26,7 @@ class Cell:
                 # epi_frame = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
                 # print(torch.unique(epi_frame))
                 dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
-                new_row = '\n' + '\t'.join([str(self.cell_centre()), str(self.speed()), str(self.area()), str(self.circularity()), str(self.overlap()), str(dist), str(index_of_nearest)])
+                new_row = '\n' + '\t'.join([str(self.speed().item()), str(self.area().item()), str(self.circularity().item()), str(self.overlap().item()), str(dist), str(index_of_nearest.item())])
                 with open(self.file, 'a') as f:
                     f.write(new_row)
                 self.last_mask = self.mask.clone()
@@ -49,7 +49,7 @@ class Cell:
     def overlap(self):
         intersection = torch.logical_and(self.mask, self.last_mask)
         union = torch.logical_or(self.mask, self.last_mask)
-        return intersection / union
+        return torch.sum(intersection) / torch.sum(union)
 
     def nearest(self, other_frame):
         dist = 0
