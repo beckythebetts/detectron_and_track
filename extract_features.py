@@ -107,7 +107,8 @@ def main():
     print('\n--------------------\nEXTRACTING FEATURES\n--------------------')
 
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    reached_max_index = False
+    #reached_max_index = False
+    max_index = 200
     cell_index = 1
     batch_size = 10
     while not reached_max_index:
@@ -115,13 +116,12 @@ def main():
         sys.stdout.flush()
 
         batch_cells = []
-        for i in range(batch_size):
-            cell = Cell(cell_index)
-            batch_cells.append(cell)
-            cell_index += 1
-            if cell.index_exists or cell.index >= SETTINGS.MAX_INDEX:
-                reached_max_index = True
-                break
+        while cell_index < max_index:
+            for i in range(batch_size):
+                cell = Cell(cell_index)
+                batch_cells.append(cell)
+                cell_index += 1
+
 
         if batch_cells:
             batch_write_features(batch_cells)
