@@ -107,7 +107,7 @@ def main():
     print('\n--------------------\nEXTRACTING FEATURES\n--------------------')
 
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    #reached_max_index = False
+    reached_max_index = False
     cell_index = 1
     batch_size = 10
     while not reached_max_index:
