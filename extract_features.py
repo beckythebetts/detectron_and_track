@@ -71,6 +71,8 @@ class Cell:
         dist = 0
         index_of_nearest = None
         while index_of_nearest is None:
+            sys.stdout.write(f'\rDistance {dist}')
+            sys.stdout.flush()
             circle_mask = mask_funcs.torch_circle(self.centre, dist)
             intersection = torch.logical_and(circle_mask, other_frame>0)
             unique_values, counts = torch.unique(other_frame[intersection], return_counts=True)
@@ -87,6 +89,8 @@ def batch_write_features(cells):
         indices = torch.tensor([int(cell.index) for cell in cells]).cuda()
         mask_indices = indices.expand((*full_mask.shape, len(indices)))
         mask_batch = torch.where(full_mask.unsqueeze(-1) == mask_indices, 1, 0)
+        epi_mask = torch.tensor(
+                    utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
         for cell, mask in zip(cells, mask_batch):
             print(cell.index)
             if cell.index in full_mask:
@@ -94,8 +98,7 @@ def batch_write_features(cells):
                 cell.mask = mask
                 cell.centre = cell.cell_centre()
                 print('foun_cenr')
-                dist, index_of_nearest = cell.nearest(torch.tensor(
-                    utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
+                dist, index_of_nearest = cell.nearest(epi_mask)
                 print('found dit')
                 new_row = '\n' + '\t'.join(
                     [str(cell.speed().item()), str(cell.area().item()), str(cell.circularity().item()),
