@@ -71,7 +71,7 @@ class Cell:
         dist = 0
         index_of_nearest = None
         while index_of_nearest is None:
-            sys.stdout.write(f'\rDistance {dist}')
+            sys.stdout.write(f'\rDistance {dist} {torch.sum(circle_mask)}')
             sys.stdout.flush()
             circle_mask = mask_funcs.torch_circle(self.centre, dist)
             intersection = torch.logical_and(circle_mask, other_frame>0)
