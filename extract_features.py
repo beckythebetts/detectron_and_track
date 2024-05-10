@@ -111,16 +111,15 @@ def main():
     max_index = 200
     cell_index = 1
     batch_size = 10
-    while not reached_max_index:
+    while not cell_index < max_index:
         sys.stdout.write(f'\rCells {cell_index}-{cell_index + batch_size - 1}')
         sys.stdout.flush()
 
         batch_cells = []
-        while cell_index < max_index:
-            for i in range(batch_size):
-                cell = Cell(cell_index)
-                batch_cells.append(cell)
-                cell_index += 1
+        for i in range(batch_size):
+            cell = Cell(cell_index)
+            batch_cells.append(cell)
+            cell_index += 1
 
 
         if batch_cells:
