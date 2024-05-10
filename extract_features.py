@@ -84,7 +84,7 @@ def batch_write_features(cells):
     last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
     for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
         full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
-        indices = [cell.index for cell in cells]
+        indices = torch.tensor([cell.index for cell in cells]).cuda()
         print(indices)
         # mask_indices = torch.tensor(indices).unsqueeze(1).unsqueeze(2).unsqueeze(3)
         # mask_indices = mask_indices.expand(-1, *full_mask.shape)
