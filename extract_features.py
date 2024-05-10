@@ -86,11 +86,6 @@ def batch_write_features(cells):
         full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
         indices = torch.tensor([int(cell.index) for cell in cells]).cuda()
         mask_indices = indices.expand((*full_mask.shape, len(indices)))
-        print(mask_indices[54, 982, :])
-        # mask_indices = torch.tensor(indices).unsqueeze(1).unsqueeze(2).unsqueeze(3)
-        # mask_indices = mask_indices.expand(-1, *full_mask.shape)
-        #mask_indices = torch.tensor([torch.full(full_mask.shape, index) for index in indices]).cuda()
-        #mask_indices = [torch.full(full_mask.shape, i) for i in indices].cuda()
         mask_batch = torch.where(full_mask.unsqueeze(-1) == mask_indices, 1, 0)
         for cell, mask in zip(cells, mask_batch):
             if cell.index in full_mask:
@@ -124,10 +119,7 @@ def main():
             cell = Cell(cell_index)
             batch_cells.append(cell)
             cell_index += 1
-
-
-        if batch_cells:
-            batch_write_features(batch_cells)
+        batch_write_features(batch_cells)
 
     # while not reached_max_index:
     #     sys.stdout.write(f'\rCell {cell_index}')
