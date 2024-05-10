@@ -71,7 +71,7 @@ def create_circle(centre, radius, array_shape=(1024, 1024)):
     return circle
 
 def torch_circle(centre, radius, array_shape=(1200, 1200)):
-    circle = circle_equ(torch.arange(0, array_shape[0], 1).cuda(), torch.arange(0, array_shape[1], 1).cuda().unsqueeze(0), torch.tensor(centre).cuda(), radius)
+    circle = circle_equ(torch.arange(0, array_shape[0], 1).cuda().unsqueeze(1), torch.arange(0, array_shape[1], 1).cuda().unsqueeze(0), torch.tensor(centre).cuda(), radius)
     return circle
 
 def cal_iou(mask1, mask2):
