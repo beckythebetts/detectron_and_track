@@ -35,9 +35,11 @@ class Cell:
                 time_ = time.time()
                 new_row = '\n' + '\t'.join([str(self.speed().item()), str(self.area().item()), str(self.circularity().item()), str(self.overlap().item()), str(dist), str(index_of_nearest.item())])
                 print(time.time() - time_, 'other features')
-                with open(self.file, 'a') as f:
-                    f.write(new_row)
                 self.last_mask = self.mask.clone()
+            else:
+                new_row = '\n' + '\t'.join(np.full(6, np.nan))
+            with open(self.file, 'a') as f:
+                f.write(new_row)
 
     def cell_centre(self):
         return mask_funcs.find_centre(self.mask)
