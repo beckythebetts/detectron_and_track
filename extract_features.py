@@ -1,12 +1,12 @@
-import SETTINGS
 import torch
-import utils
 from skimage import measure
 import numpy as np
 import sys
+import time
 
+import utils
 import mask_funcs
-
+import SETTINGS
 class Cell:
 
     def __init__(self, index):
@@ -18,15 +18,23 @@ class Cell:
     def write_features(self):
         self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
         for mask_path in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir():
+            time = time.time()
             full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
+            print(time.time()-time, 'read mask')
             if self.index in full_mask:
                 self.index_exists = True
+                time = time.time()
                 self.mask = torch.where(full_mask==self.index, 1, 0)
+                print(time.time()-time, 'extract mask')
                 self.centre = self.cell_centre()
                 # epi_frame = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
                 # print(torch.unique(epi_frame))
+                time = time.time()
                 dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
+                print(time.time() - time, 'find nearest')
+                time = time.time()
                 new_row = '\n' + '\t'.join([str(self.speed().item()), str(self.area().item()), str(self.circularity().item()), str(self.overlap().item()), str(dist), str(index_of_nearest.item())])
+                print(time.time() - time, 'other features')
                 with open(self.file, 'a') as f:
                     f.write(new_row)
                 self.last_mask = self.mask.clone()
