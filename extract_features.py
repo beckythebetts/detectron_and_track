@@ -99,6 +99,7 @@ def batch_write_features(cells):
             if cell.index in full_mask:
                 cell.index_exists = True
                 cell.mask = mask
+                print(torch.unique(cell.mask))
                 cell.centre = cell.cell_centre()
                 print('foun_cenr', cell.centre)
                 dist, index_of_nearest = cell.nearest(epi_mask)
