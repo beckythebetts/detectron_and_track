@@ -88,12 +88,15 @@ def batch_write_features(cells):
         mask_indices = indices.expand((*full_mask.shape, len(indices)))
         mask_batch = torch.where(full_mask.unsqueeze(-1) == mask_indices, 1, 0)
         for cell, mask in zip(cells, mask_batch):
+            print(cell.index)
             if cell.index in full_mask:
                 cell.index_exists = True
                 cell.mask = mask
                 cell.centre = cell.cell_centre()
+                print('foun_cenr')
                 dist, index_of_nearest = cell.nearest(torch.tensor(
                     utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
+                print('found dit')
                 new_row = '\n' + '\t'.join(
                     [str(cell.speed().item()), str(cell.area().item()), str(cell.circularity().item()),
                      str(cell.overlap().item()), str(dist), str(index_of_nearest.item())])
