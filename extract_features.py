@@ -16,6 +16,7 @@ class Cell:
             f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
         self.index_exists = False
         self.missing = 0
+        self.centre = []
     def write_features(self):
         self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
         for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
