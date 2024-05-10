@@ -100,7 +100,7 @@ def batch_write_features(cells):
                 cell.index_exists = True
                 cell.mask = mask
                 cell.centre = cell.cell_centre()
-                print('foun_cenr')
+                print('foun_cenr', cell_centre)
                 dist, index_of_nearest = cell.nearest(epi_mask)
                 print('found dit')
                 new_row = '\n' + '\t'.join(
