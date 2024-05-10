@@ -18,35 +18,34 @@ class Cell:
         self.missing = 0
     def write_features(self):
         self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
-        while self.missing <= SETTINGS.FRAME_MEMORY:
-            for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
-                print(mask_path.stem)
+        for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
+            print(mask_path.stem)
+            time_ = time.time()
+            full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
+            print(time.time()-time_, 'read mask')
+            if self.index in full_mask:
+                self.missing=0
+                self.index_exists = True
                 time_ = time.time()
-                full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
-                print(time.time()-time_, 'read mask')
-                if self.index in full_mask:
-                    self.missing=0
-                    self.index_exists = True
-                    time_ = time.time()
-                    self.mask = torch.where(full_mask==self.index, 1, 0)
-                    print(time.time()-time_, 'extract mask')
-                    self.centre = self.cell_centre()
-                    # epi_frame = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
-                    # print(torch.unique(epi_frame))
-                    time_ = time.time()
-                    dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
-                    print(time.time() - time_, 'find nearest')
-                    time_ = time.time()
-                    new_row = '\n' + '\t'.join([str(self.speed().item()), str(self.area().item()), str(self.circularity().item()), str(self.overlap().item()), str(dist), str(index_of_nearest.item())])
-                    print(time.time() - time_, 'other features')
-                    self.last_mask = self.mask.clone()
-                else:
-                    new_row = '\n' + '\t'.join(np.full(6, 'nan'))
-                    self.missing += 1
+                self.mask = torch.where(full_mask==self.index, 1, 0)
+                print(time.time()-time_, 'extract mask')
+                self.centre = self.cell_centre()
+                # epi_frame = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
+                # print(torch.unique(epi_frame))
                 time_ = time.time()
-                with open(self.file, 'a') as f:
-                    f.write(new_row)
-                print(time.time() - time_, 'writing data')
+                dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
+                print(time.time() - time_, 'find nearest')
+                time_ = time.time()
+                new_row = '\n' + '\t'.join([str(self.speed().item()), str(self.area().item()), str(self.circularity().item()), str(self.overlap().item()), str(dist), str(index_of_nearest.item())])
+                print(time.time() - time_, 'other features')
+                self.last_mask = self.mask.clone()
+            else:
+                new_row = '\n' + '\t'.join(np.full(6, 'nan'))
+                self.missing += 1
+            time_ = time.time()
+            with open(self.file, 'a') as f:
+                f.write(new_row)
+            print(time.time() - time_, 'writing data')
 
     def cell_centre(self):
         return mask_funcs.find_centre(self.mask)
@@ -81,20 +80,62 @@ class Cell:
                 dist += 1
         return dist, index_of_nearest
 
+def batch_write_features(cells):
+    last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
+    for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
+        full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
+        indices = [cell.index for cell in cells]
+        mask_indices = torch.tensor(indices).unsqueeze(1).unsqueeze(2).unsqueeze(3)
+        mask_indices = mask_indices.expand(-1, *full_mask.shape)
+        mask_batch = torch.where(full_mask == mask_indices, 1, 0)
+        for cell, mask in zip(cells, mask_batch):
+            if cell.index in full_mask:
+                cell.index_exists = True
+                cell.mask = mask
+                cell.centre = cell.cell_centre()
+                dist, index_of_nearest = cell.nearest(torch.tensor(
+                    utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
+                new_row = '\n' + '\t'.join(
+                    [str(cell.speed().item()), str(cell.area().item()), str(cell.circularity().item()),
+                     str(cell.overlap().item()), str(dist), str(index_of_nearest.item())])
+                cell.last_mask = cell.mask.clone()
+            else:
+                new_row = '\n' + '\t'.join(np.full(6, 'nan'))
+            with open(cell.file, 'a') as f:
+                f.write(new_row)
 def main():
     print('\n--------------------\nEXTRACTING FEATURES\n--------------------')
 
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    reached_max_index = False
+    #reached_max_index = False
     cell_index = 1
+    batch_size = 10
     while not reached_max_index:
-        sys.stdout.write(f'\rCell {cell_index}')
+        sys.stdout.write(f'\rCells {cell_index}-{cell_index + batch_size - 1}')
         sys.stdout.flush()
-        cell = Cell(cell_index)
-        cell.write_features()
-        if not cell.index_exists:
-            reached_max_index=True
-        cell_index += 1
+
+        batch_cells = []
+        for i in range(batch_size):
+            cell = Cell(cell_index)
+            batch_cells.append(cell)
+            cell_index += 1
+            if cell.index_exists or cell.index >= SETTINGS.MAX_INDEX:
+                reached_max_index = True
+                break
+
+        if batch_cells:
+            batch_write_features(batch_cells)
+
+
+
+    # while not reached_max_index:
+    #     sys.stdout.write(f'\rCell {cell_index}')
+    #     sys.stdout.flush()
+    #     cell = Cell(cell_index)
+    #     cell.write_features()
+    #     if not cell.index_exists:
+    #         reached_max_index=True
+    #     cell_index += 1
     print(f'Completed, {cell_index-1} cells')
 
 
