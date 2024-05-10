@@ -37,7 +37,7 @@ class Cell:
                 print(time.time() - time_, 'other features')
                 self.last_mask = self.mask.clone()
             else:
-                new_row = '\n' + '\t'.join(np.full(6, np.nan))
+                new_row = '\n' + '\t'.join(np.full(6, 'nan'))
             with open(self.file, 'a') as f:
                 f.write(new_row)
 
