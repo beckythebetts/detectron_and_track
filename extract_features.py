@@ -18,6 +18,7 @@ class Cell:
     def write_features(self):
         self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
         for mask_path in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir():
+            print(mask_path.stem)
             time_ = time.time()
             full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
             print(time.time()-time_, 'read mask')
