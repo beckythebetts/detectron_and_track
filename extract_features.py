@@ -111,7 +111,7 @@ def main():
     max_index = 200
     cell_index = 1
     batch_size = 10
-    while not cell_index < max_index:
+    while cell_index < max_index:
         sys.stdout.write(f'\rCells {cell_index}-{cell_index + batch_size - 1}')
         sys.stdout.flush()
 
@@ -124,8 +124,6 @@ def main():
 
         if batch_cells:
             batch_write_features(batch_cells)
-
-
 
     # while not reached_max_index:
     #     sys.stdout.write(f'\rCell {cell_index}')
