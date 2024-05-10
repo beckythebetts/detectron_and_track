@@ -75,7 +75,7 @@ class Cell:
             circle_mask = mask_funcs.torch_circle(self.centre, dist)
             intersection = torch.logical_and(circle_mask, other_frame>0)
             unique_values, counts = torch.unique(other_frame[intersection], return_counts=True)
-            sys.stdout.write(f'\rDistance {dis}{torch.sum(circle_mask)}')
+            sys.stdout.write(f'\rDistance {self.centre}{dis}{torch.sum(circle_mask)}')
             sys.stdout.flush()
             if len(unique_values) > 0:
                 index_of_nearest = unique_values[torch.argmax(counts)]
@@ -140,5 +140,4 @@ def main():
 
 
 if __name__ == '__main__':
-    #main()
-    print(mask_funcs.torch_circle((3, 5), 3, array_shape=(10, 10)))
+    main()
