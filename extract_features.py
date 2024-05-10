@@ -15,32 +15,38 @@ class Cell:
         with open(self.file, 'w') as f:
             f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
         self.index_exists = False
+        self.missing = 0
     def write_features(self):
         self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
-        for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
-            print(mask_path.stem)
-            time_ = time.time()
-            full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
-            print(time.time()-time_, 'read mask')
-            if self.index in full_mask:
-                self.index_exists = True
+        while self.missing <= SETTINGS.FRAME_MEMORY:
+            for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
+                print(mask_path.stem)
                 time_ = time.time()
-                self.mask = torch.where(full_mask==self.index, 1, 0)
-                print(time.time()-time_, 'extract mask')
-                self.centre = self.cell_centre()
-                # epi_frame = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
-                # print(torch.unique(epi_frame))
+                full_mask = torch.tensor(utils.read_tiff(mask_path).astype(np.int16)).cuda()
+                print(time.time()-time_, 'read mask')
+                if self.index in full_mask:
+                    self.missing=0
+                    self.index_exists = True
+                    time_ = time.time()
+                    self.mask = torch.where(full_mask==self.index, 1, 0)
+                    print(time.time()-time_, 'extract mask')
+                    self.centre = self.cell_centre()
+                    # epi_frame = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
+                    # print(torch.unique(epi_frame))
+                    time_ = time.time()
+                    dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
+                    print(time.time() - time_, 'find nearest')
+                    time_ = time.time()
+                    new_row = '\n' + '\t'.join([str(self.speed().item()), str(self.area().item()), str(self.circularity().item()), str(self.overlap().item()), str(dist), str(index_of_nearest.item())])
+                    print(time.time() - time_, 'other features')
+                    self.last_mask = self.mask.clone()
+                else:
+                    new_row = '\n' + '\t'.join(np.full(6, 'nan'))
+                    self.missing += 1
                 time_ = time.time()
-                dist, index_of_nearest = self.nearest(torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda())
-                print(time.time() - time_, 'find nearest')
-                time_ = time.time()
-                new_row = '\n' + '\t'.join([str(self.speed().item()), str(self.area().item()), str(self.circularity().item()), str(self.overlap().item()), str(dist), str(index_of_nearest.item())])
-                print(time.time() - time_, 'other features')
-                self.last_mask = self.mask.clone()
-            else:
-                new_row = '\n' + '\t'.join(np.full(6, 'nan'))
-            with open(self.file, 'a') as f:
-                f.write(new_row)
+                with open(self.file, 'a') as f:
+                    f.write(new_row)
+                print(time.time() - time_, 'writing data')
 
     def cell_centre(self):
         return mask_funcs.find_centre(self.mask)
