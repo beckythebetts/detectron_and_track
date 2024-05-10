@@ -141,4 +141,4 @@ def main():
 
 if __name__ == '__main__':
     #main()
-    print(utils.torch_circle((3, 5), 3, array_shape=(10, 10)))
+    print(mask_funcs.torch_circle((3, 5), 3, array_shape=(10, 10)))
