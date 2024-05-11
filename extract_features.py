@@ -16,6 +16,7 @@ class Cell:
             f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
         self.index_exists = False
         self.missing = 0
+        self.last_mask = None
 
     def get_mask(self, mask):
         self.mask = mask
@@ -80,8 +81,6 @@ class Cell:
             circle_mask = mask_funcs.torch_circle(centre, dist)
             intersection = torch.logical_and(circle_mask, other_frame>0)
             unique_values, counts = torch.unique(other_frame[intersection], return_counts=True)
-            sys.stdout.write(f'\rCentre {centre} Distance {dist} Sum {torch.sum(circle_mask)} Vals {torch.unique(self.mask)}')
-            sys.stdout.flush()
             if len(unique_values) > 0:
                 index_of_nearest = unique_values[torch.argmax(counts)]
             else:
@@ -95,20 +94,15 @@ def batch_write_features(cells):
         indices = torch.tensor([int(cell.index) for cell in cells]).cuda()
         mask_indices = indices.unsqueeze(-1).unsqueeze(-1).expand((len(indices), *full_mask.shape))
         mask_batch = torch.where(full_mask.unsqueeze(0).expand(len(indices), *full_mask.shape) == mask_indices, 1, 0)
-        print(f'mask batch values {torch.unique(mask_batch)}')
-        epi_mask = torch.tensor(
-                    utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
+        epi_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
         for cell, mask in zip(cells, mask_batch):
-            print(cell.index)
             if cell.index in full_mask:
-                print(f'**MASK** {torch.unique(mask)} shape {mask.shape}')
                 cell.index_exists = True
                 cell.get_mask(mask)
-                print(torch.unique(cell.mask))
+                if cell.last_mask is None:
+                    cell.last_mask = cell.mask.clone()
                 cell.centre = cell.cell_centre()
-                print('foun_cenr', cell.centre)
                 dist, index_of_nearest = cell.nearest(epi_mask)
-                print('found dit')
                 new_row = '\n' + '\t'.join(
                     [str(cell.speed().item()), str(cell.area().item()), str(cell.circularity().item()),
                      str(cell.overlap().item()), str(dist), str(index_of_nearest.item())])
