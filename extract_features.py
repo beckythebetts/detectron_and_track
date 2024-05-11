@@ -101,7 +101,7 @@ def batch_write_features(cells):
         for cell, mask in zip(cells, mask_batch):
             print(cell.index)
             if cell.index in full_mask:
-                print(f'**MASK** {torch.unique(mask)}')
+                print(f'**MASK** {torch.unique(mask)} shape {mask.shape}')
                 cell.index_exists = True
                 cell.get_mask(mask)
                 print(torch.unique(cell.mask))
