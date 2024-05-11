@@ -95,7 +95,7 @@ def batch_write_features(cells):
         indices = torch.tensor([int(cell.index) for cell in cells]).cuda()
         mask_indices = indices.expand((*full_mask.shape, len(indices)))
         mask_batch = torch.where(full_mask.unsqueeze(-1).expand(*full_mask.shape, len(indices)) == mask_indices, 1, 0)
-        print(f'mask batch shape {mask_batch.shape}')
+        print(f'mask batch values {torch.unique(mask_values)}')
         epi_mask = torch.tensor(
                     utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / mask_path.name).astype(np.int16)).cuda()
         for cell, mask in zip(cells, mask_batch):
