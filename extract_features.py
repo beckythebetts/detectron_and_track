@@ -17,6 +17,9 @@ class Cell:
         self.index_exists = False
         self.missing = 0
 
+    def get_mask(self, mask):
+        self.mask = mask
+
     def write_features(self):
         self.last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
         for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
@@ -98,7 +101,7 @@ def batch_write_features(cells):
             print(cell.index)
             if cell.index in full_mask:
                 cell.index_exists = True
-                cell.mask = mask
+                cell.get_mask(mask)
                 print(torch.unique(cell.mask))
                 cell.centre = cell.cell_centre()
                 print('foun_cenr', cell.centre)
