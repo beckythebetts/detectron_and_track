@@ -19,17 +19,20 @@ class CellBatch:
         self.expanded_indices = self.indices.unsqueeze(-1).unsqueeze(-1).expand((len(indices), *SETTINGS.IMAGE_SIZE))
         self.cells = [Cell(i) for i in self.indices]
         full_mask = torch.tensor(utils.read_tiff(self.paths[0]).astype(np.int16)).cuda()
-        self.masks = torch.where(full_mask.unsqueeze(0).expand(len(indices), *full_mask.shape) == mask_indices, 1, 0)
+
 
     def run_feature_extraction(self):
-        for path in sorted(SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir():
+        for i, path in enumerate(sorted(SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):
+            if i == 0:
+                full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
+                self.masks = torch.where(full_mask.unsqueeze(0).expand(len(indices), *full_mask.shape) == self.expanded_indices, 1,0)
             self.next_frame(path)
             self.read_features()
             self.write_features()
     def next_frame(self, path):
         self.last_masks = self.masks
         full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
-        self.masks = torch.where(full_mask.unsqueeze(0).expand(len(indices), *full_mask.shape) == mask_indices, 1, 0)
+        self.masks = torch.where(full_mask.unsqueeze(0).expand(len(indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         self.epi_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
 
     def read_features(self):
