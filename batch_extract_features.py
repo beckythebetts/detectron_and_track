@@ -81,7 +81,7 @@ class CellBatch:
             b, row, col = coord.tolist()
             masks_patch = self.masks[b, row-1:row+2, col-1:col+2]
             #print(masks_patch.shape, kernel.shape)
-            if masks_patch*kernel < 8:
+            if torch.sum(masks_patch*kernel) < 8:
                 perimeters[b] += 1
         self.perimeters = perimeters
 
