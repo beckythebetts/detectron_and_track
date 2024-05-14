@@ -87,6 +87,9 @@ class Cell:
                 dist += 1
         return dist, index_of_nearest
 
+
+
+
 def batch_write_features(cells):
     last_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / '0000.tif').astype(np.int16)).cuda()
     for mask_path in sorted((SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()):

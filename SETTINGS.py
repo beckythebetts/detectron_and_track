@@ -3,6 +3,7 @@ from pathlib import Path
 # ******* GENERAL *******
 DIRECTORY = Path('03_test')
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
+IMAGE_SIZE = (1200, 1200)
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 6000
