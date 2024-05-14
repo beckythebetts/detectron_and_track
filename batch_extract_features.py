@@ -44,7 +44,7 @@ class CellBatch:
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
     def get_centres(self):
-        coord_grid_x, cord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(), torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
+        coord_grid_x, coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(), torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
 
         x_centres = torch.sum(self.masks * coord_grid_x, dim=(1, 2)) / self.areas
         y_centres = torch.sum(self.masks * coord_grid_y, dim=(1, 2)) / self.areas
