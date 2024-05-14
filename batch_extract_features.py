@@ -44,6 +44,7 @@ class CellBatch:
     def read_features(self):
         self.get_areas()
         self.get_centres()
+        self.get_speeds()
 
     def write_features(self):
         print(self.speeds)
