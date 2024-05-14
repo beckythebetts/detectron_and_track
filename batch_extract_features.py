@@ -72,17 +72,26 @@ class CellBatch:
             self.speeds = ((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)**0.5
 
     def get_perimeters(self):
-        perimeters = torch.zeros(len(self.indices))
+        /perimeters = torch.zeros(len(self.indices))
         kernel = torch.tensor([[1, 1, 1],
                                [1, 0, 1],
                                [1, 1, 1]] ).cuda()
-        coords = self.masks.nonzero()
-        for coord in coords:
-            b, row, col = coord.tolist()
-            masks_patch = self.masks[b, row-1:row+2, col-1:col+2]
-            #print(masks_patch.shape, kernel.shape)
-            if torch.sum(masks_patch*kernel) < 8:
-                perimeters[b] += 1
+        # coords = self.masks.nonzero()
+        # for coord in coords:
+        #     b, row, col = coord.tolist()
+        #     masks_patch = self.masks[b, row-1:row+2, col-1:col+2]
+        #     if torch.sum(masks_patch*kernel) < 8:
+        #         perimeters[b] += 1
+        # self.perimeters = perimeters
+        padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
+
+        # Apply the kernel to get the convolution result
+        conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0),
+                                                 padding=0).squeeze()
+
+        # Count pixels with convolution result less than 8 to compute perimeters
+        perimeters = torch.sum(conv_result < 8, dim=(1, 2))
+
         self.perimeters = perimeters
 
 
