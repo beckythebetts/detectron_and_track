@@ -35,15 +35,22 @@ class CellBatch:
         self.epi_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
 
     def read_features(self):
-        self.centres = self.get_centres()
+        self.get_areas()
+        self.get_centres()
 
     def write_features(self):
         print(self.centres)
 
+    def get_areas(self):
+        self.areas = torch.sum(self.masks, dim=(1, 2))
     def get_centres(self):
-        coords = torch.nonzero(self.masks, as_tuple=True)
-        #x_means = torch.sum(coords, dim=1)
-        return coords
+        coord_grid_x, cord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(), torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
+
+        x_centres = torch.sum(self.masks * coord_grid_x, dim=(1, 2)) / self.areas
+        y_centres = torch.sum(self.masks * coord_grid_y, dim=(1, 2)) / self.areas
+
+        self.centres = torch.stack((x_centres, y_centres), dim=1)
+
 
 def main():
     cell_batch = CellBatch(torch.tensor(np.arange(1, 10)).cuda())
