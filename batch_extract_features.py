@@ -59,8 +59,8 @@ class CellBatch:
             self.last_centres = self.centres
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(), torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
 
-        x_centres = torch.sum(self.masks * coord_grid_x, dim=(1, 2)) / self.areas
-        y_centres = torch.sum(self.masks * coord_grid_y, dim=(1, 2)) / self.areas
+        x_centres = torch.sum(self.masks * self.coord_grid_x, dim=(1, 2)) / self.areas
+        y_centres = torch.sum(self.masks * self.coord_grid_y, dim=(1, 2)) / self.areas
 
         self.centres = torch.stack((x_centres, y_centres), dim=1)
 
