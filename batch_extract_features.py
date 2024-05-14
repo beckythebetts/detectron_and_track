@@ -43,6 +43,7 @@ class CellBatch:
     def get_centres(self):
         coords = torch.nonzero(self.masks)
         x_means = torch.sum(coords, dim=1)
+        return coords
 
 def main():
     cell_batch = CellBatch(torch.tensor(np.arange(1, 10)).cuda())
