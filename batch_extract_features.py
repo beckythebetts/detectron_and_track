@@ -57,7 +57,7 @@ class CellBatch:
 
 
 def main():
-    cell_batch = CellBatch(torch.tensor(np.arange(1, 10)).cuda())
+    cell_batch = CellBatch(torch.tensor(np.arange(1, 50)).cuda())
     cell_batch.run_feature_extraction()
 
 if __name__ == '__main__':
