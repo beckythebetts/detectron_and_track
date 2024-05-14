@@ -20,6 +20,8 @@ class CellBatch:
         self.indices = indices
         self.expanded_indices = self.indices.unsqueeze(-1).unsqueeze(-1).expand((len(indices), *SETTINGS.IMAGE_SIZE))
         self.cells = [Cell(i) for i in self.indices]
+        self.centres = None
+        self.last_centres = None
 
 
     def run_feature_extraction(self):
@@ -32,6 +34,7 @@ class CellBatch:
             self.next_frame(path)
             self.read_features()
             self.write_features()
+
     def next_frame(self, path):
         self.last_masks = self.masks
         full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
@@ -43,11 +46,14 @@ class CellBatch:
         self.get_centres()
 
     def write_features(self):
-        print(self.centres)
+        print(self.speeds)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
+
     def get_centres(self):
+        if self.centres is not None:
+            self.last_centres = self.centres
         coord_grid_x, coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(), torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
 
         x_centres = torch.sum(self.masks * coord_grid_x, dim=(1, 2)) / self.areas
@@ -55,6 +61,12 @@ class CellBatch:
 
         self.centres = torch.stack((x_centres, y_centres), dim=1)
 
+    def get_speeds(self):
+        if self.last_centres is None:
+            self.speeds = 'nan'
+
+        else:
+            self.speeds = ((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)**0.5
 
 def main():
     cell_batch = CellBatch(torch.tensor(np.arange(1, 50)).cuda())
