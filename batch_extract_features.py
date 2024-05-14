@@ -22,6 +22,8 @@ class CellBatch:
 
     def run_feature_extraction(self):
         for i, path in enumerate(sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])):
+            sys.stdout.write(f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)}')
+            sys.stdout.flush()
             if i == 0:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
