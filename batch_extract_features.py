@@ -86,7 +86,7 @@ class CellBatch:
         padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
 
         # Apply the kernel to get the convolution result
-        conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0),
+        conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0).float(),
                                                  padding=0).squeeze()
 
         # Count pixels with convolution result less than 8 to compute perimeters
