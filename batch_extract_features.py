@@ -74,7 +74,7 @@ class CellBatch:
     def get_perimeters(self):
         #perimeters = torch.zeros(len(self.indices))
         kernel = torch.tensor([[1, 1, 1],
-                               [1, 0, 1],
+                               [1, 9, 1],
                                [1, 1, 1]] ).cuda()
         # coords = self.masks.nonzero()
         # for coord in coords:
@@ -90,7 +90,7 @@ class CellBatch:
                                                  padding=0).squeeze()
 
         # Count pixels with convolution result less than 8 to compute perimeters
-        perimeters = torch.sum(conv_result < 8, dim=(1, 2))
+        perimeters = torch.sum((conv_result >= 10) & (conv_results <=16), dim=(1, 2))
 
         self.perimeters = perimeters
 
