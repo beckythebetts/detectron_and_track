@@ -41,7 +41,7 @@ class CellBatch:
         print(self.centres)
 
     def get_centres(self):
-        coords = torch.nonzero(self.masks)
+        coords = torch.nonzero(self.masks, as_tuple=True)
         x_means = torch.sum(coords, dim=1)
         return coords
 
