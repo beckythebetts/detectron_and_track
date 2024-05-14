@@ -36,7 +36,7 @@ class CellBatch:
             self.write_features()
 
     def next_frame(self, path):
-        self.last_masks = self.masks
+        #self.last_masks = self.masks
         full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         self.epi_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
@@ -45,9 +45,11 @@ class CellBatch:
         self.get_areas()
         self.get_centres()
         self.get_speeds()
+        self.get_perimeters()
+
 
     def write_features(self):
-        print(self.speeds)
+        print(self.perimeters)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -55,7 +57,7 @@ class CellBatch:
     def get_centres(self):
         if self.centres is not None:
             self.last_centres = self.centres
-        coord_grid_x, coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(), torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
+        self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(), torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
 
         x_centres = torch.sum(self.masks * coord_grid_x, dim=(1, 2)) / self.areas
         y_centres = torch.sum(self.masks * coord_grid_y, dim=(1, 2)) / self.areas
@@ -68,6 +70,21 @@ class CellBatch:
 
         else:
             self.speeds = ((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)**0.5
+
+    def get_perimeters(self):
+        perimeters = torch.zeros(len(self.indices))
+        kernel = torch.tensor([[1, 1, 1],
+                               [1, 0, 1],
+                               [1, 1, 1]] ).cuda()
+        coords = self.masks.nonzero()
+        for coord in coords:
+            b, row, col = coord.tolist()
+            masks_patch = self.masks[b, row-1:row+1, col-1:col+1]
+            if masks_batch*kernel < 8:
+                perimeters[b] += 1
+        self.perimeters = perimeters
+
+
 
 def main():
     cell_batch = CellBatch(torch.tensor(np.arange(1, 50)).cuda())
