@@ -36,10 +36,10 @@ class CellBatch:
 
     def read_features(self):
         self.centres = self.get_centres()
-        return centres
 
     def write_features(self):
         print(self.centres)
+
     def get_centres(self):
         coords = torch.nonzero(self.masks)
         x_means = torch.sum(coords, dim=1)
