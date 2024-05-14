@@ -72,7 +72,7 @@ class CellBatch:
             self.speeds = ((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)**0.5
 
     def get_perimeters(self):
-        /perimeters = torch.zeros(len(self.indices))
+        #perimeters = torch.zeros(len(self.indices))
         kernel = torch.tensor([[1, 1, 1],
                                [1, 0, 1],
                                [1, 1, 1]] ).cuda()
