@@ -90,7 +90,7 @@ class CellBatch:
                                                  padding=0).squeeze()
 
         # Count pixels with convolution result less than 8 to compute perimeters
-        perimeters = torch.sum((conv_result >= 10) & (conv_results <=16), dim=(1, 2))
+        perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2))
 
         self.perimeters = perimeters
 
