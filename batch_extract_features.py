@@ -80,7 +80,7 @@ class CellBatch:
         for coord in coords:
             b, row, col = coord.tolist()
             masks_patch = self.masks[b, row-1:row+1, col-1:col+1]
-            if masks_batch*kernel < 8:
+            if masks_patch*kernel < 8:
                 perimeters[b] += 1
         self.perimeters = perimeters
 
