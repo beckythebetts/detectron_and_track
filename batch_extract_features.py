@@ -18,7 +18,6 @@ class CellBatch:
         self.indices = indices
         self.expanded_indices = self.indices.unsqueeze(-1).unsqueeze(-1).expand((len(indices), *SETTINGS.IMAGE_SIZE))
         self.cells = [Cell(i) for i in self.indices]
-        full_mask = torch.tensor(utils.read_tiff(self.paths[0]).astype(np.int16)).cuda()
 
 
     def run_feature_extraction(self):
