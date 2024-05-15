@@ -48,11 +48,11 @@ class CellBatch:
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
-        self.get_epi_centres()
+        self.get_nearest_2()
         #self.get_nearest()
 
     def write_features(self):
-        print(self.epi_centres)
+        print(self.dists, self.indices_of_nearest)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -95,8 +95,20 @@ class CellBatch:
         y_centres = torch.sum(self.epi_masks * self.coord_grid_y, dim=(1, 2)) / self.epi_areas
 
         self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
-    # def get_nearest_2(self):
-    #     # Get centre coords of all
+
+    def get_nearest_2(self):
+        self.get_epi_centres()
+        self.dists, self.indices_of_nearest = [],[]
+        for centre in self.centres:
+            dist, index = float('nan'), float('nan')
+            if not centre.isnan().any():
+                for i, epi_centre in enumerate(self.epi_centres):
+                    dist_temp = torch.sqrt(torch.sum((centre[0] - epi_centre[0])**2, (centre[1] - epi_centre[1])**2))
+                    if dist_temp < dist or dist.isnan():
+                        dist = dist_temp
+                        index = self.epi_indices[i]
+            dists = torch.append(dists, dist)
+            indices_of_nearest = torch.append(index)
     def get_nearest(self):
         dists = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
