@@ -46,10 +46,10 @@ class CellBatch:
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
-
+        self.get_nearest()
 
     def write_features(self):
-        print(self.perimeters)
+        print(self.perimeters, self.dists, self.index_of_nearest)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -72,28 +72,32 @@ class CellBatch:
             self.speeds = ((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)**0.5
 
     def get_perimeters(self):
-        #perimeters = torch.zeros(len(self.indices))
         kernel = torch.tensor([[1, 1, 1],
                                [1, 9, 1],
                                [1, 1, 1]] ).cuda()
-        # coords = self.masks.nonzero()
-        # for coord in coords:
-        #     b, row, col = coord.tolist()
-        #     masks_patch = self.masks[b, row-1:row+2, col-1:col+2]
-        #     if torch.sum(masks_patch*kernel) < 8:
-        #         perimeters[b] += 1
-        # self.perimeters = perimeters
-        padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
 
-        # Apply the kernel to get the convolution result
+        padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
         conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0).float(),
                                                  padding=0).squeeze()
-
-        # Count pixels with convolution result less than 8 to compute perimeters
         perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2))
-
         self.perimeters = perimeters
 
+    def get_nearest(self):
+        dists = torch.full(len(self.indices), None)
+        indices_of_nearest = torch.full(len(self.indices), None)
+        radius = 0
+        self.epanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
+        while any(indices_of_nearest is None):
+            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius).unsqueeze(0) for centre in self.centres], dim=0)
+            intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
+            unique_values, counts = torch.unique(self.expanded_epi_mask[intersections], return_counts=True, dim=(1, 2))
+            for i, uv, c in enumerate(zip(unique_values, counts)):
+                if len(uv) > 0:
+                    indices_of_nearest[i] = uv[torch.argmax[c]]
+                    dists[i] = radius
+                    self.expanded_epi_mask[i] = torch.zeros(SETTINGS.IMAGE_SIZE)
+                radius += 1
+        self.dists, self.index_of_nearest = dists, indices_of_nearest
 
 
 def main():
