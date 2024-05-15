@@ -1,3 +1,4 @@
+import SETTINGS
 import numpy as np
 import cv2
 import torch
@@ -70,9 +71,12 @@ def create_circle(centre, radius, array_shape=(1024, 1024)):
     circle = circle_equ(np.arange(0, array_shape[0], 1), np.arange(0, array_shape[1], 1)[:, np.newaxis], centre, radius)
     return circle
 
-def torch_circle(centre, radius, array_shape=(1200, 1200)):
+def torch_circle(centre, radius, array_shape=SETTINGS.IMAGE_SIZE):
     circle = circle_equ(torch.arange(0, array_shape[0], 1).cuda().unsqueeze(1), torch.arange(0, array_shape[1], 1).cuda().unsqueeze(0), torch.tensor(centre).cuda(), radius)
     return circle
+
+def torch_circle_batch(centres, radius, batch_size, frame_size=SETTINGS.IMAGE_SIZE):
+    circle_batch = circle_equ
 
 def cal_iou(mask1, mask2):
     intersection = np.logical_and(mask1, mask2)
