@@ -95,8 +95,8 @@ class CellBatch:
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
             for i in range(self.batch_size):
                 if centres_copy[i].isnan().any():
-                    dists[i] = 'nan'
-                    indices_of_narest[i] = 'nan'
+                    dists[i] = float('nan')
+                    indices_of_narest[i] = float('nan')
                 else:
                     unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
                     if len(unique) > 0:
