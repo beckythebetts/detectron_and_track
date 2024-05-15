@@ -91,13 +91,13 @@ class CellBatch:
         while torch.min(indices_of_nearest) == -1:
             circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
-
-            print(type(self.batch_size))
-            unique_values, counts = torch.stack([torch.tensor(torch.unique(self.epi_mask[intersections[i]], return_counts=True)) for i in torch.range(0, self.batch_size, dtype=torch.int64)])
+            unique_values, counts = [], []
+            for i in range(self.batch_size):
+                unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
+                unique_values.append(unqiue.unsqueeze(0))
+                counts.append(count.unsqueeze(0))
+            unique_values, counts = torch.cat(unqiue_values, dim=0), torch.cat(counts, dim=0)
             print(unique_values, counts)
-            # Find the counts of unique values
-            counts = torch.stack(
-                [torch.bincount(flat_other_frames[i][flat_intersection[i]], minlength=1) for i in range(len(self.indices))])
 
             # Find the index of the nearest value for each batch element
             indices_of_nearest[dists < self.max_dist] = torch.argmax(counts[dists < self.max_dist], dim=1)
