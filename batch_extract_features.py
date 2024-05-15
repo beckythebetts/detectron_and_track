@@ -83,8 +83,8 @@ class CellBatch:
         self.perimeters = perimeters
 
     def get_nearest(self):
-        dists = torch.full(len(self.indices), None)
-        indices_of_nearest = torch.full(len(self.indices), None)
+        dists = torch.full((len(self.indices)), None)
+        indices_of_nearest = torch.full((len(self.indices)), None)
         radius = 0
         self.epanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
         while any(indices_of_nearest is None):
