@@ -92,10 +92,7 @@ class CellBatch:
             circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
 
-            # flat_intersection = intersections.view(len(self.indices), -1)
-            # flat_other_frames = s.view(len(self.indices), -1)
-
-            # Find unique values in each batch element
+            print(type(self.batch_size))
             unique_values, counts = torch.stack([torch.tensor(torch.unique(self.epi_mask[intersections[i]], return_counts=True)) for i in range(self.batch_size)])
             print(unique_values, counts)
             # Find the counts of unique values
