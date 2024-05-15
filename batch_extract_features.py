@@ -89,7 +89,7 @@ class CellBatch:
     def get_epi_centres(self):
         self.epi_indices, self.epi_areas = torch.unique(self.epi_mask, return_counts=True)
         self.expanded_epi_indices = self.epi_indices.unsqueeze(-1).unsqueeze(-1).expand((len(self.epi_indices), *SETTINGS.IMAGE_SIZE))
-        self.epi_masks = torch.where(self.epi_mask.unsqueeze(0).expand(len(self.epi_indices), *SETTINGS.IMAGE_SIZE) == self.expanded_indices, 1, 0)
+        self.epi_masks = torch.where(self.epi_mask.unsqueeze(0).expand(len(self.epi_indices), *SETTINGS.IMAGE_SIZE) == self.expanded_epi_indices, 1, 0)
 
         x_centres = torch.sum(self.epi_masks * self.coord_grid_x, dim=(1, 2)) / self.epi_areas
         y_centres = torch.sum(self.epi_masks * self.coord_grid_y, dim=(1, 2)) / self.epi_areas
