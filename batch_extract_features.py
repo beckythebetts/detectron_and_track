@@ -105,7 +105,7 @@ class CellBatch:
             indices_of_nearest[dists < self.max_dist] = torch.argmax(counts[dists < self.max_dist], dim=1)
 
             # Update distances for masks where nearest value is not found
-            dists[index_of_nearest == -1] += 1
+            dists[indices_of_nearest == -1] += 1
 
         self.dists, self.index_of_nearest = dists, indices_of_nearest
 
