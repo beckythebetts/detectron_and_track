@@ -100,6 +100,7 @@ class CellBatch:
         y_centres = torch.sum(self.epi_masks * self.coord_grid_y, dim=(1, 2)) / self.epi_areas
 
         self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
+        del self.epi_masks
 
     def get_nearest(self):
         self.get_epi_centres()
