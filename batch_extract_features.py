@@ -78,7 +78,7 @@ class CellBatch:
             self.speeds = 'nan'
 
         else:
-            self.speeds = ((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)**0.5
+            self.speeds = torch.sqrt((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)
 
     def get_perimeters(self):
         kernel = torch.tensor([[1, 1, 1],
