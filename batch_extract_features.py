@@ -85,12 +85,10 @@ class CellBatch:
     def get_nearest(self):
         dists = torch.zeros(len(self.indices)).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1).cuda()
-        self.epanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
+        self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
         radius = 0
-        print(self.centres, dists)
         while torch.min(indices_of_nearest) == -1:
             circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
-            print(circle_masks.shape)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
 
             flat_intersection = intersection.view(len(self.indices), -1)
