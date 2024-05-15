@@ -89,18 +89,20 @@ class CellBatch:
         self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
         radius = 0
         centres_copy = self.centres.clone().detach()
-        while any(centres_copy != 'nan'):
+        while (centres_copy != 'nan').any():
             circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in centres_copy], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
             for i in range(self.batch_size):
                 if centres_copy[i] == 'nan':
                     dists[i] = 'nan'
                     indices_of_narest[i] = 'nan'
-                unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
-                if len(unqiue) > 0:
-                    dists[i] = radius
-                    indices_of_nearest[i] = unique[torch.argmax[unique]]
-                    centres_copy[i] = 'nan'
+                else:
+                    unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
+                    if len(unqiue) > 0:
+                        dists[i] = radius
+                        indices_of_nearest[i] = unique[torch.argmax[unique]]
+                        centres_copy[i] = 'nan'
+            radius += 1
 
 
 
