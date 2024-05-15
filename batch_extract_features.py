@@ -22,6 +22,7 @@ class CellBatch:
         self.cells = [Cell(i) for i in self.indices]
         self.centres = None
         self.last_centres = None
+        self.batch_size = len(self.indices)
 
 
     def run_feature_extraction(self):
@@ -91,13 +92,13 @@ class CellBatch:
             circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
 
-            flat_intersection = intersection.view(len(self.indices), -1)
-            flat_other_frames = other_frames.view(len(self.indices), -1)
+            # flat_intersection = intersections.view(len(self.indices), -1)
+            # flat_other_frames = s.view(len(self.indices), -1)
 
             # Find unique values in each batch element
-            unique_values = torch.stack(
-                [torch.unique(flat_other_frames[i][flat_intersection[i]]) for i in range(len(self.indices))])
-
+            unique_values, counts = torch.stack(
+                [torch.unique(self.epi_mask[intersections[i]], return_counts=True) for i in range(self.batch_size)])
+            print(unique_values, counts)
             # Find the counts of unique values
             counts = torch.stack(
                 [torch.bincount(flat_other_frames[i][flat_intersection[i]], minlength=1) for i in range(len(self.indices))])
