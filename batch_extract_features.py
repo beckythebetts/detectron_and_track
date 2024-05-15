@@ -94,9 +94,9 @@ class CellBatch:
             unique_values, counts = [], []
             for i in range(self.batch_size):
                 unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
-                unique_values.append(unqiue.unsqueeze(0))
+                unique_values.append(unique.unsqueeze(0))
                 counts.append(count.unsqueeze(0))
-            unique_values, counts = torch.cat(unqiue_values, dim=0), torch.cat(counts, dim=0)
+            unique_values, counts = torch.cat(unique_values, dim=0), torch.cat(counts, dim=0)
             print(unique_values, counts)
 
             # Find the index of the nearest value for each batch element
