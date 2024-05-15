@@ -50,7 +50,7 @@ class CellBatch:
         self.get_nearest()
 
     def write_features(self):
-        print(self.dists, self.index_of_nearest)
+        return None
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
