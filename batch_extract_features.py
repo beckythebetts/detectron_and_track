@@ -42,15 +42,17 @@ class CellBatch:
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         self.epi_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
 
+
     def read_features(self):
         self.get_areas()
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
+        self.get_epi_centres()
         #self.get_nearest()
 
     def write_features(self):
-        return None
+        print(self.epi_centres)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -64,6 +66,7 @@ class CellBatch:
         y_centres = torch.sum(self.masks * self.coord_grid_y, dim=(1, 2)) / self.areas
 
         self.centres = torch.stack((x_centres, y_centres), dim=1)
+
 
     def get_speeds(self):
         if self.last_centres is None:
@@ -83,6 +86,17 @@ class CellBatch:
         perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2))
         self.perimeters = perimeters
 
+    def get_epi_centres(self):
+        self.epi_indices, self.epi_areas = torch.unique(self.epi_mask, return_counts=True)
+        self.expanded_epi_indices = self.epi_indices.unsqueeze(-1).unsqueeze(-1).expand((len(self.epi_indices), *SETTINGS.IMAGE_SIZE))
+        self.epi_masks = torch.where(self.epi_mask.unsqueeze(0).expand(len(self.epi_indices), *SETTINGS.IMAGE_SIZE) == self.expanded_indices, 1, 0)
+
+        x_centres = torch.sum(self.epi_masks * self.coord_grid_x, dim=(1, 2)) / self.epi_areas
+        y_centres = torch.sum(self.epi_masks * self.coord_grid_y, dim=(1, 2)) / self.epi_areas
+
+        self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
+    # def get_nearest_2(self):
+    #     # Get centre coords of all
     def get_nearest(self):
         dists = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
@@ -102,10 +116,6 @@ class CellBatch:
                             dists[i] = radius
                             indices_of_nearest[i] = unique[torch.argmax(count)]
             radius += 1
-            # sys.stdout.write(f'\rRadius {radius}')
-            # sys.stdout.flush()
-
-
 
         self.dists, self.index_of_nearest = dists, indices_of_nearest
 
