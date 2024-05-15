@@ -83,20 +83,30 @@ class CellBatch:
         self.perimeters = perimeters
 
     def get_nearest(self):
-        dists = torch.full((len(self.indices), 0), None)
-        indices_of_nearest = torch.full((len(self.indices), 0), None)
-        radius = 0
+        dists = torch.zeros(len(self.indices)).cuda()
+        indices_of_nearest = torch.full((len(self.indices),), -1).cuda()
         self.epanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
-        while any(indices_of_nearest is None):
-            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius).unsqueeze(0) for centre in self.centres], dim=0)
+        while torch.min(indices_of_nearest) == -1:
+            circle_masks = mask_funcs.torch_circle(self.centres.unsqueeze(0).expand(*SETTINGS.IMAGE_SIZE, -1), dist.unsqueeze(1))
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
-            unique_values, counts = torch.unique(self.expanded_epi_mask[intersections], return_counts=True, dim=(1, 2))
-            for i, uv, c in enumerate(zip(unique_values, counts)):
-                if len(uv) > 0:
-                    indices_of_nearest[i] = uv[torch.argmax[c]]
-                    dists[i] = radius
-                    self.expanded_epi_mask[i] = torch.zeros(SETTINGS.IMAGE_SIZE)
-                radius += 1
+
+            flat_intersection = intersection.view(batch_size, -1)
+            flat_other_frames = other_frames.view(batch_size, -1)
+
+            # Find unique values in each batch element
+            unique_values = torch.stack(
+                [torch.unique(flat_other_frames[i][flat_intersection[i]]) for i in range(batch_size)])
+
+            # Find the counts of unique values
+            counts = torch.stack(
+                [torch.bincount(flat_other_frames[i][flat_intersection[i]], minlength=1) for i in range(batch_size)])
+
+            # Find the index of the nearest value for each batch element
+            index_of_nearest[dist < self.max_dist] = torch.argmax(counts[dist < self.max_dist], dim=1)
+
+            # Update distances for masks where nearest value is not found
+            dist[index_of_nearest == -1] += 1
+
         self.dists, self.index_of_nearest = dists, indices_of_nearest
 
 
