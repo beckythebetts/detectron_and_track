@@ -51,6 +51,7 @@ class CellBatch:
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
+        del self.masks
         self.get_nearest()
 
     def write_features(self):
@@ -113,7 +114,7 @@ class CellBatch:
 
 def main():
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+    cell_batch = CellBatch(torch.tensor(np.arange(1, 201)).cuda())
     cell_batch.run_feature_extraction()
 
 if __name__ == '__main__':
