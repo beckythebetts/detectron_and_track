@@ -104,8 +104,9 @@ class CellBatch:
                         indices_of_nearest[i] = unique[torch.argmax(count)]
                         centres_copy[i] = float('nan')
             radius += 1
-            sys.stdout.write(f'\rSearch radius {radius}')
+            sys.stdout.write(f'\rSearch radius {radius} {dists} {indices_of_nearest}')
             sys.stdout.flush()
+            print()
 
 
         self.dists, self.index_of_nearest = dists, indices_of_nearest
