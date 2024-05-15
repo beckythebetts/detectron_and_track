@@ -90,7 +90,7 @@ class CellBatch:
         self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
         radius = 0
         centres_copy = self.centres.clone().detach()
-        while indices_of_nearest.any() == -1:
+        while any(indices_of_nearest == -1):
             circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in centres_copy], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
             for i in range(self.batch_size):
@@ -106,7 +106,7 @@ class CellBatch:
             radius += 1
             # sys.stdout.write(f'\rSearch radius {radius} {dists[0]} {indices_of_nearest[0]}')
             # sys.stdout.flush()
-            print()
+
 
 
         self.dists, self.index_of_nearest = dists, indices_of_nearest
