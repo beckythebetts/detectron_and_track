@@ -96,8 +96,7 @@ class CellBatch:
             # flat_other_frames = s.view(len(self.indices), -1)
 
             # Find unique values in each batch element
-            unique_values, counts = torch.stack(
-                [torch.unique(self.epi_mask[intersections[i]], return_counts=True) for i in range(self.batch_size)])
+            unique_values, counts = torch.stack([[torch.unique(self.epi_mask[intersections[i]], return_counts=True)] for i in range(self.batch_size)])
             print(unique_values, counts)
             # Find the counts of unique values
             counts = torch.stack(
