@@ -86,7 +86,7 @@ class CellBatch:
     def get_nearest(self):
         #print(self.centres)
         dists = torch.zeros(len(self.indices)).cuda()
-        indices_of_nearest = torch.full((len(self.indices),), -1).cuda()
+        indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
         radius = 0
         centres_copy = self.centres.clone().detach()
