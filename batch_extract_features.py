@@ -96,7 +96,7 @@ class CellBatch:
             for i in range(self.batch_size):
                 if centres_copy[i].isnan().any():
                     dists[i] = float('nan')
-                    indices_of_narest[i] = float('nan')
+                    indices_of_nearest[i] = float('nan')
                 else:
                     unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
                     if len(unique) > 0:
