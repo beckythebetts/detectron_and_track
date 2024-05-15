@@ -39,12 +39,15 @@ class CellBatch:
                 full_mask = None
             self.next_frame(path)
             self.read_features()
+            self.epi_mask = None
             self.write_features()
 
     def next_frame(self, path):
         full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         full_mask = None
+        self.epi_mask = torch.tensor(
+            utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
 
 
 
@@ -96,10 +99,9 @@ class CellBatch:
         del padded_masks, conv_result
 
     def get_epi_centres(self):
-        self.epi_mask = torch.tensor(
-            utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
+
         self.epi_indices, self.epi_areas = torch.unique(self.epi_mask, return_counts=True)
-        self.epi_mask = None
+
         self.expanded_epi_indices = self.epi_indices.unsqueeze(-1).unsqueeze(-1).expand((len(self.epi_indices), *SETTINGS.IMAGE_SIZE))
         self.epi_masks = torch.where(self.epi_mask.unsqueeze(0).expand(len(self.epi_indices), *SETTINGS.IMAGE_SIZE) == self.expanded_epi_indices, 1, 0)
 
