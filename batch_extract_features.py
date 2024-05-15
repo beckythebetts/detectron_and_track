@@ -101,7 +101,7 @@ class CellBatch:
         self.get_epi_centres()
         self.dists, self.indices_of_nearest = torch.tensor([]).cuda(), torch.tensor([]).cuda()
         for centre in self.centres:
-            dist, index = torch.tensor([float('nan')]).cuda(), torch.tensor([float('nan')]).cuda()
+            dist, index = torch.tensor(float('nan')).cuda(), torch.tensor(float('nan')).cuda()
             if not centre.isnan().any():
                 for i, epi_centre in enumerate(self.epi_centres):
                     dist_temp = torch.sqrt((centre[0] - epi_centre[0])**2 + (centre[1] - epi_centre[1])**2)
