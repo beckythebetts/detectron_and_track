@@ -124,6 +124,7 @@ class CellBatch:
         self.indices_of_nearest = torch.cat((self.indices_of_nearest, self.epi_indices[min_indices]), dim=0)
         del centres_expanded, self.epi_centres, distances, min_distances, min_indices
 
+@profile
 def main():
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
