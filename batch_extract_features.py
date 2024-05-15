@@ -94,7 +94,7 @@ class CellBatch:
             circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in centres_copy], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
             for i in range(self.batch_size):
-                if centres_copy[i] == 'nan':
+                if centres_copy[i].isnan():
                     dists[i] = 'nan'
                     indices_of_narest[i] = 'nan'
                 else:
@@ -104,8 +104,7 @@ class CellBatch:
                         indices_of_nearest[i] = unique[torch.argmax(count)]
                         centres_copy[i] = float('nan')
             radius += 1
-            # sys.stdout.write(f'\rSearch radius {radius} {dists[0]} {indices_of_nearest[0]}')
-            # sys.stdout.flush()
+
 
 
 
