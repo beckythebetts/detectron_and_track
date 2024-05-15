@@ -15,7 +15,7 @@ class Cell:
         with open(self.file, 'w') as f:
             f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
 
-    def write_features(self):
+    #def write_features(self):
 class CellBatch:
     def __init__(self, indices):
         self.indices = indices
