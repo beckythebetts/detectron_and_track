@@ -89,7 +89,7 @@ class CellBatch:
         radius = 0
         print(self.centres, dists)
         while torch.min(indices_of_nearest) == -1:
-            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius).unsqueeze(0) for centre in self.centres], dim=0)
+            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
             print(circle_masks.shape)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
 
