@@ -47,7 +47,7 @@ class CellBatch:
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
-        self.get_nearest()
+        #self.get_nearest()
 
     def write_features(self):
         return None
