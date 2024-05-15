@@ -15,7 +15,7 @@ class Cell:
         with open(self.file, 'w') as f:
             f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
 
-    #def write_features(self):
+    def write_features(self):
 class CellBatch:
     def __init__(self, indices):
         self.indices = indices
@@ -38,7 +38,6 @@ class CellBatch:
             self.write_features()
 
     def next_frame(self, path):
-        #self.last_masks = self.masks
         full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         self.epi_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
@@ -50,10 +49,10 @@ class CellBatch:
         self.get_speeds()
         self.get_perimeters()
         self.get_nearest_2()
-        #self.get_nearest()
 
     def write_features(self):
-        return None
+        #for i, cell in enumerate(self.cells):
+        print(self.indices, self.indices_of_nearest)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -97,14 +96,14 @@ class CellBatch:
 
         self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
 
-    def get_nearest_2(self):
+    def get_nearest(self):
         self.get_epi_centres()
         self.dists, self.indices_of_nearest = torch.tensor([]).cuda(), torch.tensor([]).cuda()
-        centres_expanded = self.centres.unsqueeze(1)  # Add a new dimension to allow broadcasting
+        centres_expanded = self.centres.unsqueeze(1)
         distances = torch.sqrt(torch.sum((centres_expanded - self.epi_centres) ** 2, dim=2))
         min_distances, min_indices = torch.min(distances, dim=1)
         self.dists = torch.cat((self.dists, min_distances.unsqueeze(1)), dim=0)
-        self.indices_of_nearest = torch.cat((self.indices_of_nearest, min_indices.unsqueeze(1)), dim=0)
+        self.indices_of_nearest = torch.cat((self.indices_of_nearest, self.epi_indices[min_indices]), dim=0)
 
 def main():
     cell_batch = CellBatch(torch.tensor(np.arange(1, 51)).cuda())
