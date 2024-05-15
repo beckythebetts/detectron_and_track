@@ -50,7 +50,7 @@ class CellBatch:
         self.get_nearest()
 
     def write_features(self):
-        print(self.perimeters, self.dists, self.index_of_nearest)
+        print(self.dists, self.index_of_nearest)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -84,7 +84,7 @@ class CellBatch:
         self.perimeters = perimeters
 
     def get_nearest(self):
-        #print(self.centres)
+        print(self.centres)
         dists = torch.zeros(len(self.indices)).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
