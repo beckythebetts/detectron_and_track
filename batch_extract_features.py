@@ -98,7 +98,7 @@ class CellBatch:
                     indices_of_narest[i] = 'nan'
                 else:
                     unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
-                    if len(unqiue) > 0:
+                    if len(unique) > 0:
                         dists[i] = radius
                         indices_of_nearest[i] = unique[torch.argmax[unique]]
                         centres_copy[i] = 'nan'
