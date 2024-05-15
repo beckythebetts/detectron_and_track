@@ -108,8 +108,8 @@ class CellBatch:
                     if dist_temp < dist or math.isnan(dist):
                         dist = dist_temp
                         index = self.epi_indices[i]
-            self.dists = self.dists.append(dist)
-            self.indices_of_nearest = self.indices_of_nearest.append(index)
+            self.dists.append(dist)
+            self.indices_of_nearest.append(index)
     def get_nearest(self):
         dists = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
