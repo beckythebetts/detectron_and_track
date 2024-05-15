@@ -84,7 +84,7 @@ class CellBatch:
         self.perimeters = perimeters
 
     def get_nearest(self):
-        print(self.centres)
+        #print(self.centres)
         dists = torch.zeros(len(self.indices)).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1).cuda()
         self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
@@ -102,7 +102,7 @@ class CellBatch:
                     if len(unique) > 0:
                         dists[i] = radius
                         indices_of_nearest[i] = unique[torch.argmax(count)]
-                        centres_copy[i] = 'nan'
+                        centres_copy[i] = float('nan')
             radius += 1
 
 
@@ -111,7 +111,7 @@ class CellBatch:
 
 
 def main():
-    cell_batch = CellBatch(torch.tensor(np.arange(100, 151)).cuda())
+    cell_batch = CellBatch(torch.tensor(np.arange(1, 51)).cuda())
     cell_batch.run_feature_extraction()
 
 if __name__ == '__main__':
