@@ -103,7 +103,7 @@ class CellBatch:
             dist, index = float('nan'), float('nan')
             if not centre.isnan().any():
                 for i, epi_centre in enumerate(self.epi_centres):
-                    dist_temp = torch.sqrt(torch.sum((centre[0] - epi_centre[0])**2, (centre[1] - epi_centre[1])**2))
+                    dist_temp = torch.sqrt((centre[0] - epi_centre[0])**2 + (centre[1] - epi_centre[1])**2)
                     if dist_temp < dist or dist.isnan():
                         dist = dist_temp
                         index = self.epi_indices[i]
