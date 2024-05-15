@@ -114,7 +114,7 @@ class CellBatch:
 
 def main():
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    cell_batch = CellBatch(torch.tensor(np.arange(1, 21)).cuda())
+    cell_batch = CellBatch(torch.tensor(np.arange(1, 6)).cuda())
     cell_batch.run_feature_extraction()
 
 if __name__ == '__main__':
