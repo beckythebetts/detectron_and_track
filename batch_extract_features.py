@@ -30,7 +30,7 @@ class CellBatch:
         self.num_frames = len(self.paths)
 
     def run_feature_extraction(self):
-        for i, path in enumerate(paths):
+        for i, path in enumerate(self.paths):
             sys.stdout.write(f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)}')
             sys.stdout.flush()
             if i == 0:
