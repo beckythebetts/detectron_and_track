@@ -88,22 +88,21 @@ class CellBatch:
         indices_of_nearest = torch.full((len(self.indices),), -1).cuda()
         self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
         radius = 0
-        while torch.min(indices_of_nearest) == -1:
-            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
+        centres_copy = self.centres.clone().detach()
+        while any(centres_copy != 'nan'):
+            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in centres_copy], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
-            unique_values, counts = [], []
             for i in range(self.batch_size):
+                if centres_copy[i] == 'nan':
+                    dists[i] = 'nan'
+                    indices_of_narest[i] = 'nan'
                 unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
-                unique_values.append(unique.unsqueeze(0))
-                counts.append(count.unsqueeze(0))
-            unique_values, counts = torch.cat(unique_values, dim=0), torch.cat(counts, dim=0)
-            print(unique_values, counts)
+                if len(unqiue) > 0:
+                    dists[i] = radius
+                    indices_of_nearest[i] = unique[torch.argmax[unique]]
+                    centres_copy[i] = 'nan'
 
-            # Find the index of the nearest value for each batch element
-            indices_of_nearest[dists < self.max_dist] = torch.argmax(counts[dists < self.max_dist], dim=1)
 
-            # Update distances for masks where nearest value is not found
-            dists[indices_of_nearest == -1] += 1
 
         self.dists, self.index_of_nearest = dists, indices_of_nearest
 
