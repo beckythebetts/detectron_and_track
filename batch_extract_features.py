@@ -99,7 +99,7 @@ class CellBatch:
 
     def get_nearest_2(self):
         self.get_epi_centres()
-        self.dists, self.indices_of_nearest = torch.tensor([]).cuda(),torch.tensor([]).cuda()
+        self.dists, self.indices_of_nearest = [], []
         for centre in self.centres:
             dist, index = float('nan'), float('nan')
             if not centre.isnan().any():
@@ -108,8 +108,8 @@ class CellBatch:
                     if dist_temp < dist or math.isnan(dist):
                         dist = dist_temp
                         index = self.epi_indices[i]
-            self.dists = torch.cat((self.dists, dist))
-            self.indices_of_nearest = torch.cat((self.indices_of_nearest, index))
+            self.dists = self.dists.append(dist)
+            self.indices_of_nearest = self.indices_of_nearest.append(index)
     def get_nearest(self):
         dists = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
