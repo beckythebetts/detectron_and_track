@@ -102,8 +102,8 @@ class CellBatch:
                             dists[i] = radius
                             indices_of_nearest[i] = unique[torch.argmax(count)]
             radius += 1
-            sys.stdout.write(f'\rRadius {radius}')
-            sys.stdout.flush()
+            # sys.stdout.write(f'\rRadius {radius}')
+            # sys.stdout.flush()
 
 
 
