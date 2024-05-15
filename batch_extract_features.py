@@ -110,6 +110,7 @@ class CellBatch:
         self.indices_of_nearest = torch.cat((self.indices_of_nearest, self.epi_indices[min_indices]), dim=0)
 
 def main():
+    utils.remake_dir(SETTINGS.DIRECTORY / 'features')
     cell_batch = CellBatch(torch.tensor(np.arange(1, 51)).cuda())
     cell_batch.run_feature_extraction()
 
