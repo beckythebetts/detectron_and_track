@@ -97,7 +97,7 @@ class CellBatch:
 
         self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
 
-    def get_nearest_2(self):
+    def get_nearest_2NO(self):
         self.get_epi_centres()
         self.dists, self.indices_of_nearest = torch.tensor([]).cuda(), torch.tensor([]).cuda()
         for centre in self.centres:
@@ -110,6 +110,22 @@ class CellBatch:
                         index = self.epi_indices[i]
             self.dists = torch.cat((self.dists, dist.unsqueeze(0)), dim=0)
             self.indices_of_nearest = torch.cat((self.indices_of_nearest, index.unsqueeze(0)), dim=0)
+
+    def get_nearest_2(self):
+        self.get_epi_centres()
+        self.dists, self.indices_of_nearest = torch.tensor([]).cuda(), torch.tensor([]).cuda()
+
+        centres_expanded = self.centres.unsqueeze(1)  # Add a new dimension to allow broadcasting
+
+        # Compute distances using broadcasting
+        distances = torch.sqrt(torch.sum((centres_expanded - self.epi_centres) ** 2, dim=2))
+
+        # Find the minimum distance and corresponding index for each centre
+        min_distances, min_indices = torch.min(distances, dim=1)
+
+        # Update self.dists and self.indices_of_nearest
+        self.dists = torch.cat((self.dists, min_distances.unsqueeze(1)), dim=0)
+        self.indices_of_nearest = torch.cat((self.indices_of_nearest, min_indices.unsqueeze(1)), dim=0)
     def get_nearest(self):
         dists = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
