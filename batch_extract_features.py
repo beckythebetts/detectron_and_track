@@ -102,7 +102,7 @@ class CellBatch:
                     if len(unique) > 0:
                         dists[i] = radius
                         indices_of_nearest[i] = unique[torch.argmax(count)]
-                        centres_copy[i] = [float('nan'), float('nan')]
+                        centres_copy[i] = torch.tensor([float('nan'), float('nan')])
             radius += 1
 
 
