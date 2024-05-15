@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import sys
+import math
 
 import utils
 import mask_funcs
@@ -95,7 +96,6 @@ class CellBatch:
         y_centres = torch.sum(self.epi_masks * self.coord_grid_y, dim=(1, 2)) / self.epi_areas
 
         self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
-        print(self.epi_centres)
 
     def get_nearest_2(self):
         self.get_epi_centres()
@@ -105,7 +105,7 @@ class CellBatch:
             if not centre.isnan().any():
                 for i, epi_centre in enumerate(self.epi_centres):
                     dist_temp = torch.sqrt((centre[0] - epi_centre[0])**2 + (centre[1] - epi_centre[1])**2)
-                    if dist_temp < dist or dist.isnan():
+                    if dist_temp < dist or math.isnan(dist):
                         dist = dist_temp
                         index = self.epi_indices[i]
             dists = torch.append(dists, dist)
