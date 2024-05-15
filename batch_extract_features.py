@@ -85,24 +85,23 @@ class CellBatch:
 
     def get_nearest(self):
         print(self.centres)
-        dists = torch.zeros(len(self.indices)).cuda()
+        dists = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
         self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
         radius = 0
-        centres_copy = self.centres.clone().detach()
         while any(indices_of_nearest == -1):
-            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in centres_copy], dim=0)
+            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
             for i in range(self.batch_size):
-                if centres_copy[i].isnan().any():
-                    dists[i] = float('nan')
-                    indices_of_nearest[i] = float('nan')
-                else:
-                    unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
-                    if len(unique) > 0:
-                        dists[i] = radius
-                        indices_of_nearest[i] = unique[torch.argmax(count)]
-                        centres_copy[i] = torch.tensor([float('nan'), float('nan')])
+                if dists[i] != -1:
+                    if centres_copy[i].isnan().any():
+                        dists[i] = float('nan')
+                        indices_of_nearest[i] = float('nan')
+                    else:
+                        unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
+                        if len(unique) > 0:
+                            dists[i] = radius
+                            indices_of_nearest[i] = unique[torch.argmax(count)]
             radius += 1
 
 
