@@ -36,6 +36,7 @@ class CellBatch:
             if i == 0:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
+                full_mask = None
             self.next_frame(path)
             self.read_features()
             self.write_features()
@@ -43,6 +44,7 @@ class CellBatch:
     def next_frame(self, path):
         full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
+        full_mask = None
         self.epi_mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
 
 
@@ -114,7 +116,7 @@ class CellBatch:
 
 def main():
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    cell_batch = CellBatch(torch.tensor(np.arange(1, 6)).cuda())
+    cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
     cell_batch.run_feature_extraction()
 
 if __name__ == '__main__':
