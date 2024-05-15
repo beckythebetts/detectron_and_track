@@ -110,6 +110,7 @@ class CellBatch:
                         index = self.epi_indices[i]
             self.dists.append(dist)
             self.indices_of_nearest.append(index)
+        print(self.dists.type())
         self.dists = torch.cat(self.dists)
         self.indices_of_nearest = torch.cat(self.indices_of_nearest)
     def get_nearest(self):
