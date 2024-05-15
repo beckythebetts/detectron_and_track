@@ -53,7 +53,7 @@ class CellBatch:
         #self.get_nearest()
 
     def write_features(self):
-        print(self.dists, self.indices_of_nearest)
+        return None
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -97,57 +97,14 @@ class CellBatch:
 
         self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
 
-    def get_nearest_2NO(self):
-        self.get_epi_centres()
-        self.dists, self.indices_of_nearest = torch.tensor([]).cuda(), torch.tensor([]).cuda()
-        for centre in self.centres:
-            dist, index = torch.tensor(float('nan')).cuda(), torch.tensor(float('nan')).cuda()
-            if not centre.isnan().any():
-                for i, epi_centre in enumerate(self.epi_centres):
-                    dist_temp = torch.sqrt((centre[0] - epi_centre[0])**2 + (centre[1] - epi_centre[1])**2)
-                    if dist_temp < dist or math.isnan(dist):
-                        dist = dist_temp
-                        index = self.epi_indices[i]
-            self.dists = torch.cat((self.dists, dist.unsqueeze(0)), dim=0)
-            self.indices_of_nearest = torch.cat((self.indices_of_nearest, index.unsqueeze(0)), dim=0)
-
     def get_nearest_2(self):
         self.get_epi_centres()
         self.dists, self.indices_of_nearest = torch.tensor([]).cuda(), torch.tensor([]).cuda()
-
         centres_expanded = self.centres.unsqueeze(1)  # Add a new dimension to allow broadcasting
-
-        # Compute distances using broadcasting
         distances = torch.sqrt(torch.sum((centres_expanded - self.epi_centres) ** 2, dim=2))
-
-        # Find the minimum distance and corresponding index for each centre
         min_distances, min_indices = torch.min(distances, dim=1)
-
-        # Update self.dists and self.indices_of_nearest
         self.dists = torch.cat((self.dists, min_distances.unsqueeze(1)), dim=0)
         self.indices_of_nearest = torch.cat((self.indices_of_nearest, min_indices.unsqueeze(1)), dim=0)
-    def get_nearest(self):
-        dists = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
-        indices_of_nearest = torch.full((len(self.indices),), -1, dtype=torch.float64).cuda()
-        self.expanded_epi_mask = self.epi_mask.unsqueeze(0).expand(len(self.indices), *SETTINGS.IMAGE_SIZE)
-        radius = 0
-        while any(indices_of_nearest == -1):
-            circle_masks = torch.stack([mask_funcs.torch_circle(centre, radius) for centre in self.centres], dim=0)
-            intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
-            for i in range(self.batch_size):
-                if dists[i] == -1:
-                    if self.centres[i].isnan().any():
-                        dists[i] = float('nan')
-                        indices_of_nearest[i] = float('nan')
-                    else:
-                        unique, count = torch.unique(self.epi_mask[intersections[i]], return_counts=True)
-                        if len(unique) > 0:
-                            dists[i] = radius
-                            indices_of_nearest[i] = unique[torch.argmax(count)]
-            radius += 1
-
-        self.dists, self.index_of_nearest = dists, indices_of_nearest
-
 
 def main():
     cell_batch = CellBatch(torch.tensor(np.arange(1, 51)).cuda())
