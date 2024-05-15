@@ -55,7 +55,7 @@ class CellBatch:
 
     def write_features(self):
         for i, cell in enumerate(self.cells):
-            print([type(a) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
+            print([type(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
             new_line = '\n' + '\t'.join([self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i]])
             cell.write_features(new_line)
 
