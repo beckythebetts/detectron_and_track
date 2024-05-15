@@ -61,6 +61,7 @@ class CellBatch:
             #print([type(str(a.item())) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
             new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
             cell.write_features(new_line)
+        del self.areas, self.speeds, self.perimeters, self.dists, self.indices_of_nearest
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
@@ -91,8 +92,8 @@ class CellBatch:
         padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
         conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0).float(),
                                                  padding=0).squeeze()
-        perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2))
-        self.perimeters = perimeters
+        self.perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2))
+        del padded_masks, conv_result
 
     def get_epi_centres(self):
         self.epi_indices, self.epi_areas = torch.unique(self.epi_mask, return_counts=True)
@@ -104,6 +105,8 @@ class CellBatch:
 
         self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
         del self.epi_masks
+        del self.expanded_epi_indices
+        del x_centres, y_centres
 
     def get_nearest(self):
         self.get_epi_centres()
@@ -113,6 +116,7 @@ class CellBatch:
         min_distances, min_indices = torch.min(distances, dim=1)
         self.dists = torch.cat((self.dists, min_distances.unsqueeze(1)), dim=0)
         self.indices_of_nearest = torch.cat((self.indices_of_nearest, self.epi_indices[min_indices]), dim=0)
+        del centres_expanded, self.epi_centres, distances, min_distances, min_indices
 
 def main():
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
