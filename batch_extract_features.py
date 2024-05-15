@@ -13,9 +13,11 @@ class Cell:
         self.index = index
         self.file = self.file = SETTINGS.DIRECTORY / 'features' / ("{0:04}".format(self.index) + '.txt')
         with open(self.file, 'w') as f:
-            f.write('dist_moved\tarea\tcircularity\toverlap\tdist_nearest\tindex_nearest')
+            f.write('area\tspeed\tperimeter\tdist_nearest\tindex_nearest')
 
-    #def write_features(self):
+    def write_features(self, line):
+        with open(self.file, 'a') as f:
+            f.write(line)
 class CellBatch:
     def __init__(self, indices):
         self.indices = indices
@@ -24,10 +26,11 @@ class CellBatch:
         self.centres = None
         self.last_centres = None
         self.batch_size = len(self.indices)
-
+        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
+        self.num_frames = len(self.paths)
 
     def run_feature_extraction(self):
-        for i, path in enumerate(sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])):
+        for i, path in enumerate(paths):
             sys.stdout.write(f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)}')
             sys.stdout.flush()
             if i == 0:
@@ -51,8 +54,9 @@ class CellBatch:
         self.get_nearest()
 
     def write_features(self):
-        #for i, cell in enumerate(self.cells):
-        print(self.indices, self.indices_of_nearest)
+        for i, cell in enumerate(self.cells):
+            new_line = '\n' + '\t'.join([self.areas, self.speeds, self.perimeters, self.dists, self.indices_of_nearest])
+            cell.write_features(new_line)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
