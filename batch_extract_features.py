@@ -75,7 +75,7 @@ class CellBatch:
 
     def get_speeds(self):
         if self.last_centres is None:
-            self.speeds = 'nan'
+            self.speeds = torch.full(self.batch_size, float('nan'))
 
         else:
             self.speeds = torch.sqrt((self.centres[:, 0] - self.last_centres[:, 0])**2 + (self.centres[:, 1] - self.last_centres[:, 1])**2)
