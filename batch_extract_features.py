@@ -90,22 +90,22 @@ class CellBatch:
             circle_masks = mask_funcs.torch_circle(self.centres.unsqueeze(0).expand(*SETTINGS.IMAGE_SIZE, -1), dist.unsqueeze(1))
             intersections = torch.logical_and(circle_masks, self.expanded_epi_mask>0)
 
-            flat_intersection = intersection.view(batch_size, -1)
-            flat_other_frames = other_frames.view(batch_size, -1)
+            flat_intersection = intersection.view(len(self.indices), -1)
+            flat_other_frames = other_frames.view(len(self.indices), -1)
 
             # Find unique values in each batch element
             unique_values = torch.stack(
-                [torch.unique(flat_other_frames[i][flat_intersection[i]]) for i in range(batch_size)])
+                [torch.unique(flat_other_frames[i][flat_intersection[i]]) for i in range(len(self.indices))])
 
             # Find the counts of unique values
             counts = torch.stack(
-                [torch.bincount(flat_other_frames[i][flat_intersection[i]], minlength=1) for i in range(batch_size)])
+                [torch.bincount(flat_other_frames[i][flat_intersection[i]], minlength=1) for i in range(len(self.indices))])
 
             # Find the index of the nearest value for each batch element
-            index_of_nearest[dist < self.max_dist] = torch.argmax(counts[dist < self.max_dist], dim=1)
+            indices_of_nearest[dists < self.max_dist] = torch.argmax(counts[dists < self.max_dist], dim=1)
 
             # Update distances for masks where nearest value is not found
-            dist[index_of_nearest == -1] += 1
+            dists[index_of_nearest == -1] += 1
 
         self.dists, self.index_of_nearest = dists, indices_of_nearest
 
