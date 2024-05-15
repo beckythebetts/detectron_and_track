@@ -111,7 +111,7 @@ class CellBatch:
 
 
 def main():
-    cell_batch = CellBatch(torch.tensor(np.arange(1, 51)).cuda())
+    cell_batch = CellBatch(torch.tensor(np.arange(100, 151)).cuda())
     cell_batch.run_feature_extraction()
 
 if __name__ == '__main__':
