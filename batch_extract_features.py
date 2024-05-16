@@ -125,6 +125,7 @@ class CellBatch:
         del centres_expanded, self.epi_centres, distances, min_distances, min_indices
 
 def main():
+    torch.cuda.empty_cache()
     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
     cell_batch = CellBatch(torch.tensor(np.arange(1, 11)).cuda())
     cell_batch.run_feature_extraction()
