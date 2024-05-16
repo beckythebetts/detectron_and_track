@@ -126,9 +126,10 @@ class CellBatch:
 
 def main():
     torch.cuda.empty_cache()
-    utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    cell_batch = CellBatch(torch.tensor(np.arange(1, 11)).cuda())
-    cell_batch.run_feature_extraction()
+    with torch.no_grad():
+        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+        cell_batch.run_feature_extraction()
 
 if __name__ == '__main__':
     main()
