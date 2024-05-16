@@ -41,6 +41,7 @@ class CellBatch:
             self.read_features()
             self.epi_mask = None
             self.write_features()
+            torch.cuda.empty_cache()
 
     def next_frame(self, path):
         full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
