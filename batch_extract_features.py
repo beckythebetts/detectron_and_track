@@ -159,7 +159,7 @@ class CellBatch:
 #         axs[-1].set(xlabel='frames')
 #         plt.legend(title='Index of yeast', ncol=2)
 #         plt.tight_layout()
-        plt.savefig(dir / str('Amoeba_'+index+'.png'))
+#         plt.savefig(dir / str('Amoeba_'+index+'.png'))
 
 
 def main():
