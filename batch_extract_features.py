@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import math
 import pandas as pd
+import gc
 
 import utils
 import mask_funcs
@@ -53,6 +54,7 @@ class CellBatch:
             self.write_features()
 
             torch.cuda.empty_cache()
+            gc.collect()
 
 
     def next_frame(self, path):
@@ -164,6 +166,7 @@ class CellBatch:
 
 def main():
     torch.cuda.empty_cache()
+    gc.enable()
     with torch.no_grad():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
         cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
