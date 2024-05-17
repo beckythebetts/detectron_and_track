@@ -15,11 +15,11 @@ import SETTINGS
 #     print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
 #           f"Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
 
-def print_gpu_memory(memory_usage):
+def print_gpu_memory():
     result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'], stdout=subprocess.PIPE)
     memory_used = result.stdout.decode('utf-8').strip()
     sys.stdout.write(
-        f'\ GPU memory used: {memory_used}')
+        f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | GPU memory used: {memory_used}')
     sys.stdout.flush()
     with open(memory_usage, 'a') as f:
         f.write(memory_used)
@@ -46,6 +46,17 @@ class CellBatch:
         self.num_frames = len(self.paths)
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
+        self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
+
+    def print_gpu_memory():
+        result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
+                                stdout=subprocess.PIPE)
+        memory_used = result.stdout.decode('utf-8').strip()
+        sys.stdout.write(
+            f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | GPU memory used: {memory_used}')
+        sys.stdout.flush()
+        with open(self.memory_usage, 'a') as f:
+            f.write(memory_used)
 
     def run_feature_extraction(self):
         for i, path in enumerate(self.paths):
@@ -55,15 +66,15 @@ class CellBatch:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
                 full_mask = None
-            print_gpu_memory(memory_usage)
+            self.print_gpu_memory()
             self.next_frame(path)
-            print_gpu_memory(memory_usage)
+            self.print_gpu_memory()
             self.read_features()
-            print_gpu_memory(memory_usage)
+            self.print_gpu_memory()
             self.epi_mask = None
-            print_gpu_memory(memory_usage)
+            self.print_gpu_memory()
             self.write_features()
-            print_gpu_memory(memory_usage)
+            self.print_gpu_memory()
             torch.cuda.empty_cache()
             gc.collect()
 
@@ -180,7 +191,6 @@ def plot_features():
 
 
 def main():
-    memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
     torch.cuda.empty_cache()
     gc.enable()
     with torch.no_grad():
