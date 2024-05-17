@@ -56,7 +56,7 @@ class CellBatch:
         #     f'\rGPU memory used: {memory_used}\n')
         # sys.stdout.flush()
         with open(self.memory_usage, 'a') as f:
-            f.write(f'{memory_used}\n')
+            f.write(f'{sys.getsizeof(self.masks)}\n')
 
     def run_feature_extraction(self):
         for i, path in enumerate(self.paths):
@@ -74,6 +74,7 @@ class CellBatch:
             self.epi_mask = None
             self.print_gpu_memory()
             self.write_features()
+            self.masks = None
             self.print_gpu_memory()
             torch.cuda.empty_cache()
             gc.collect()
