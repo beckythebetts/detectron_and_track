@@ -134,7 +134,7 @@ class CellBatch:
 
     def get_eaten(self):
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
-        unique = torch.unique(self.masks[intersection], dim=(1, 2))
+        unique = torch.unique(self.masks[intersection], dim=0)
         print(unique)
 
 
