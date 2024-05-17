@@ -53,7 +53,7 @@ class CellBatch:
                                 stdout=subprocess.PIPE)
         memory_used = result.stdout.decode('utf-8').strip()
         sys.stdout.write(
-            f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | GPU memory used: {memory_used}')
+            f'\rGPU memory used: {memory_used}')
         sys.stdout.flush()
         with open(self.memory_usage, 'a') as f:
             f.write(memory_used)
