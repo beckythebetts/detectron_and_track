@@ -47,14 +47,14 @@ class CellBatch:
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
         self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
-        self.masks = None
-        self.epi_mask = None
-        self.epi_masks = None
-        self.areas = None
-        self.speeds = None
-        self.dists = None
-        self.perimeters = None
-        self.indices_of_nearest = None
+        # self.masks = None
+        # self.epi_mask = None
+        # self.epi_masks = None
+        # self.areas = None
+        # self.speeds = None
+        # self.dists = None
+        # self.perimeters = None
+        # self.indices_of_nearest = None
 
     def print_gpu_memory(self):
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
@@ -64,7 +64,7 @@ class CellBatch:
         #     f'\rGPU memory used: {memory_used}\n')
         # sys.stdout.flush()
         with open(self.memory_usage, 'a') as f:
-            f.write(f'{sys.getsizeof(self.epi_mask), sys.getsizeof(self.epi_masks), sys.getsizeof(self.areas), sys.getsizeof(self.speeds), sys.getsizeof(self.perimeters), sys.getsizeof(self.dists), sys.getsizeof(self.indices_of_nearest)}\n')
+            f.write(f'{memoryUsed}')
 
     def run_feature_extraction(self):
         for i, path in enumerate(self.paths):
@@ -199,6 +199,7 @@ def plot_features():
 
 
 def main():
+    torch.cuda.set_per_process_memory_fraction(0.8)
     torch.cuda.empty_cache()
     gc.enable()
     with torch.no_grad():
