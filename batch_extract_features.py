@@ -15,14 +15,14 @@ import SETTINGS
 #     print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
 #           f"Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
 
-def print_gpu_memory():
-    result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'], stdout=subprocess.PIPE)
-    memory_used = result.stdout.decode('utf-8').strip()
-    sys.stdout.write(
-        f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | GPU memory used: {memory_used}')
-    sys.stdout.flush()
-    with open(memory_usage, 'a') as f:
-        f.write(memory_used)
+# def print_gpu_memory():
+#     result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'], stdout=subprocess.PIPE)
+#     memory_used = result.stdout.decode('utf-8').strip()
+#     sys.stdout.write(
+#         f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | GPU memory used: {memory_used}')
+#     sys.stdout.flush()
+#     with open(memory_usage, 'a') as f:
+#         f.write(memory_used)
 
 class Cell:
     def __init__(self, index):
@@ -48,7 +48,7 @@ class CellBatch:
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
         self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
 
-    def print_gpu_memory():
+    def print_gpu_memory(self):
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
                                 stdout=subprocess.PIPE)
         memory_used = result.stdout.decode('utf-8').strip()
