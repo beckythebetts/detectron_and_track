@@ -10,9 +10,18 @@ import utils
 import mask_funcs
 import SETTINGS
 
-def print_gpu_memory_usage(stage):
-    print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
-          f"Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
+# def print_gpu_memory_usage(stage):
+#     print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
+#           f"Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
+
+def print_gpu_memory():
+    result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'], stdout=subprocess.PIPE)
+    memory_used = result.stdout.decode('utf-8').strip()
+    sys.stdout.write(
+        f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | GPU memory used: {memory_used}')
+    sys.stdout.flush()
+    with open(memory_usage, 'a') as f:
+        f.write(memory_used)
 
 class Cell:
     def __init__(self, index):
@@ -45,25 +54,15 @@ class CellBatch:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
                 full_mask = None
-            sys.stdout.write(
-                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
-            sys.stdout.flush()
+            print_gpu_memory()
             self.next_frame(path)
-            sys.stdout.write(
-                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
-            sys.stdout.flush()
+            print_gpu_memory()
             self.read_features()
-            sys.stdout.write(
-                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
-            sys.stdout.flush()
+            print_gpu_memory()
             self.epi_mask = None
-            sys.stdout.write(
-                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
-            sys.stdout.flush()
+            print_gpu_memory()
             self.write_features()
-            sys.stdout.write(
-                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
-            sys.stdout.flush()
+            print_gpu_memory()
             torch.cuda.empty_cache()
             gc.collect()
 
@@ -180,6 +179,7 @@ def plot_features():
 
 
 def main():
+    memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
     torch.cuda.empty_cache()
     gc.enable()
     with torch.no_grad():
