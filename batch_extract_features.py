@@ -12,15 +12,6 @@ import utils
 import mask_funcs
 import SETTINGS
 
-def memory_usage(tensor):
-    torch.cuda.reset_peak_memory_stats()  # Reset peak memory stats
-    torch.cuda.empty_cache()  # Empty cache to get accurate memory usage
-    before = torch.cuda.memory_allocated()
-    _ = tensor.cuda()  # Move tensor to GPU
-    after = torch.cuda.memory_allocated()
-    memory_used = after - before
-    return memory_used
-
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 # def print_gpu_memory_usage(stage):
 #     print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
@@ -40,7 +31,7 @@ class Cell:
         self.index = index
         self.file = self.file = SETTINGS.DIRECTORY / 'features' / ("{0:04}".format(self.index) + '.txt')
         with open(self.file, 'w') as f:
-            f.write('area\tspeed\tperimeter\tdist_nearest\tindex_nearest')
+            f.write('area\tspeed\tperimeter\tdist_nearest')
 
     def write_features(self, line):
         with open(self.file, 'a') as f:
@@ -53,7 +44,7 @@ class CellBatch:
         self.centres = None
         self.last_centres = None
         self.batch_size = len(self.indices)
-        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
+        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])[:5]
         self.num_frames = len(self.paths)
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
@@ -196,7 +187,7 @@ class CellBatch:
         print('AMOEBS - ', self.centres.unsqueeze(0).shape)
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(0) - non_zero_pixels.unsqueeze(1))**2, dim=2))
         print(distances, distances.shape)
-        self.dists, i = torch.min(distances, dim=1)
+        self.dists, i = torch.min(distances, dim=0)
         print('DISTS - ', self.dists)
 
 def plot_features():
@@ -210,12 +201,12 @@ def plot_features():
             axs[i].set(ylabel=data.columns.values.tolist()[i])
             axs[i].grid()
 
-        yeast_indexes = np.unique(data.iloc[:, 4])
-        for yeast in yeast_indexes[np.isnan(yeast_indexes) == False]:
-            #print(yeast)
-            axs[3].plot(data.query('index_nearest == @yeast').loc[:, 'dist_nearest'], label=str(yeast), linestyle='', marker='.')
-            axs[3].set(ylabel='nearest yeast')
-        axs[3].grid()
+        # yeast_indexes = np.unique(data.iloc[:, 4])
+        # for yeast in yeast_indexes[np.isnan(yeast_indexes) == False]:
+        #     #print(yeast)
+        #     axs[3].plot(data.query('index_nearest == @yeast').loc[:, 'dist_nearest'], label=str(yeast), linestyle='', marker='.')
+        #     axs[3].set(ylabel='nearest yeast')
+        # axs[3].grid()
 
         fig.suptitle('Amoeba '+ features_path.stem)
         axs[-1].set(xlabel='frames')
