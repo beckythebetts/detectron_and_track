@@ -192,7 +192,7 @@ class CellBatch:
 
     def get_nearest_2(self):
         non_zero_pixels = torch.nonzero(self.epi_mask).unsqueeze(1)
-        distances = torch.sqrt(torch.sum((centres.unsqueeze - non_zero_pixels)**2, dim=2))
+        distances = torch.sqrt(torch.sum((self.centres - non_zero_pixels)**2, dim=2))
         self.dists, i = torch.min(distances, dim=1)
 
 def plot_features():
