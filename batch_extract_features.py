@@ -52,9 +52,9 @@ class CellBatch:
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         memory_used = result.stdout.decode('utf-8').strip().split('\n')[0]
-        sys.stdout.write(
-            f'\rGPU memory used: {memory_used}\n')
-        sys.stdout.flush()
+        # sys.stdout.write(
+        #     f'\rGPU memory used: {memory_used}\n')
+        # sys.stdout.flush()
         with open(self.memory_usage, 'a') as f:
             f.write(f'{memory_used}\n')
 
