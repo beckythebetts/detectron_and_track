@@ -24,6 +24,7 @@ class Cell:
     def write_features(self, line):
         with open(self.file, 'a') as f:
             f.write(line)
+
 class CellBatch:
     def __init__(self, indices):
         self.indices = indices
@@ -32,7 +33,7 @@ class CellBatch:
         self.centres = None
         self.last_centres = None
         self.batch_size = len(self.indices)
-        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
+        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])[:20]
         self.num_frames = len(self.paths)
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
@@ -90,7 +91,7 @@ class CellBatch:
 
     def write_features(self):
         for i, cell in enumerate(self.cells):
-            new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i])])
+            new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.eaten[i])])
             cell.write_features(new_line)
 
     def get_areas(self):
@@ -134,7 +135,7 @@ class CellBatch:
 
     def get_eaten(self):
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
-        print(intersection.any(dim=(1, 2)))
+        self.eaten = intersection.any(dim=(1, 2)).int()
 
 
 def plot_features():
@@ -160,7 +161,7 @@ def main():
     gc.enable()
     with torch.no_grad():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 6)).cuda())
         cell_batch.run_feature_extraction()
     if SETTINGS.PLOT_FEATURES:
         plot_features()
