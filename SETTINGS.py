@@ -15,6 +15,9 @@ TRACK = True
 VIEW_TRACKS = True # Save labelled tracked images
 NUM_FRAMES_TO_VIEW = None # Set as None to view all (slow)
 
+# ******* FEATURE EXTRACTION *******
+PLOT_FEATURES = True
+
 # ******* DIRECTORY STRUCTURE ********
 # - 'training_dataset'
 #       - 'train'

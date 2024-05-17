@@ -21,5 +21,11 @@ def split_channels(input_path, folder_even, folder_odd):
             shutil.copy(str(image), str(folder_even / str('t'+str(int(i/2))+'.tif')))
         odd = not odd
 
+# Merge COCOC:
+# pip install COCO_merger
+# python -m COCO_merger.merge --src Json1.json Json2.json --out OUTPUT_JSON.json
+
+
 if __name__ == '__main__':
-    split_channels(input_path, folder_even, folder_odd)
+    #split_channels(input_path, folder_even, folder_odd)
+    split_coco()

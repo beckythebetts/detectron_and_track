@@ -4,6 +4,7 @@ import sys
 import math
 import pandas as pd
 import gc
+import matplotlib.pyplot as plt
 
 import utils
 import mask_funcs
@@ -44,15 +45,25 @@ class CellBatch:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
                 full_mask = None
-
+            sys.stdout.write(
+                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
+            sys.stdout.flush()
             self.next_frame(path)
-
+            sys.stdout.write(
+                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
+            sys.stdout.flush()
             self.read_features()
-
+            sys.stdout.write(
+                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
+            sys.stdout.flush()
             self.epi_mask = None
-
+            sys.stdout.write(
+                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
+            sys.stdout.flush()
             self.write_features()
-
+            sys.stdout.write(
+                f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024 ** 2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024 ** 2:.2f} MB')
+            sys.stdout.flush()
             torch.cuda.empty_cache()
             gc.collect()
 
@@ -84,6 +95,7 @@ class CellBatch:
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2))
+        self.areas[self.areas == 0] = float('nan')
 
     def get_centres(self):
         if self.centres is not None:
@@ -113,6 +125,7 @@ class CellBatch:
         conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0).float(),
                                                  padding=0).squeeze()
         self.perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2))
+        self.perimeters[self.perimeters == 0] = float('nan')
         del padded_masks, conv_result
 
     def get_epi_centres(self):
@@ -141,27 +154,29 @@ class CellBatch:
         self.indices_of_nearest = torch.cat((self.indices_of_nearest, self.epi_indices[min_indices]), dim=0)
         del centres_expanded, self.epi_centres, distances, min_distances, min_indices
 
-# def plot_features():
-#     for dir in (SETTINGS.DIRECTORY / 'features').iterdir():
-#         data = pd.read_csv(dir), sep='\t')
-#         fig, axs = plt.subplots(5, sharex=True, figsize=(10, 10))
-#         for i in range(4):
-#             axs[i].plot(data.iloc[:, i])
-#             axs[i].set(ylabel=data.columns.values.tolist()[i])
-#             axs[i].grid()
-#
-#         yeast_indexes = np.unique(data.iloc[:, 5])
-#         for yeast in yeast_indexes[np.isnan(yeast_indexes) == False]:
-#             print(yeast)
-#             axs[4].plot(data.query('index_nearest == @yeast').loc[:, 'dist_nearest'], label=str(yeast), linestyle='', marker='.')
-#             axs[4].set(ylabel='nearest yeast')
-#         axs[4].grid()
-#
-#         fig.suptitle('Amoeba '+index)
-#         axs[-1].set(xlabel='frames')
-#         plt.legend(title='Index of yeast', ncol=2)
-#         plt.tight_layout()
-#         plt.savefig(dir / str('Amoeba_'+index+'.png'))
+def plot_features():
+    print('\n---------- Plotting Features\n----------\n')
+    utils.remake_dir(SETTINGS.DIRECTORY / 'features_plots')
+    for features_path in (SETTINGS.DIRECTORY / 'features').iterdir():
+        data = pd.read_csv(features_path, sep='\t')
+        fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
+        for i in range(4):
+            axs[i].plot(data.iloc[:, i])
+            axs[i].set(ylabel=data.columns.values.tolist()[i])
+            axs[i].grid()
+
+        yeast_indexes = np.unique(data.iloc[:, 4])
+        for yeast in yeast_indexes[np.isnan(yeast_indexes) == False]:
+            #print(yeast)
+            axs[3].plot(data.query('index_nearest == @yeast').loc[:, 'dist_nearest'], label=str(yeast), linestyle='', marker='.')
+            axs[3].set(ylabel='nearest yeast')
+        axs[3].grid()
+
+        fig.suptitle('Amoeba '+ features_path.stem)
+        axs[-1].set(xlabel='frames')
+        #plt.legend(title='Index of yeast', ncol=2)
+        #plt.tight_layout()
+        plt.savefig(SETTINGS.DIRECTORY / 'features_plots' / str(features_path.stem+'.png'))
 
 
 def main():
@@ -171,7 +186,8 @@ def main():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
         cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
         cell_batch.run_feature_extraction()
-
+    if SETTINGS.PLOT_FEATURES:
+        plot_features()
 if __name__ == '__main__':
     main()
 
