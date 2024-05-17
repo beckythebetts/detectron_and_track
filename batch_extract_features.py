@@ -94,7 +94,7 @@ class CellBatch:
         del self.areas, self.speeds, self.perimeters, self.dists, self.indices_of_nearest
 
     def get_areas(self):
-        self.areas = torch.sum(self.masks, dim=(1, 2)).astype(float)
+        self.areas = torch.sum(self.masks, dim=(1, 2)).float()
         self.areas[self.areas == 0] = float('nan')
 
     def get_centres(self):
@@ -124,7 +124,7 @@ class CellBatch:
         padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
         conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0).float(),
                                                  padding=0).squeeze()
-        self.perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2)).astype(float)
+        self.perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2)).float()
         self.perimeters[self.perimeters == 0] = float('nan')
         del padded_masks, conv_result
 
