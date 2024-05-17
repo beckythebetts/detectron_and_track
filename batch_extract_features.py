@@ -13,18 +13,6 @@ import mask_funcs
 import SETTINGS
 
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
-# def print_gpu_memory_usage(stage):
-#     print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
-#           f"Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
-
-# def print_gpu_memory():
-#     result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'], stdout=subprocess.PIPE)
-#     memory_used = result.stdout.decode('utf-8').strip()
-#     sys.stdout.write(
-#         f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | GPU memory used: {memory_used}')
-#     sys.stdout.flush()
-#     with open(memory_usage, 'a') as f:
-#         f.write(memory_used)
 
 class Cell:
     def __init__(self, index):
@@ -49,22 +37,11 @@ class CellBatch:
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
         self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
-        # self.masks = None
-        # self.epi_mask = None
-        # self.epi_masks = None
-        # self.areas = None
-        # self.speeds = None
-        # self.dists = None
-        # self.perimeters = None
-        # self.indices_of_nearest = None
 
     def print_gpu_memory(self):
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         memory_used = result.stdout.decode('utf-8').strip().split('\n')[0]
-        # sys.stdout.write(
-        #     f'\rGPU memory used: {memory_used}\n')
-        # sys.stdout.flush()
         with open(self.memory_usage, 'a') as f:
             f.write(f'{memory_used}\n')
 
@@ -102,23 +79,19 @@ class CellBatch:
         self.epi_mask = torch.tensor(
             utils.read_tiff(SETTINGS.DIRECTORY / 'segmented' / 'epi' / path.name).astype(np.int16)).cuda()
 
-
-
     def read_features(self):
         self.get_areas()
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
         self.masks = None
-        self.get_nearest_2()
-        #self.get_nearest()
+        self.get_nearest()
+        self.get_eaten()
 
     def write_features(self):
         for i, cell in enumerate(self.cells):
-            #print([type(str(a.item())) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
             new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i])])
             cell.write_features(new_line)
-            del new_line
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2)).float()
@@ -127,7 +100,6 @@ class CellBatch:
     def get_centres(self):
         if self.centres is not None:
             self.last_centres = self.centres
-
 
         x_centres = torch.sum(self.masks * self.coord_grid_x, dim=(1, 2)) / self.areas
         y_centres = torch.sum(self.masks * self.coord_grid_y, dim=(1, 2)) / self.areas
@@ -153,38 +125,17 @@ class CellBatch:
                                                  padding=0).squeeze()
         self.perimeters = torch.sum((conv_result >= 10) & (conv_result <=16), dim=(1, 2)).float()
         self.perimeters[self.perimeters == 0] = float('nan')
-        del padded_masks, conv_result
-
-    def get_epi_centres(self):
-
-        self.epi_indices, self.epi_areas = torch.unique(self.epi_mask, return_counts=True)
-
-        self.expanded_epi_indices = self.epi_indices.unsqueeze(-1).unsqueeze(-1).expand((len(self.epi_indices), *SETTINGS.IMAGE_SIZE))
-        self.epi_masks = torch.where(self.epi_mask.unsqueeze(0).expand(len(self.epi_indices), *SETTINGS.IMAGE_SIZE) == self.expanded_epi_indices, 1, 0)
-
-        x_centres = torch.sum(self.epi_masks * self.coord_grid_x, dim=(1, 2)) / self.epi_areas
-        y_centres = torch.sum(self.epi_masks * self.coord_grid_y, dim=(1, 2)) / self.epi_areas
-
-        self.epi_centres = torch.stack((x_centres, y_centres), dim=1)
-
-        self.epi_masks = None
-        self.expanded_epi_indices = None
-        del x_centres, y_centres
 
     def get_nearest(self):
-        self.get_epi_centres()
-        self.dists, self.indices_of_nearest = torch.tensor([]).cuda(), torch.tensor([]).cuda()
-        centres_expanded = self.centres.unsqueeze(1)
-        distances = torch.sqrt(torch.sum((centres_expanded - self.epi_centres) ** 2, dim=2))
-        min_distances, min_indices = torch.min(distances, dim=1)
-        self.dists = torch.cat((self.dists, min_distances.unsqueeze(1)), dim=0)
-        self.indices_of_nearest = torch.cat((self.indices_of_nearest, self.epi_indices[min_indices]), dim=0)
-        del centres_expanded, self.epi_centres, distances, min_distances, min_indices
-
-    def get_nearest_2(self):
         non_zero_pixels = torch.nonzero(self.epi_mask)
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(0) - non_zero_pixels.unsqueeze(1))**2, dim=2))
         self.dists, i = torch.min(distances, dim=0)
+
+    def get_eaten(self):
+        #intersection = torch.logical_and(self.masks, self.epi_masks.unsqueeze(-1))
+        print(self.masks.shape)
+        #unique = torch.unique(self.masks[intersection], dim=)
+
 
 def plot_features():
     print('\n----------\nPlotting Features\n----------\n')
@@ -197,17 +148,8 @@ def plot_features():
             axs[i].set(ylabel=data.columns.values.tolist()[i])
             axs[i].grid()
 
-        # yeast_indexes = np.unique(data.iloc[:, 4])
-        # for yeast in yeast_indexes[np.isnan(yeast_indexes) == False]:
-        #     #print(yeast)
-        #     axs[3].plot(data.query('index_nearest == @yeast').loc[:, 'dist_nearest'], label=str(yeast), linestyle='', marker='.')
-        #     axs[3].set(ylabel='nearest yeast')
-        # axs[3].grid()
-
         fig.suptitle('Amoeba '+ features_path.stem)
         axs[-1].set(xlabel='frames')
-        #plt.legend(title='Index of yeast', ncol=2)
-        #plt.tight_layout()
         plt.savefig(SETTINGS.DIRECTORY / 'features_plots' / str(features_path.stem+'.png'))
         plt.close()
 
