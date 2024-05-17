@@ -64,7 +64,7 @@ class CellBatch:
         #     f'\rGPU memory used: {memory_used}\n')
         # sys.stdout.flush()
         with open(self.memory_usage, 'a') as f:
-            f.write(f'{memoryUsed}')
+            f.write(f'{memory_used}')
 
     def run_feature_extraction(self):
         for i, path in enumerate(self.paths):
