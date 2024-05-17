@@ -51,7 +51,7 @@ class CellBatch:
     def print_gpu_memory(self):
         # result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
         #                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        result = subprocess.run(['nvidia-', '--query-gpu=index,memory.used', "--format=csv,noheader,nounits | grep '^0,' | awk -F, '{print $2}'"],
+        result = subprocess.run(['nvidia-smi', '--query-gpu=index,memory.used', "--format=csv,noheader,nounits | grep '^0,' | awk -F, '{print $2}'"],
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         memory_used = result.stdout.decode('utf-8').strip()
         sys.stdout.write(
