@@ -193,7 +193,7 @@ class CellBatch:
     def get_nearest_2(self):
         non_zero_pixels = torch.nonzero(self.epi_mask)
         print('EPI- ', non_zero_pixels.shape)
-        print('AMOEBS - ', self.centres.shape)
+        print('AMOEBS - ', self.centres.unsqueeze(-1).shape)
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(-1) - non_zero_pixels)**2, dim=1))
         print(distances, distances.shape)
         self.dists, i = torch.min(distances, dim=1)
