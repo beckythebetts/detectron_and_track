@@ -57,7 +57,7 @@ class CellBatch:
         #     f'\rGPU memory used: {memory_used}\n')
         # sys.stdout.flush()
         with open(self.memory_usage, 'a') as f:
-            f.write(f'{sys.getsizeof(self.masks), sys.getsizeof(self.epi_mask), sys.getsizeof(self.epi_masks), sys.getsizeof(self.)}\n')
+            f.write(f'{sys.getsizeof(self.epi_mask), sys.getsizeof(self.epi_masks), sys.getsizeof(self.areas), sys.getsizeof(self.speeds), sys.getsizeof(self.perimeters), sys.getsizeof(self.dists), sys.getsizeof(self.indices_of_nearest)}\n')
 
     def run_feature_extraction(self):
         for i, path in enumerate(self.paths):
