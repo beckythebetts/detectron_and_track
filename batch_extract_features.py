@@ -6,11 +6,15 @@ import pandas as pd
 import gc
 import matplotlib.pyplot as plt
 import subprocess
+import os
 
 import utils
 import mask_funcs
 import SETTINGS
 
+
+
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 # def print_gpu_memory_usage(stage):
 #     print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
 #           f"Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
