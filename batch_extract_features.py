@@ -94,7 +94,7 @@ class CellBatch:
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
-        del self.masks
+        self.masks = None
         self.get_nearest()
 
     def write_features(self):
