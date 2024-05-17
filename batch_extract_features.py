@@ -192,10 +192,10 @@ class CellBatch:
 
     def get_nearest_2(self):
         non_zero_pixels = torch.nonzero(self.epi_mask)
-        print('EPI- ', non_zero_pixels.unsqueeze(1).shape)
-        print('AMOEBS - ', self.centres.unsqueeze(0).shape)
+        #print('EPI- ', non_zero_pixels.unsqueeze(1).shape)
+        #print('AMOEBS - ', self.centres.unsqueeze(0).shape)
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(0) - non_zero_pixels.unsqueeze(1))**2, dim=2))
-        print(distances, distances.shape)
+        #print(distances, distances.shape)
         self.dists, i = torch.min(distances, dim=1)
 
 def plot_features():
@@ -229,7 +229,7 @@ def main():
     gc.enable()
     with torch.no_grad():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 4)).cuda())
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
         cell_batch.run_feature_extraction()
     if SETTINGS.PLOT_FEATURES:
         plot_features()
