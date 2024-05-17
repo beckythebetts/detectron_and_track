@@ -48,6 +48,13 @@ class CellBatch:
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
         self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
         self.masks = None
+        self.epi_mask = None
+        self.epi_masks = None
+        self.areas = None
+        self.speeds = None
+        self.dists = None
+        self.perimeters = None
+        self.indices_of_nearest = None
 
     def print_gpu_memory(self):
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
