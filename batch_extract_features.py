@@ -192,11 +192,13 @@ class CellBatch:
 
     def get_nearest_2(self):
         non_zero_pixels = torch.nonzero(self.epi_mask).unsqueeze(1)
+        print(non_zero_pixels)
         distances = torch.sqrt(torch.sum((self.centres - non_zero_pixels)**2, dim=2))
+        print(distances)
         self.dists, i = torch.min(distances, dim=1)
 
 def plot_features():
-    print('\n---------- Plotting Features\n----------\n')
+    print('\n----------\nPlotting Features\n----------\n')
     utils.remake_dir(SETTINGS.DIRECTORY / 'features_plots')
     for features_path in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features_path, sep='\t')
@@ -226,7 +228,7 @@ def main():
     gc.enable()
     with torch.no_grad():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 11)).cuda())
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 4)).cuda())
         cell_batch.run_feature_extraction()
     if SETTINGS.PLOT_FEATURES:
         plot_features()
