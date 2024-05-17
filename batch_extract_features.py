@@ -47,6 +47,7 @@ class CellBatch:
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
         self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
+        self.masks = None
 
     def print_gpu_memory(self):
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
@@ -74,7 +75,6 @@ class CellBatch:
             self.epi_mask = None
             self.print_gpu_memory()
             self.write_features()
-            self.masks = None
             self.print_gpu_memory()
             torch.cuda.empty_cache()
             gc.collect()
