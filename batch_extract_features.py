@@ -12,7 +12,14 @@ import utils
 import mask_funcs
 import SETTINGS
 
-
+def memory_usage(tensor):
+    torch.cuda.reset_peak_memory_stats()  # Reset peak memory stats
+    torch.cuda.empty_cache()  # Empty cache to get accurate memory usage
+    before = torch.cuda.memory_allocated()
+    _ = tensor.cuda()  # Move tensor to GPU
+    after = torch.cuda.memory_allocated()
+    memory_used = after - before
+    return memory_used
 
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 # def print_gpu_memory_usage(stage):
@@ -112,7 +119,7 @@ class CellBatch:
         self.get_speeds()
         self.get_perimeters()
         self.masks = None
-        self.get_nearest()
+        #self.get_nearest()
 
     def write_features(self):
         for i, cell in enumerate(self.cells):
