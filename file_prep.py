@@ -1,9 +1,11 @@
+import pandas as pd
 from tifffile import TiffFile
 import shutil
 from pathlib import Path
 import os
 from PIL import Image
 import cv2
+import matplotlib.pyplot as plt
 
 
 input_path = Path('RAW_DATA') / '03'/ 'all_tiffs'
@@ -25,7 +27,11 @@ def split_channels(input_path, folder_even, folder_odd):
 # pip install COCO_merger
 # python -m COCO_merger.merge --src Json1.json Json2.json --out OUTPUT_JSON.json
 
-
+def plot_mem():
+    data = pd.read_csv('03_test/features_memory.txt')
+    plt.plot(data)
+    plt.show()
 if __name__ == '__main__':
     #split_channels(input_path, folder_even, folder_odd)
-    split_coco()
+    #split_coco()
+    plot_mem()
