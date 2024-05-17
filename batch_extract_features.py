@@ -60,7 +60,7 @@ class CellBatch:
 
     def run_feature_extraction(self):
         for i, path in enumerate(self.paths):
-            sys.stdout.write(f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} | Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB')
+            sys.stdout.write(f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} ')
             sys.stdout.flush()
             if i == 0:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
