@@ -124,10 +124,9 @@ class CellBatch:
     def write_features(self):
         for i, cell in enumerate(self.cells):
             #print([type(str(a.item())) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
-            new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
+            new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i])])
             cell.write_features(new_line)
             del new_line
-        self.areas, self.speeds, self.perimeters, self.dists, self.indices_of_nearest = None, None, None, None, None
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2)).float()
