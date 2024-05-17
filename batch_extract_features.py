@@ -44,7 +44,7 @@ class CellBatch:
         self.centres = None
         self.last_centres = None
         self.batch_size = len(self.indices)
-        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])[:5]
+        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
         self.num_frames = len(self.paths)
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
@@ -183,12 +183,8 @@ class CellBatch:
 
     def get_nearest_2(self):
         non_zero_pixels = torch.nonzero(self.epi_mask)
-        print('EPI- ', non_zero_pixels.unsqueeze(1).shape)
-        print('AMOEBS - ', self.centres.unsqueeze(0).shape)
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(0) - non_zero_pixels.unsqueeze(1))**2, dim=2))
-        print(distances, distances.shape)
         self.dists, i = torch.min(distances, dim=0)
-        print('DISTS - ', self.dists)
 
 def plot_features():
     print('\n----------\nPlotting Features\n----------\n')
@@ -222,7 +218,7 @@ def main():
     gc.enable()
     with torch.no_grad():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 4)).cuda())
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
         cell_batch.run_feature_extraction()
     if SETTINGS.PLOT_FEATURES:
         plot_features()
