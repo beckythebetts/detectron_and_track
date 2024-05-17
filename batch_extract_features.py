@@ -33,7 +33,7 @@ class CellBatch:
         self.centres = None
         self.last_centres = None
         self.batch_size = len(self.indices)
-        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])[:20]
+        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
         self.num_frames = len(self.paths)
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
@@ -161,7 +161,7 @@ def main():
     gc.enable()
     with torch.no_grad():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 6)).cuda())
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
         cell_batch.run_feature_extraction()
     if SETTINGS.PLOT_FEATURES:
         plot_features()
