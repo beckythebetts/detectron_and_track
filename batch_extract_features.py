@@ -133,9 +133,9 @@ class CellBatch:
         self.dists, i = torch.min(distances, dim=0)
 
     def get_eaten(self):
-        #intersection = torch.logical_and(self.masks, self.epi_masks.unsqueeze(-1))
-        print(self.masks.shape)
-        #unique = torch.unique(self.masks[intersection], dim=)
+        intersection = torch.logical_and(self.masks, self.epi_masks.unsqueeze(0))
+        unique = torch.unique(self.masks[intersection], dim=(1, 2))
+        print(unique)
 
 
 def plot_features():
