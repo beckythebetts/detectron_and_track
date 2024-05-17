@@ -19,7 +19,7 @@ class Cell:
         self.index = index
         self.file = self.file = SETTINGS.DIRECTORY / 'features' / ("{0:04}".format(self.index) + '.txt')
         with open(self.file, 'w') as f:
-            f.write('area\tspeed\tperimeter\tdist_nearest')
+            f.write('area\tspeed\tperimeter\tdist_nearest\teaten')
 
     def write_features(self, line):
         with open(self.file, 'a') as f:
@@ -143,8 +143,8 @@ def plot_features():
     utils.remake_dir(SETTINGS.DIRECTORY / 'features_plots')
     for features_path in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features_path, sep='\t')
-        fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
-        for i in range(4):
+        fig, axs = plt.subplots(5, sharex=True, figsize=(10, 10))
+        for i in range(5):
             axs[i].plot(data.iloc[:, i])
             axs[i].set(ylabel=data.columns.values.tolist()[i])
             axs[i].grid()
