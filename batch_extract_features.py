@@ -15,7 +15,7 @@ import SETTINGS
 #     print(f"[{stage}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB, "
 #           f"Cached: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
 
-def print_gpu_memory():
+def print_gpu_memory(memory_usage):
     result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'], stdout=subprocess.PIPE)
     memory_used = result.stdout.decode('utf-8').strip()
     sys.stdout.write(
@@ -55,15 +55,15 @@ class CellBatch:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
                 full_mask = None
-            print_gpu_memory()
+            print_gpu_memory(memory_usage)
             self.next_frame(path)
-            print_gpu_memory()
+            print_gpu_memory(memory_usage)
             self.read_features()
-            print_gpu_memory()
+            print_gpu_memory(memory_usage)
             self.epi_mask = None
-            print_gpu_memory()
+            print_gpu_memory(memory_usage)
             self.write_features()
-            print_gpu_memory()
+            print_gpu_memory(memory_usage)
             torch.cuda.empty_cache()
             gc.collect()
 
