@@ -109,7 +109,7 @@ class CellBatch:
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         full_mask = None
         self.epi_mask = torch.tensor(
-            utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'epi' / path.name).astype(np.int16)).cuda()
+            utils.read_tiff(SETTINGS.DIRECTORY / 'segmented' / 'epi' / path.name).astype(np.int16)).cuda()
 
 
 
@@ -119,12 +119,13 @@ class CellBatch:
         self.get_speeds()
         self.get_perimeters()
         self.masks = None
+        self.get_nearest_2()
         #self.get_nearest()
 
     def write_features(self):
         for i, cell in enumerate(self.cells):
             #print([type(str(a.item())) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.indices_of_nearest[i])])
-            new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i])])
+            new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i])])
             cell.write_features(new_line)
             del new_line
 
@@ -188,6 +189,11 @@ class CellBatch:
         self.dists = torch.cat((self.dists, min_distances.unsqueeze(1)), dim=0)
         self.indices_of_nearest = torch.cat((self.indices_of_nearest, self.epi_indices[min_indices]), dim=0)
         del centres_expanded, self.epi_centres, distances, min_distances, min_indices
+
+    def get_nearest_2(self):
+        non_zero_pixels = torch.nonzero(self.epi_masks).unsqueeze(1)
+        distances = torch.sqrt(torch.sum((centres.unsqueeze - non_zero_pixels)**2, dim=2))
+        self.dists, i = torch.min(distances, dim=1)
 
 def plot_features():
     print('\n---------- Plotting Features\n----------\n')
