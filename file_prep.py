@@ -29,7 +29,7 @@ def split_channels(input_path, folder_even, folder_odd):
 
 def plot_mem():
     data = pd.read_csv('03_test/features_memory.txt')
-    plt.plot(data)
+    plt.plot(data, linestyle='', marker='.')
     plt.show()
 if __name__ == '__main__':
     #split_channels(input_path, folder_even, folder_odd)
