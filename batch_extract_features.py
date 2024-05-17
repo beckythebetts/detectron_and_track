@@ -84,9 +84,9 @@ class CellBatch:
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
-        self.masks = None
-        self.get_nearest()
         self.get_eaten()
+        self.get_nearest()
+
 
     def write_features(self):
         for i, cell in enumerate(self.cells):
@@ -127,6 +127,7 @@ class CellBatch:
         self.perimeters[self.perimeters == 0] = float('nan')
 
     def get_nearest(self):
+        self.masks = None # Save memory
         non_zero_pixels = torch.nonzero(self.epi_mask)
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(0) - non_zero_pixels.unsqueeze(1))**2, dim=2))
         self.dists, i = torch.min(distances, dim=0)
