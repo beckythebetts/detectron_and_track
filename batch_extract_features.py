@@ -170,7 +170,7 @@ def show_eating():
                 im_rgb[0] = torch.where(outline, 255, im_rgb[0])
                 im_rgb[1] = im_rgb[1] + epi_image.unsqueeze(0)
                 im_rgb = im_rgb.permute(1, 2, 0)
-                utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / (features.stem + '.jpg'))
+                utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
 
         #print(features.stem, eaten_frames)
 
