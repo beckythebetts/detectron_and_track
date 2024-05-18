@@ -165,7 +165,7 @@ def show_eating():
                 image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ('t' + features.stem + '.jpg'))).cuda()
                 epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + features.stem + '.tif')).astype(np.float32)).cuda()
                 mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / (features.stem+'.tif')).astype(np.int16)).cuda()
-                outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem)), thickness=3)
+                outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=3)
                 im_rgb = torch.stack((image, image, image), axis=0)
                 im_rgb[0] = torch.where(outline, 255, im_rgb[0])
                 im_rgb[1] = im_rgb[1] + epi_image.unsqueeze(0)
