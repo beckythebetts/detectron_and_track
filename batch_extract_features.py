@@ -169,6 +169,7 @@ def show_eating():
                 im_rgb = torch.stack((image, image, image), axis=0)
                 im_rgb[0] = torch.where(outline, 255, im_rgb[0])
                 im_rgb[1] = im_rgb[1] + epi_image.unsqueeze(0)
+                print(im_rgb.shape)
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / (features.stem + '.jpg'))
 
         #print(features.stem, eaten_frames)
