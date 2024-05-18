@@ -158,7 +158,7 @@ def show_eating():
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features, delimiter='\t')
         eaten_frames = data.index[data['eaten']==1].tolist()
-        print(eaten_frames)
+        print(features.stem, eaten_frames)
 
 
 def main():
