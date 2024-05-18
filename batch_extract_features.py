@@ -163,7 +163,7 @@ def show_eating():
             (SETTINGS.DIRECTORY / 'show_eating' / features.stem).mkdir()
             for eaten_frame in eaten_frames:
                 image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ('t' + features.stem + '.jpg'))).cuda()
-                epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + features.stem + '.jpg'))).cuda()
+                epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + features.stem + '.tif'))).cuda()
                 mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / (features.stem+'.tif'))).cuda()
                 outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem)), thickness=3)
                 im_rgb = torch.stack((image, image, image), axis=0)
