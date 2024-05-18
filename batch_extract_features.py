@@ -154,17 +154,23 @@ def plot_features():
         plt.savefig(SETTINGS.DIRECTORY / 'features_plots' / str(features_path.stem+'.png'))
         plt.close()
 
+def show_eating():
+    for features in (SETTINGS.DIRECTORY / 'features').iterdir():
+        data = pd.read_csv(features)
+        print(data)
+
 
 def main():
-    torch.cuda.set_per_process_memory_fraction(0.8)
-    torch.cuda.empty_cache()
-    gc.enable()
-    with torch.no_grad():
-        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-        cell_batch.run_feature_extraction()
-    if SETTINGS.PLOT_FEATURES:
-        plot_features()
+    # torch.cuda.set_per_process_memory_fraction(0.8)
+    # torch.cuda.empty_cache()
+    # gc.enable()
+    # with torch.no_grad():
+    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+    #     cell_batch.run_feature_extraction()
+    # if SETTINGS.PLOT_FEATURES:
+    #     plot_features()
+    show_eating()
 if __name__ == '__main__':
     main()
 
