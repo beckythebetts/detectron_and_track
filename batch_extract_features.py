@@ -157,8 +157,8 @@ def plot_features():
 def show_eating():
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features, delimiter='\t')
-        #if data['']
-        print(data)
+        eaten_frames = data.loc[data['eaten']==1:].iloc[:, 0]
+        print(eaten_frames)
 
 
 def main():
