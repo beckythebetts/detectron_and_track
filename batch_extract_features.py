@@ -162,13 +162,13 @@ def show_eating():
         if len(eaten_frames) > 0:
             (SETTINGS.DIRECTORY / 'show_eating' / features.stem).mkdir()
             for eaten_frame in eaten_frames:
-                image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ('t' + features.stem + '.jpg'))).cuda()
-                epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + features.stem + '.tif')).astype(np.float32)).cuda()
-                mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / (features.stem+'.tif')).astype(np.int16)).cuda()
+                image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ('t' + "{0:04}".format(eaten_frame) + '.jpg'))).cuda()
+                epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + "{0:04}".format(eaten_frame) + '.tif')).astype(np.float32)).cuda()
+                mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / ("{0:04}".format(eaten_frame)+'.tif')).astype(np.int16)).cuda()
                 outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=3)
                 im_rgb = torch.stack((image, image, image), axis=0)
-                im_rgb[0] = torch.where(outline, 255, im_rgb[0])
-                im_rgb[1] = im_rgb[1] + (epi_image/256).unsqueeze(0)
+                im_rgb[2] = torch.where(outline, 255, im_rgb[0])
+                im_rgb[0] = im_rgb[1] + (epi_image/256).unsqueeze(0)
                 im_rgb = im_rgb.permute(1, 2, 0)
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
 
