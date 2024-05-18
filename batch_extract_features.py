@@ -162,9 +162,9 @@ def show_eating():
         if len(eaten_frames) > 0:
             (SETTINGS.DIRECTORY / 'show_eating' / features.stem).mkdir()
             for eaten_frame in eaten_frames:
-                image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ('t' + features.stem + '.jpg')).astype(np.int16)).cuda()
+                image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ('t' + features.stem + '.jpg'))).cuda()
                 epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + features.stem + '.tif')).astype(np.float32)).cuda()
-                mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / (features.stem+'.tif'))).cuda()
+                mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / (features.stem+'.tif')).astype(np.int16)).cuda()
                 outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem)), thickness=3)
                 im_rgb = torch.stack((image, image, image), axis=0)
                 im_rgb[0] = torch.where(outline, 255, im_rgb[0])
