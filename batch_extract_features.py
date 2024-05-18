@@ -156,7 +156,8 @@ def plot_features():
 
 def show_eating():
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
-        data = pd.read_csv(features)
+        data = pd.read_csv(features, delimiter='\t')
+        #if data['']
         print(data)
 
 
