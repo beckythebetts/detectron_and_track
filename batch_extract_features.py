@@ -167,7 +167,7 @@ def show_eating():
                 mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / ("{0:04}".format(eaten_frame)+'.tif')).astype(np.int16)).cuda()
                 outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=3)
                 im_rgb = torch.stack((image, image, image), axis=0)
-                im_rgb[2] = torch.where(outline, 255, im_rgb[0])
+                im_rgb[2] = torch.where(outline, 255, im_rgb[2])
                 im_rgb[0] = im_rgb[0] + (epi_image/256).unsqueeze(0)
                 im_rgb = im_rgb.permute(1, 2, 0)
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
