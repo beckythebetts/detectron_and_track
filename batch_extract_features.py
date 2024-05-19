@@ -168,9 +168,9 @@ def show_eating():
                 outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=3)
                 epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
                 im_rgb = torch.stack((image, image, image), axis=0)
-                #im_rgb[2] = torch.where(outline, 255, im_rgb[2])
+                im_rgb[2] = torch.where(outline, 255, im_rgb[2])
                 im_rgb[0] = torch.where(epi_image>SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
-                #im_rgb[0] = im_rgb[0] + (epi_image/256).unsqueeze(0)
+                print(torch.min(im_rgb[0], torh.max(im_rgb[0])))
                 im_rgb = im_rgb.permute(1, 2, 0)
                 im_rgb = im_rgb.clamp(0, 255).byte()
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
