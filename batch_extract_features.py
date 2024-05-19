@@ -48,7 +48,7 @@ class CellBatch:
 
     def run_feature_extraction(self):
         for i, path in enumerate(self.paths):
-            sys.stdout.write(f'\rFrame {i} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} ')
+            sys.stdout.write(f'\rFrame {i+1} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} ')
             sys.stdout.flush()
             if i == 0:
                 full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
@@ -166,9 +166,10 @@ def show_eating():
                 epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + "{0:04}".format(eaten_frame) + '.tif')).astype(np.float32)).cuda()
                 mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / ("{0:04}".format(eaten_frame)+'.tif')).astype(np.int16)).cuda()
                 outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=3)
+                epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
                 im_rgb = torch.stack((image, image, image), axis=0)
                 im_rgb[2] = torch.where(outline, 255, im_rgb[2])
-                im_rgb[0] = torch.where(epi_image>SETTINGS.THRESHOLD, epi_image/256, im_rgb[0])
+                im_rgb[0] = torch.where(epi_image>SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
                 #im_rgb[0] = im_rgb[0] + (epi_image/256).unsqueeze(0)
                 im_rgb = im_rgb.permute(1, 2, 0)
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
@@ -177,15 +178,15 @@ def show_eating():
 
 
 def main():
-    torch.cuda.set_per_process_memory_fraction(0.8)
-    torch.cuda.empty_cache()
-    gc.enable()
-    with torch.no_grad():
-        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-        cell_batch.run_feature_extraction()
-    if SETTINGS.PLOT_FEATURES:
-        plot_features()
+    # torch.cuda.set_per_process_memory_fraction(0.8)
+    # torch.cuda.empty_cache()
+    # gc.enable()
+    # with torch.no_grad():
+    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+    #     cell_batch.run_feature_extraction()
+    # if SETTINGS.PLOT_FEATURES:
+    #     plot_features()
     show_eating()
 if __name__ == '__main__':
     main()
