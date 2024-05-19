@@ -169,7 +169,7 @@ def show_eating():
                 epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
                 im_rgb = torch.stack((image, image, image), axis=0)
                 im_rgb[2] = torch.where(outline, 255, im_rgb[2])
-                im_rgb[0] = torch.where(epi_image>SETTINGS.THRESHOLD, epi_image_normalised, torch.zeros((epi_image.shape)))
+                im_rgb[0] = torch.where(epi_image>SETTINGS.THRESHOLD, epi_image_normalised, torch.zeros((epi_image.shape)).cuda())
                 im_rgb = im_rgb.permute(1, 2, 0)
                 utils.save_tiff((im_rgb[0]).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
 
