@@ -135,7 +135,7 @@ class CellBatch:
 
     def get_eaten(self):
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
-        self.eaten = intersection.any(dim=(1, 2)).int()
+        self.eaten = intersection.sum(dim=(1, 2)).int()
 
 
 def plot_features():
@@ -158,7 +158,7 @@ def show_eating():
     utils.remake_dir(SETTINGS.DIRECTORY / 'show_eating')
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features, delimiter='\t')
-        eaten_frames = data.index[data['eaten']==1].tolist()
+        eaten_frames = data.index[data['eaten']>=1].tolist()
         if len(eaten_frames) > 0:
             (SETTINGS.DIRECTORY / 'show_eating' / features.stem).mkdir()
             for eaten_frame in eaten_frames:
@@ -177,15 +177,15 @@ def show_eating():
 
 
 def main():
-    # torch.cuda.set_per_process_memory_fraction(0.8)
-    # torch.cuda.empty_cache()
-    # gc.enable()
-    # with torch.no_grad():
-    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-    #     cell_batch.run_feature_extraction()
-    # if SETTINGS.PLOT_FEATURES:
-    #     plot_features()
+    torch.cuda.set_per_process_memory_fraction(0.8)
+    torch.cuda.empty_cache()
+    gc.enable()
+    with torch.no_grad():
+        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+        cell_batch.run_feature_extraction()
+    if SETTINGS.PLOT_FEATURES:
+        plot_features()
     show_eating()
 if __name__ == '__main__':
     main()
