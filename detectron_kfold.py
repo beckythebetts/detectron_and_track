@@ -70,7 +70,7 @@ def main():
     my_kfold = KFold(Path('kfold_test'))
     # my_kfold.split_all()
     # my_kfold.train()
-    print(my_kfold.getAP('00'))
+    print(my_kfold.getAP('test00'))
 
 if __name__=='__main__':
     main()
