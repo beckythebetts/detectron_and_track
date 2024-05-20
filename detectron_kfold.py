@@ -53,7 +53,8 @@ class KFold:
             evaluator(file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
-            AP.append()
+            APs.append(getAP(file))
+        print(f'*****COMPLETED*****\nAP = {np.mean(APs)} +- {np.std(APs)}')
 
     def getAP(self, file):
         try:
@@ -61,11 +62,7 @@ class KFold:
                 AP_string = f.read()
 
             AP_string = AP_string.replace('nan', 'np.nan').strip()
-            print(AP_string)
-
             AP_dict = eval(AP_string)
-            print(AP_dict)
-            #AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])') + 1])
             return AP_dict[0]['segm']['AP']
         except ValueError as e:
             print("Error:", e)
