@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 from subprocess import call
 from detectron2.data import MetadataCatalog, DatasetCatalog
+import ast
 
 from detectron_train import train
 from detectron_eval import eval
@@ -42,6 +43,7 @@ class KFold:
             self.make_split(name.stem)
 
     def train(self):
+        APs = []
         for file in self.directory.glob('*test*'):
             train(file)
             unregister_coco_instances('my_dataset_train')
@@ -49,6 +51,13 @@ class KFold:
             eval(file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
+            AP.append()
+
+    def getAP(self, file):
+        with open(self.directory / file / 'eval.txt', 'r') as f:
+            AP_string = f.read()
+        AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])')+1])
+        return AP_dict[1]['segm']['AP']
 
 def unregister_coco_instances(name):
     if name in DatasetCatalog.list():
@@ -59,8 +68,9 @@ def unregister_coco_instances(name):
 
 def main():
     my_kfold = KFold(Path('kfold_test'))
-    my_kfold.split_all()
-    my_kfold.train()
+    # my_kfold.split_all()
+    # my_kfold.train()
+    print(my_kfold.getAP('00'))
 
 if __name__=='__main__':
     main()
