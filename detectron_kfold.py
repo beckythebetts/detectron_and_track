@@ -6,6 +6,7 @@ from subprocess import call
 from detectron2.data import MetadataCatalog, DatasetCatalog
 import ast
 import numpy as np
+from collections import OrderedDict
 
 from detectron_train import train
 from detectron_eval import evaluator
