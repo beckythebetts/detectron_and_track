@@ -46,7 +46,7 @@ class KFold:
 
 
 def main():
-    my_kfold = KFold(Path('RAW_DATA/04/training_dataset/kfold'))
+    my_kfold = KFold(Path('kfold_test'))
     my_kfold.split_all()
     my_kfold.train()
 
