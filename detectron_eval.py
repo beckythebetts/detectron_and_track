@@ -21,7 +21,7 @@ import SETTINGS
 
 directory = SETTINGS.DIRECTORY
 
-def eval(directory):
+def evaluator(directory):
     setup_logger()
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
@@ -51,7 +51,7 @@ def eval(directory):
         f.write(str(output))
 
 def main():
-    eval(directory)
+    evaluator(directory)
 
 if __name__ == '__main__':
     main()

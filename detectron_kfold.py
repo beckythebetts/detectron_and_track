@@ -8,7 +8,7 @@ import ast
 import numpy as np
 
 from detectron_train import train
-from detectron_eval import eval
+from detectron_eval import evaluator
 
 class KFold:
 
@@ -49,7 +49,7 @@ class KFold:
             train(file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
-            eval(file)
+            evaluator(file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
             AP.append()
