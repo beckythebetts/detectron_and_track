@@ -56,7 +56,8 @@ class KFold:
     def getAP(self, file):
         with open(self.directory / file / 'model' / 'eval.txt', 'r') as f:
             AP_string = f.read()
-        AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])')+1])
+        AP_dict = ast.literal_eval(AP_string)
+        #AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])') + 1])
         return AP_dict[1]['segm']['AP']
 
 def unregister_coco_instances(name):
