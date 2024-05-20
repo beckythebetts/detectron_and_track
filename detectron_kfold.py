@@ -53,7 +53,7 @@ class KFold:
             evaluator(file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
-            APs.append(getAP(file))
+            APs.append(self.getAP(file))
         print(f'*****COMPLETED*****\nAP = {np.mean(APs)} +- {np.std(APs)}')
 
     def getAP(self, file):
