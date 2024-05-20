@@ -66,7 +66,7 @@ class KFold:
             AP_dict = eval(AP_string)
             print(AP_dict)
             #AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])') + 1])
-            return AP_dict[1]['segm']['AP']
+            return AP_dict[0]['segm']['AP']
         except ValueError as e:
             print("Error:", e)
 
