@@ -3,6 +3,7 @@ import utils
 from pathlib import Path
 import shutil
 from subprocess import call
+from detectron2.data import MetadataCatalog, DatasetCatalog
 
 from detectron_train import train
 from detectron_eval import eval
