@@ -62,7 +62,7 @@ class KFold:
             AP_string = AP_string.replace('nan', 'np.nan').strip()
             print(AP_string)
 
-            AP_dict = ast.literal_eval(AP_string)
+            AP_dict = ast.eval(AP_string)
             print(AP_dict)
             #AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])') + 1])
             return AP_dict[1]['segm']['AP']
