@@ -5,6 +5,7 @@ import shutil
 from subprocess import call
 from detectron2.data import MetadataCatalog, DatasetCatalog
 import ast
+import numpy as np
 
 from detectron_train import train
 from detectron_eval import eval
@@ -58,6 +59,7 @@ class KFold:
             with open(self.directory / file / 'model' / 'eval.txt', 'r') as f:
                 AP_string = f.read()
                 print(AP_string)
+            AP_string = AP_string.replace('nan', 'np.nan')
             AP_dict = ast.literal_eval(AP_string)
             #AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])') + 1])
             return AP_dict[1]['segm']['AP']
