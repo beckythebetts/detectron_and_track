@@ -75,7 +75,4 @@ def main():
     print(my_kfold.getAP('test00'))
 
 if __name__=='__main__':
-    main()                                                                                          'AP50': 96.54907073334822,
-                                                                                          'AP75': 56.025364570107385,
-                                                                                          'APs': 53.48682294841414,
-                                                                                          'APm': nan, 'APl': nan})]), 2)
+    main()
