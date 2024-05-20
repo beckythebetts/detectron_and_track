@@ -59,7 +59,7 @@ class KFold:
             with open(self.directory / file / 'model' / 'eval.txt', 'r') as f:
                 AP_string = f.read()
 
-            AP_string = AP_string.replace('nan', 'np.nan')
+            AP_string = AP_string.replace('nan', 'np.nan').strip()[1:-1]
             print(AP_string)
 
             AP_dict = ast.literal_eval(AP_string)
