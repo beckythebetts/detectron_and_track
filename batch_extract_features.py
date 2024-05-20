@@ -119,7 +119,7 @@ class CellBatch:
     def get_perimeters(self):
         kernel = torch.tensor([[1, 1, 1],
                                [1, 9, 1],
-                               [1, 1, 1]] ).cuda()
+                               [1, 1, 1]]).cuda()
 
         padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
         conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0).float(),

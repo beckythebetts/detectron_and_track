@@ -43,8 +43,17 @@ class KFold:
     def train(self):
         for file in self.directory.glob('*test*'):
             train(file)
+            unregister_coco_instances('my_dataset_train')
+            unregister_coco_instances('my_dataset_val')
+            eval(file)
+            unregister_coco_instances('my_dataset_train')
+            unregister_coco_instances('my_dataset_val')
 
-
+def unregister_coco_instances(name):
+    if name in DatasetCatalog.list():
+        DatasetCatalog.pop(name)
+    if name in MetadataCatalog.list():
+        MetadatCatalog.pop(name)
 def main():
     my_kfold = KFold(Path('kfold_test'))
     my_kfold.split_all()
