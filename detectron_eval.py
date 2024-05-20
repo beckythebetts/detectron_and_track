@@ -19,10 +19,12 @@ import yaml
 
 import SETTINGS
 
-setup_logger()
-os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
-def main():
-    directory = SETTINGS.DIRECTORY
+directory = SETTINGS.DIRECTORY
+
+def eval(directory):
+    setup_logger()
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+
     dataset_dir = directory / 'training_dataset'
     config_directory = directory / 'model'
 
@@ -47,6 +49,9 @@ def main():
     print(output)
     with open(str(config_directory / 'eval.txt'), 'w') as f:
         f.write(str(output))
+
+def main():
+    eval(directory)
 
 if __name__ == '__main__':
     main()

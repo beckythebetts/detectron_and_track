@@ -28,10 +28,11 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
 torch.cuda.empty_cache()
 
 directory = SETTINGS.DIRECTORY
-dataset_dir = directory / 'training_dataset'
-config_directory = directory / 'model'
 
-def main():
+
+def train(directory):
+    dataset_dir = directory / 'training_dataset'
+    config_directory = directory / 'model'
     register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
     register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
 
@@ -58,7 +59,7 @@ def main():
     cfg.DATALOADER.NUM_WORKERS = 4
     cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-    cfg.SOLVER.MAX_ITER = 3000  # iteration = run through one batch
+    cfg.SOLVER.MAX_ITER = 1000  # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32  # (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 2 # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
@@ -68,19 +69,13 @@ def main():
     trainer.resume_or_load(resume=False)
 
     trainer.train()
-    #launch(trainer.train(), 2)
 
     config_yaml_path = config_directory / 'config.yaml'
     with open(str(config_yaml_path), 'w') as file:
         yaml.dump(cfg, file)
 
-    # cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
-    # predictor = DefaultPredictor(cfg)
-    #
-    # evaluator = COCOEvaluator("my_dataset_val", output_dir="./output", max_dets_per_image=1000)
-    # val_loader = build_detection_test_loader(cfg, "my_dataset_val")
-    # print(inference_on_dataset(predictor.model, val_loader, evaluator), 2)
+def main():
+    train(directory)
 
 if __name__ == '__main__':
     main()
