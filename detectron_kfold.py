@@ -56,6 +56,7 @@ class KFold:
     def getAP(self, file):
         with open(self.directory / file / 'model' / 'eval.txt', 'r') as f:
             AP_string = f.read()
+            print(AP_string)
         AP_dict = ast.literal_eval(AP_string)
         #AP_dict = ast.literal_eval(AP_string[AP_string.find('OrderedDict(['):AP_string.find('])') + 1])
         return AP_dict[1]['segm']['AP']
@@ -74,4 +75,7 @@ def main():
     print(my_kfold.getAP('test00'))
 
 if __name__=='__main__':
-    main()
+    main()                                                                                          'AP50': 96.54907073334822,
+                                                                                          'AP75': 56.025364570107385,
+                                                                                          'APs': 53.48682294841414,
+                                                                                          'APm': nan, 'APl': nan})]), 2)
