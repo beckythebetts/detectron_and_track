@@ -59,17 +59,17 @@ def train(directory):
     cfg.DATALOADER.NUM_WORKERS = 4
     cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-    cfg.SOLVER.MAX_ITER = 1000  # iteration = run through one batch
+    cfg.SOLVER.MAX_ITER = 2000  # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32  # (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
-    cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
-    cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
-    cfg.INPUT.MIN_SIZE_TRAIN = (600,)
-    cfg.INPUT.MAX_SIZE_TRAIN = 600
-    cfg.INPUT.MIN_SIZE_TEST = 600
-    cfg.INPUT.MAX_SIZE_TEST = 600
+    # cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
+    # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
+    # cfg.INPUT.MIN_SIZE_TRAIN = (600,)
+    # cfg.INPUT.MAX_SIZE_TRAIN = 600
+    # cfg.INPUT.MIN_SIZE_TEST = 600
+    # cfg.INPUT.MAX_SIZE_TEST = 600
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
