@@ -64,7 +64,7 @@ def train(directory):
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32  # (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
-    cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[40, 50,  60, 70,  80]]
+    cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 40, 50]]
     cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.75, 1.0, 1.25]]
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg)
