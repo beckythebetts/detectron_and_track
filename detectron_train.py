@@ -67,9 +67,9 @@ def train(directory):
     cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
     cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
     cfg.INPUT.MIN_SIZE_TRAIN = (600,)
-    cfg.INPUT.MIN_SIZE_TRAIN = 600
+    cfg.INPUT.MAX_SIZE_TRAIN = 600
     cfg.INPUT.MIN_SIZE_TEST = 600
-    cfg.INPUT.MIN_SIZE_TEST = 600
+    cfg.INPUT.MAX_SIZE_TEST = 600
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
