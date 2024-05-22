@@ -112,7 +112,7 @@ class MyTrainer(DefaultTrainer):
             T.RandomContrast(0.8, 1.2),  # Random contrast changes between 0.8 and 1.2
             T.RandomResize(shape_list=[(800, 800), (1000, 1000), (1200, 1200)])  # Example resize augmentation from the original code
         ]
-        mapper = DatasetMapper(cfg, is_train=True, augmentations=augmenations)
+        mapper = DatasetMapper(cfg, is_train=True, augmentations=augmentations)
         return build_detection_train_loader(cfg, mapper=mapper)
 
     @classmethod
