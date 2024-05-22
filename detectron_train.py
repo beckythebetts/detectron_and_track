@@ -39,7 +39,8 @@ import detectron2.utils.comm as comm
 import torch
 import time
 import datetime
-
+from detectron2.data import transforms as T
+from detectron2.data import build_detection_train_loader
 
 class LossEvalHook(HookBase):
     def __init__(self, eval_period, model, data_loader):
@@ -102,6 +103,18 @@ class LossEvalHook(HookBase):
 
 
 class MyTrainer(DefaultTrainer):
+    @classmethod
+    def build_train_loader(cls, cfg):
+        augmentations = [
+            # Add your augmentations here, for example:
+            T.RandomRotation(angle=[-180, 180]),  # Random rotations between -10 and 10 degrees
+            T.RandomBrightness(0.8, 1.2),  # Random brightness changes between 0.8 and 1.2
+            T.RandomContrast(0.8, 1.2),  # Random contrast changes between 0.8 and 1.2
+            T.RandomResize(min_scale=0.8, max_scale=1.2)  # Example resize augmentation from the original code
+        ]
+        mapper = DatasetMapper(cfg, is_train=True, augmentations=augmenations)
+        return build_detection_train_loader(cfg, mapper=mapper)
+
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
         if output_folder is None:
@@ -182,13 +195,13 @@ def train(directory):
         return lines
 
     experiment_metrics = load_json_arr(config_directory / 'metrics.json')
-    print('EXPERIMENT METRICS***', experiment_metrics)
     plt.scatter([x['iteration'] for x in experiment_metrics if 'total_loss' in x], [x['total_loss'] for x in experiment_metrics if 'total_loss' in x])
     plt.scatter(
         [x['iteration'] for x in experiment_metrics if 'validation_loss' in x],
         [x['validation_loss'] for x in experiment_metrics if 'validation_loss' in x])
     plt.legend(['total_loss', 'validation_loss'], loc='upper left')
     plt.savefig(config_directory / 'loss_plot.png')
+    plt.clf()
 
 def main():
     train(directory)
