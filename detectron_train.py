@@ -183,7 +183,7 @@ def train(directory):
 
     experiment_metrics = load_json_arr(config_directory / 'metrics.json')
     print('EXPERIMENT METRICS***', experiment_metrics)
-    plt.plot([x['iteration'] for x in experiment_metrics], [x['total_loss'] for x in experiment_metrics])
+    plt.plot([x['iteration'] for x in experiment_metrics if 'total_loss' in x], [x['total_loss'] for x in experiment_metrics if 'total_loss' in x])
     plt.plot(
         [x['iteration'] for x in experiment_metrics if 'validation_loss' in x],
         [x['validation_loss'] for x in experiment_metrics if 'validation_loss' in x])
