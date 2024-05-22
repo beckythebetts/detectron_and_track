@@ -162,7 +162,6 @@ def train(directory):
     # cfg.INPUT.MIN_SIZE_TEST = 600
     # cfg.INPUT.MAX_SIZE_TEST = 600
     cfg.TEST.EVAL_PERIOD = 100
-    cfg.DATASETS.TEST = ('my_dataset_val')
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = MyTrainer(cfg)
     trainer.resume_or_load(resume=False)
