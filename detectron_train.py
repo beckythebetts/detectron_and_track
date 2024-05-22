@@ -151,7 +151,7 @@ def train(directory):
     cfg.DATALOADER.NUM_WORKERS = 4
     cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-    cfg.SOLVER.MAX_ITER = 1000  # iteration = run through one batch
+    cfg.SOLVER.MAX_ITER = 100 # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32  # (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
@@ -162,7 +162,7 @@ def train(directory):
     # cfg.INPUT.MAX_SIZE_TRAIN = 600
     # cfg.INPUT.MIN_SIZE_TEST = 600
     # cfg.INPUT.MAX_SIZE_TEST = 600
-    cfg.TEST.EVAL_PERIOD = 100
+    cfg.TEST.EVAL_PERIOD = 50
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = MyTrainer(cfg)
     trainer.resume_or_load(resume=False)
@@ -182,10 +182,8 @@ def train(directory):
         return lines
 
     experiment_metrics = load_json_arr(config_directory / 'metrics.json')
-
-    plt.plot(
-        [x['iteration'] for x in experiment_metrics],
-        [x['total_loss'] for x in experiment_metrics])
+    print('EXPERIMENT METRICS***', experiment_metrics)
+    plt.plot([x['iteration'] for x in experiment_metrics], [x['total_loss'] for x in experiment_metrics])
     plt.plot(
         [x['iteration'] for x in experiment_metrics if 'validation_loss' in x],
         [x['validation_loss'] for x in experiment_metrics if 'validation_loss' in x])
