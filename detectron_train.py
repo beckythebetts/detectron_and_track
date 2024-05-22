@@ -38,6 +38,7 @@ class ValidationLossHook(HookBase):
 
     def after_step(self):
         if self.trainer.iter % self.trainer.cfg.TEST.EVAL_PERIOD == 0:
+            print(self.cfg.DATASETS.TEST[0])
             val_loader = build_detection_test_loader(self.cfg, self.cfg.DATASETS.TEST[0])
             total_val_loss = 0
             num_batches = 0
@@ -89,7 +90,6 @@ def train(directory):
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml")
     cfg.DATASETS.TRAIN = ("my_dataset_train",)
     cfg.DATASETS.TEST = ("my_dataset_val",)
-    # cfg.TEST.EVAL_PERIOD = 100
     cfg.DATALOADER.NUM_WORKERS = 4
     cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
