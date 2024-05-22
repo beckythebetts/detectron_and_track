@@ -46,7 +46,8 @@ class ValidationLossHook(HookBase):
             with inference_context(self.trainer.model), torch.no_grad():
                 for data in val_loader:
                     loss_dict = self.trainer.model(data)
-                    losses = sum(loss_dict.values())
+                    print(loss_dict)
+                    losses = sum(loss_dict)
                     total_val_loss += losses.item()
                     num_batches += 1
 
