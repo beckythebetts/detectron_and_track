@@ -39,7 +39,7 @@ class ValidationLossHook(HookBase):
     def after_step(self):
         if self.trainer.iter % self.trainer.cfg.TEST.EVAL_PERIOD == 0:
             print('********DATASET!!*******', self.cfg.DATASETS.TEST[0])
-            val_loader = build_detection_test_loader(self.cfg, self.cfg.DATASETS.TEST[0])
+            val_loader = build_detection_test_loader(self.cfg, self.cfg.DATASETS.TEST)
             total_val_loss = 0
             num_batches = 0
 
