@@ -107,10 +107,10 @@ class MyTrainer(DefaultTrainer):
     def build_train_loader(cls, cfg):
         augmentations = [
             # Add your augmentations here, for example:
-            T.RandomRotation(angle=[-180, 180], center=[[-0.5, -0.5], [0.5, 0.5]]),
+            T.RandomRotation(angle=[-10, 10]),
             #T.RandomBrightness(0.8, 1.2),
             T.RandomContrast(0.8, 1.2),
-            T.RandomResize(shape_list=[(800, 800), (1200, 1200), (1600, 1600)])
+            #T.RandomResize(shape_list=[(800, 800), (1200, 1200), (1600, 1600)])
         ]
         mapper = DatasetMapper(cfg, is_train=True, augmentations=augmentations)
         return build_detection_train_loader(cfg, mapper=mapper)
