@@ -37,18 +37,24 @@ class KFold:
                 train_jsons.append(f.parents[1] /'labels' / ('labels'+f.stem+'.json'))
 
         print(train_jsons, test_jsons)
-            # Merge all train jsons
-        json_0 = train_jsons[0]
-        for i in range(1, len(train_jsons)):
-            call(['python', '-m', 'COCO_merger.merge', '--src', json_0, train_jsons[i], '--out', train_dir / 'labels.json' ])
-            json_0 = train_dir / 'labels.json'
+        # Merge all train jsons
+        if len(train_jsons) > 1:
+            json_0 = train_jsons[0]
+            for i in range(1, len(train_jsons)):
+                call(['python', '-m', 'COCO_merger.merge', '--src', json_0, train_jsons[i], '--out', train_dir / 'labels.json' ])
+                json_0 = train_dir / 'labels.json'
+        else:
+            shutil.copy(train_jsons[0], train_dir / 'labels.json')
 
         # merge all test jsons
-        json_0 = test_jsons[0]
-        for i in range(1, len(train_jsons)):
-            call(['python', '-m', 'COCO_merger.merge', '--src', json_0, test_jsons[i], '--out',
-                  val_dir / 'labels.json'])
-            json_0 = val_dir / 'labels.json'
+        if len(test_jsons) > 1:
+            json_0 = test_jsons[0]
+            for i in range(1, len(train_jsons)):
+                call(['python', '-m', 'COCO_merger.merge', '--src', json_0, test_jsons[i], '--out',
+                      val_dir / 'labels.json'])
+                json_0 = val_dir / 'labels.json'
+        else:
+            shutil.copy(test_jsons[0], val_dir / 'labels.json')
 
     def split_all(self):
         # for names in [('00', '01', '10'), ('01', '10', '11'), ('10', '11', '00'), ('11', '00', '10')]:
