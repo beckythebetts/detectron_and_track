@@ -48,7 +48,7 @@ class KFold:
         # merge all test jsons
         if len(test_jsons) > 1:
             json_0 = test_jsons[0]
-            for i in range(1, len(train_jsons)):
+            for i in range(1, len(test_jsons)):
                 call(['python', '-m', 'COCO_merger.merge', '--src', json_0, test_jsons[i], '--out', val_dir / 'labels.json'])
                 json_0 = val_dir / 'labels.json'
         else:
