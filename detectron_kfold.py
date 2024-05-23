@@ -36,6 +36,7 @@ class KFold:
                 shutil.copy(f, train_dir / 'images' / f.name)
                 train_jsons.append(f.parents[1] /'labels' / ('labels'+f.stem+'.json'))
 
+        print(train_jsons, test_jsons)
             # Merge all train jsons
         json_0 = train_jsons[0]
         for i in range(1, len(train_jsons)):
