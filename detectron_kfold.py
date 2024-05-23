@@ -30,7 +30,6 @@ class KFold:
 
             if f.stem in test_image_names:
                 shutil.copy(f, val_dir / 'images' / f.name)
-                #shutil.copy(f.parents[1] / 'labels' / ('labels'+f.stem+'.json'), val_dir / 'labels.json')
                 test_jsons.append(f.parents[1] / 'labels' / ('labels' + f.stem + '.json'))
             else:
                 shutil.copy(f, train_dir / 'images' / f.name)
@@ -50,8 +49,7 @@ class KFold:
         if len(test_jsons) > 1:
             json_0 = test_jsons[0]
             for i in range(1, len(train_jsons)):
-                call(['python', '-m', 'COCO_merger.merge', '--src', json_0, test_jsons[i], '--out',
-                      val_dir / 'labels.json'])
+                call(['python', '-m', 'COCO_merger.merge', '--src', json_0, test_jsons[i], '--out', val_dir / 'labels.json'])
                 json_0 = val_dir / 'labels.json'
         else:
             shutil.copy(test_jsons[0], val_dir / 'labels.json')
