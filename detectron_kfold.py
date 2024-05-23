@@ -55,7 +55,7 @@ class KFold:
             shutil.copy(test_jsons[0], val_dir / 'labels.json')
 
     def split_all(self):
-        for names in [('00', '01', '10'), ('01', '10', '11'), ('10', '11', '00'), ('11', '00', '10')]:
+        for names in [('00'), ('01'), ('10'), ('11'), ('00a')]:
             self.make_split(names)
         # for names in [('00', '01'), ('01', '10'), ('10', '11'), ('11', '10')]:
         #     self.make_split(names)
