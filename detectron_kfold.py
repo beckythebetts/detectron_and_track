@@ -28,7 +28,7 @@ class KFold:
 
         for f in (self.directory / 'images').iterdir():
 
-            if f.stem == any(test_image_names):
+            if f.stem in test_image_names:
                 shutil.copy(f, val_dir / 'images' / f.name)
                 test_jsons.append(f.parents[1] / 'labels' / ('labels' + f.stem + '.json'))
             else:
