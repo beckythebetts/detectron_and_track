@@ -16,20 +16,22 @@ class KFold:
     def __init__(self, directory):
         self.directory = directory
 
-    def make_split(self, test_image_name):
-        train_dir = self.directory / ('test'+test_image_name) / 'training_dataset' / 'train'
+    def make_split(self, test_image_names):
+        train_dir = self.directory / ('test'+str(test_image_names)) / 'training_dataset' / 'train'
         utils.remake_dir(train_dir / 'images')
 
-        val_dir = self.directory / ('test' + test_image_name) / 'training_dataset' / 'validate'
+        val_dir = self.directory / ('test' + str(test_image_names)) / 'training_dataset' / 'validate'
         utils.remake_dir(val_dir / 'images')
 
         train_jsons = []
+        test_jsons = []
 
         for f in (self.directory / 'images').iterdir():
 
-            if f.stem == test_image_name:
+            if f.stem in test_image_names:
                 shutil.copy(f, val_dir / 'images' / f.name)
-                shutil.copy(f.parents[1] / 'labels' / ('labels'+f.stem+'.json'), val_dir / 'labels.json')
+                #shutil.copy(f.parents[1] / 'labels' / ('labels'+f.stem+'.json'), val_dir / 'labels.json')
+                test_jsons.append(f.parents[1] / 'labels' / ('labels' + f.stem + '.json'))
             else:
                 shutil.copy(f, train_dir / 'images' / f.name)
                 train_jsons.append(f.parents[1] /'labels' / ('labels'+f.stem+'.json'))
@@ -40,9 +42,16 @@ class KFold:
             call(['python', '-m', 'COCO_merger.merge', '--src', json_0, train_jsons[i], '--out', train_dir / 'labels.json' ])
             json_0 = train_dir / 'labels.json'
 
+        # merge all test jsons
+        json_0 = test_jsons[0]
+        for i in range(1, len(train_jsons)):
+            call(['python', '-m', 'COCO_merger.merge', '--src', json_0, test_jsons[i], '--out',
+                  val_dir / 'labels.json'])
+            json_0 = val_dir / 'labels.json'
+
     def split_all(self):
-        for name in (self.directory / 'images').iterdir():
-            self.make_split(name.stem)
+        for names in [('00', '01'), ('01', '10'), ('10', '11'), ('11', '10')]:
+            self.make_split(names)
 
     def train(self):
         APs = []
