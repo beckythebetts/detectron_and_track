@@ -95,8 +95,8 @@ def do_resize(im_path, label_path, new_im_path, new_label_path, sf=1.5):
         json.dump(updated_coco_json, f)
 
 def main():
-    for im in Path('RAW_DATA/04/training_dataset/kfold/images').iterdir():
-        do_resize(str(im), str(im.parents[1] / 'labels' / ('labels' + im.stem + '.json')), str(Path('RAW_DATA/04/training_dataset/kfold1_5') / 'images' / im.name), str(Path('RAW_DATA/04/training_dataset/kfold1_5') / 'labels' / ('labels' + im.stem + '.json')))
+    for im in Path('RAW_DATA/05_old/kfold_old/images').iterdir():
+        do_resize(str(im), str(im.parents[1] / 'labels' / ('labels' + im.stem + '.json')), str(Path('RAW_DATA/05_old/kfold_half_old') / 'images' / im.name), str(Path('RAW_DATA/05_old/kfold_half_old') / 'labels' / ('labels' + im.stem + '.json')))
 
 if __name__ == '__main__':
     main()
