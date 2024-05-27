@@ -72,7 +72,7 @@ def update_coco_json(coco_json, scale_factor):
     return updated_coco_json
 
 
-def do_resize(im_path, label_path, new_im_path, new_label_path, sf=1.5):
+def do_resize(im_path, label_path, new_im_path, new_label_path, sf=0.5):
     # Load the original COCO JSON file
     with open(label_path) as f:
         coco_json = json.load(f)
