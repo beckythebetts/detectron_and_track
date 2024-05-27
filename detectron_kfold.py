@@ -98,7 +98,7 @@ def unregister_coco_instances(name):
 
 
 def main():
-    my_kfold = KFold(Path('kfold1_5'))
+    my_kfold = KFold(Path('kfold_old'))
     my_kfold.split_all()
     my_kfold.train()
 
