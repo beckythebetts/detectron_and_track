@@ -2,8 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 from pathlib import Path
+from matplotlib import rc
 
 def plot_average_loss_curves(directory):
+    rc('font', **{'family':'serif','serif':['Times']})
+    rc('text', usetex=True)
     all_train_losses = []
     all_val_losses = []
     for folder in directory.iterdir():
@@ -35,6 +38,7 @@ def plot_average_loss_curves(directory):
     plt.plot(train_iters, average_train_losses, color='navy', label='Training Loss')
     plt.fill_between(train_iters, average_train_losses - std_train_losses, average_train_losses + std_train_losses, color='lightsteelblue')
     plt.legend()
+    plt.grid()
     plt.xlabel('Iterations')
     plt.ylabel('Loss')
 
