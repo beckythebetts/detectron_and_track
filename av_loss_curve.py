@@ -4,10 +4,10 @@ import json
 from pathlib import Path
 
 def plot_average_loss_curves(directory):
-
+    all_train_losses = []
+    all_val_losses = []
     for folder in directory.iterdir():
-        all_train_losses = []
-        all_val_lossees = []
+
         with open(folder / 'model' / 'metrics.json', 'r') as f:
             lines = []
             for line in f:
@@ -18,9 +18,11 @@ def plot_average_loss_curves(directory):
             val_losses = [x['validation_loss'] for x in lines if 'validation_loss' in x]
             val_iters = [x['iteration'] for x in lines if 'validation_loss' in x]
 
-            all_train_losses = np.stack(all_train_losses, train_losses)
-            all_val_losses = np.stack(all_val_losses, val_losses)
-            print(train_losses.shape)
+            all_train_losses.append(train_losses)
+            all_val_losses.append(val_losses)
+    all_train_losses = np.array(all_train_losses)
+    all_val_losses = np.array(all_val_losses)
+    print(train_losses.shape, val_losses.shape)
 
 def main():
     plot_average_loss_curves(Path('kfold_quarter_old') / 'train6')
