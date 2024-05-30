@@ -55,13 +55,13 @@ class KFold:
             shutil.copy(test_jsons[0], val_dir / 'labels.json')
 
     def split_all(self):
-        for names in [('00', '01', '02', '03', '04'),
-                      ('01', '02', '03', '04', '05'),
-                      ('02', '03', '04', '05', '06'),
-                      ('03', '04', '05', '06', '00'),
-                      ('04', '05', '06', '00', '01'),
-                      ('05', '06', '00', '01', '02'),
-                      ('06', '00', '01', '02', '03')]:
+        for names in [('00',),
+                      ('01',),
+                      ('02'),
+                      ('03',),
+                      ('04',),
+                      ('05',),
+                      ('06',)]:
             self.make_split(names)
         # for names in [('00', '01'), ('01', '10'), ('10', '11'), ('11', '10')]:
         #     self.make_split(names)
@@ -97,7 +97,7 @@ def unregister_coco_instances(name):
 
 
 def main():
-    my_kfold = KFold(Path('kfold_18_old'))
+    my_kfold = KFold(Path('kfold_16_old'))
     my_kfold.split_all()
     my_kfold.train()
 
