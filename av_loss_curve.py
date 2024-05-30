@@ -11,10 +11,10 @@ def plot_average_loss_curves(directory):
             for line in f:
                 lines.append(json.loads(line))
             train_losses = [x['total_loss'] for x in lines if 'total_loss' in x]
-            train_iters = [x['iteration'] for x in line if 'total_loss' in x]
+            train_iters = [x['iteration'] for x in lines if 'total_loss' in x]
 
             val_losses = [x['validation_loss'] for x in lines if 'validation_loss' in x]
-            val_iters = [x['iteration'] for x in line if 'validation_loss' in x]
+            val_iters = [x['iteration'] for x in lines if 'validation_loss' in x]
             print(train_iters, val_iters)
 
 def main():
