@@ -15,7 +15,7 @@ def plot_average_loss_curves(directory):
 
             val_losses = [x['validation_loss'] for x in lines if 'validation_loss' in x]
             val_iters = [x['iteration'] for x in line if 'validation_loss' in x]
-            print(train_losses, val_losses, train_iters, val_iters)
+            print(train_iters, val_iters)
 
 def main():
     plot_average_loss_curves(Path('kfold_quarter_old') / 'train6')
