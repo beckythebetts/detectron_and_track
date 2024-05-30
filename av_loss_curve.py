@@ -22,7 +22,7 @@ def plot_average_loss_curves(directory):
             all_val_losses.append(val_losses)
     all_train_losses = np.array(all_train_losses)
     all_val_losses = np.array(all_val_losses)
-    print(train_losses.shape, val_losses.shape)
+    print(all_train_losses.shape, all_val_losses.shape)
 
 def main():
     plot_average_loss_curves(Path('kfold_quarter_old') / 'train6')
