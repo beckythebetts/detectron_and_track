@@ -10,7 +10,7 @@ def plot_average_loss_curves(directory):
             lines = []
             for line in f:
                 lines.append(json.loads(line))
-            print(lines)
+            print(type(lines[0]))
             #train_losses = [x['total_loss'] for x in lines if 'total_loss' in x]
             train_losses = np.where('total_loss' in lines, lines['total_loss'], np.nan)
             val_losses = np.where('validation_loss' in lines, lines['validation_loss'], np.nan)
