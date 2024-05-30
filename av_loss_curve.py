@@ -5,7 +5,7 @@ from pathlib import Path
 from matplotlib import rc
 
 def plot_average_loss_curves(directory):
-    plt.rcParams["font.family"] = 'Arial'
+    plt.rcParams["font.family"] = 'serif'
     all_train_losses = []
     all_val_losses = []
     for folder in directory.iterdir():
