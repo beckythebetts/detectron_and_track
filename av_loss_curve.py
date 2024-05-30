@@ -29,11 +29,15 @@ def plot_average_loss_curves(directory):
     std_train_losses = np.std(all_train_losses, axis=0)
     std_val_losses = np.std(all_val_losses, axis=0)
 
-    plt.plot(val_iters, average_val_losses)
-    plt.fill_between(val_iters, average_val_losses-std_val_losses, average_val_losses+std_val_losses)
+    plt.plot(val_iters, average_val_losses, color='red', label='Validation Loss')
+    plt.fill_between(val_iters, average_val_losses-std_val_losses, average_val_losses+std_val_losses, color='salmon')
 
-    plt.plot(train_iters, average_train_losses)
-    plt.fill_between(train_iters, average_train_losses - std_train_losses, average_train_losses + std_train_losses)
+    plt.plot(train_iters, average_train_losses, color='navy', label='Training Loss')
+    plt.fill_between(train_iters, average_train_losses - std_train_losses, average_train_losses + std_train_losses, color='lightsteelblue')
+    plt.legend()
+    plt.xlabel('Iterations')
+    plt.ylabel('Loss')
+
     plt.savefig(directory / 'av_loss_plot.png')
 
 def main():
