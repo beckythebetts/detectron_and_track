@@ -22,7 +22,19 @@ def plot_average_loss_curves(directory):
             all_val_losses.append(val_losses)
     all_train_losses = np.array(all_train_losses)
     all_val_losses = np.array(all_val_losses)
-    print(all_train_losses.shape, all_val_losses.shape)
+
+    average_train_losses = np.mean(all_train_losses, axis=0)
+    average_val_losses = np.mean(all_val_losses, axis=0)
+
+    std_train_losses = np.std(all_train_losses, axis=0)
+    std_val_losses = np.std(all_val_losses, axis=0)
+
+    plt.plot(val_iters, average_val_losses)
+    plt.fill_between(val_iters, average_val_losses-std_val_losses, average_val_losses+std_val_losses)
+
+    plt.plot(train_iters, average_train_losses)
+    plt.fill_between(train_iters, average_train_losses - std_train_losses, average_train_losses + std_train_losses)
+    plt.savefig(directory / 'av_loss_plot.png')
 
 def main():
     plot_average_loss_curves(Path('kfold_quarter_old') / 'train6')
