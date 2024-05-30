@@ -44,7 +44,7 @@ def plot_average_loss_curves(directory):
     plt.savefig(directory / 'av_loss_plot.png')
 
 def main():
-    plot_average_loss_curves(Path('kfold_quarter_old') / 'train6')
+    plot_average_loss_curves(Path('kfold_18_old') / 'train6')
 
 if __name__ == '__main__':
     main()
