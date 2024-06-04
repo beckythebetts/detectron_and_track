@@ -42,7 +42,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
     if transpose:
         array = array.T
         x0, y0, x1, y1 = y0, x0, y1, x1
-    x = torch.arange(x0, x1 + 1)
+    x = torch.arange(x0, x1 + 1).cuda()
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
     array[x, y, :] = colour
     return array if not transpose else array.T
