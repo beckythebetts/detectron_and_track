@@ -44,7 +44,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
         x0, y0, x1, y1 = y0, x0, y1, x1
     x = torch.arange(x0, x1 + 1).cuda()
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
-    array[int(x), int(y), :] = colour
+    array[x.round.astype(torch.int16), y.round.astype(torch.int16), :] = colour
     return array if not transpose else array.T
 
 if __name__ == '__main__':
