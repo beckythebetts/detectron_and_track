@@ -148,7 +148,7 @@ def plot_tracks():
         print(centres.shape)
         for i in range(len(centres) - 1):
             tracks_plot = utils.draw_line(tracks_plot, centres[i, 0], centres[i+1, 0], centres[i, 1], centres[i+1, 1], colour)
-    utils.save_tiff(tracks_plot, SETTINGS.DIRECTORY / 'tracks_plot.png')
+    utils.save_tiff(tracks_plot.cpu().numpy(), SETTINGS.DIRECTORY / 'tracks_plot.png')
 
 def plot_features():
     print('\n---------------\nPlotting Features\n---------------\n')
