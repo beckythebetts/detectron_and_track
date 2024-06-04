@@ -13,7 +13,7 @@ def plot_tracks(dir):
     for file in sorted([i for i in dir.iterdir()]):
         frame = torch.tensor(utils.read_tiff(file).astype(np.int32)).cuda()
         for i in torch.unique(frame):
-            centre = torch.tensor(mask_funcs.find_centre(torch.where(frame==i, 1, 0)), dtype=long).cuda()
+            centre = torch.tensor(mask_funcs.find_centre(torch.where(frame==i, 1, 0)), dtype=int).cuda()
             print(centre)
             if i not in colours_dict:
                 colours_dict[i] = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
