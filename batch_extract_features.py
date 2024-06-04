@@ -39,7 +39,7 @@ class CellBatch:
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
         self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
         self.track_plot = track_plot
-        self.colours_dict = {index: torch.tensor(np.random.uniform(0, 2**(8)-1).cuda(), size=3) for index in self.indices}
+        self.colours_dict = {index: torch.tensor(np.random.uniform(0, 2**(8)-1), size=3).cuda() for index in self.indices}
 
     def print_gpu_memory(self):
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
