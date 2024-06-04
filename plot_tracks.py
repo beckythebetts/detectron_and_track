@@ -18,7 +18,7 @@ def plot_tracks(dir):
             print(centre)
             if i not in colours_dict:
                 colours_dict[i] = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
-            track_plot[centre[0]][centre[1]] = colours_dict[i]
+            track_plot[centre[0].astype(int)][centre[1].astype(int)] = colours_dict[i]
     utils.save_tiff(track_plot, dir.parents[2] / 'track_plot.png')
 
 
