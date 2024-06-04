@@ -26,7 +26,7 @@ class Cell:
             f.write(line)
 
 class CellBatch:
-    def __init__(self, indices, track_plot):
+    def __init__(self, indices):
         self.indices = indices
         self.expanded_indices = self.indices.unsqueeze(-1).unsqueeze(-1).expand((len(indices), *SETTINGS.IMAGE_SIZE))
         self.cells = [Cell(i) for i in self.indices]
@@ -38,8 +38,6 @@ class CellBatch:
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
         self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
-        self.track_plot = track_plot
-        self.colours_dict = {index: torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda() for index in self.indices}
 
     def print_gpu_memory(self):
         result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
@@ -139,9 +137,13 @@ class CellBatch:
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
         self.eaten = intersection.sum(dim=(1, 2)).int()
 
+# def plot_tracks():
+#     print('\n---------------\nPlotting Tracks\n---------------\n')
+#     for features in (SETTINGS.DIRECTORY / 'features')
+
 
 def plot_features():
-    print('\n----------\nPlotting Features\n----------\n')
+    print('\n---------------\nPlotting Features\n---------------\n')
     utils.remake_dir(SETTINGS.DIRECTORY / 'features_plots')
     for features_path in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features_path, sep='\t')
@@ -193,7 +195,7 @@ def main():
     gc.enable()
     with torch.no_grad():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 11)).cuda(), tracks_plot)
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda(), tracks_plot)
         cell_batch.run_feature_extraction()
     if SETTINGS.PLOT_FEATURES:
         plot_features()
