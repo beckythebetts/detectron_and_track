@@ -140,7 +140,7 @@ class CellBatch:
 def plot_tracks():
     tracks_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3).cuda()
     print('\n---------------\nPlotting Tracks\n---------------\n')
-    for features in (SETTINGS.DIRECTORY / 'features'):
+    for features in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features, sep='\t')
         colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
         centres = torch.tensor(data.loc['xcentre', 'ycentre'].values).cuda()
