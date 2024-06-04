@@ -7,7 +7,7 @@ import SETTINGS
 import utils
 
 def plot_tracks(dir):
-    track_plot = torch.zeros(SETTINGS.IMAGE_SIZE*, 3)
+    track_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3)
     colours_dict = {}
     for file in sorted([i for i in dir.iterdir()]):
         frame = torch.tensor(utils.read_tiff(file)).cuda()
