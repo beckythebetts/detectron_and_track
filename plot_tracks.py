@@ -8,7 +8,7 @@ import utils
 import mask_funcs
 
 def plot_tracks(dir):
-    track_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3)
+    track_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3).cuda()
     colours_dict = {}
     for file in sorted([i for i in dir.iterdir()]):
         frame = torch.tensor(utils.read_tiff(file).astype(np.int32)).cuda()
