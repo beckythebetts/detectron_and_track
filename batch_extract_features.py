@@ -144,7 +144,7 @@ def plot_tracks():
         data = pd.read_csv(features, sep='\t')
         colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
         centres = torch.tensor(data.loc['xcentre':'ycentre'].values).cuda()
-        #print('centres!!!', data.loc['xcentre':'ycentre'])
+        print(data)
         for i in range(len(centres) - 1):
             tracks_plot = utils.draw_line(tracks_plot, centres[i, 0], centres[i+1, 0], centres[i, 1], centres[i+1, 1], colour)
     utils.save_tiff(tracks_plot.cpu().numpy(), SETTINGS.DIRECTORY / 'tracks_plot.png')
