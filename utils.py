@@ -33,6 +33,20 @@ def save_tiff(array, path):
     # im = Image.fromarray(array)
     # im.save(path)
 
+def draw_line(array, x0, x1, y0, y1, colour):
+    if x0==x1 and y0==y1:
+        return array
+    if x0 > x1:
+        x0, x1, y0, y1 = x1, x0, y1, y0
+    transpose = abs(x1 - x0) < abs(y1 - y0)
+    if transpose:
+        array = array.T
+        x0, y0, x1, y1 = y0, x0, y1, x1
+    x = torch.arange(x0, x1 + 1)
+    y = ((y1-y0)/(x1-x0))*(x-x0) + y0
+    array[x, y, :] = colour
+    return array if not transpose else array.T
+
 if __name__ == '__main__':
     array = read_tiff(Path('03') / 't0000_mask.tif')
     print(np.shape(array))

@@ -137,10 +137,16 @@ class CellBatch:
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
         self.eaten = intersection.sum(dim=(1, 2)).int()
 
-# def plot_tracks():
-#     print('\n---------------\nPlotting Tracks\n---------------\n')
-#     for features in (SETTINGS.DIRECTORY / 'features')
-
+def plot_tracks():
+    tracks_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3).cuda()
+    print('\n---------------\nPlotting Tracks\n---------------\n')
+    for features in (SETTINGS.DIRECTORY / 'features'):
+        data = pd.read_csv(features, sep='\t')
+        colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
+        centres = torch.tensor(data.loc['xcentre', 'ycentre'].values).cuda()
+        for i in range(len(centres) - 1):
+            tracks_plot = utils.draw_line(tracks_plot, centres[i, 0], centres[i+1, 0], centres[i, 1], centres[i+1, 1], colour)
+    utils.save_tiff(tracks_plot, SETTINGS.DIRECTORY / 'tracks_plot.png')
 
 def plot_features():
     print('\n---------------\nPlotting Features\n---------------\n')
@@ -190,16 +196,17 @@ def show_eating():
 
 
 def main():
-    tracks_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3)
-    torch.cuda.empty_cache()
-    gc.enable()
-    with torch.no_grad():
-        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-        cell_batch.run_feature_extraction()
-    if SETTINGS.PLOT_FEATURES:
-        plot_features()
-    show_eating()
+    # torch.cuda.empty_cache()
+    # gc.enable()
+    # with torch.no_grad():
+    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+    #     cell_batch.run_feature_extraction()
+    # if SETTINGS.PLOT_FEATURES:
+    #     plot_features()
+    if SETTINGS.TRACKS_PLOT:
+        plot_tracks()
+    # show_eating()
 if __name__ == '__main__':
     main()
 
