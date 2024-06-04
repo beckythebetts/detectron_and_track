@@ -15,7 +15,6 @@ def plot_tracks(dir):
         for i in torch.unique(frame):
             centre = torch.tensor(mask_funcs.find_centre(torch.where(frame==i, 1, 0))).cuda()
             centre = torch.round(centre)
-            print(centre)
             if i not in colours_dict:
                 colours_dict[i] = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
             track_plot[centre[0].type(torch.int16)][centre[1].type(torch.int16)] = colours_dict[i]
