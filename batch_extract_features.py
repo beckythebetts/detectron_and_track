@@ -142,7 +142,7 @@ def plot_tracks():
     print('\n---------------\nPlotting Tracks\n---------------\n')
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features, sep='\t')
-        colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
+        colour = torch.tensor(np.random.uniform(0, 1, size=3)).cuda()
         centres = torch.tensor(data.loc[:, 'xcentre':'ycentre'].values).cuda()
         #print(data.loc[:, 'xcentre':''])
         for i in range(len(centres) - 1):
