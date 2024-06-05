@@ -59,7 +59,7 @@ def main():
             instance_mask = outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0"))
             # ******* ADJUST FOR NON SQUARE IMAGES*********
             if SETTINGS.REMOVE_EDGE_CELLS:
-                if torch.any(torch.nonzero(instance_mask)==0) or torch.any(torch.nonzero(instance_mask)==SETTINGS.IMAGE_SIZE[0]):
+                if torch.any(torch.nonzero(instance_mask)==1) or torch.any(torch.nonzero(instance_mask)==SETTINGS.IMAGE_SIZE[0]-1):
                     continue
             class_masks[class_name] = torch.where(instance_mask,
                                           torch.tensor(i + 1, dtype=torch.float32),
