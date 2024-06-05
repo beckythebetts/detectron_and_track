@@ -48,10 +48,6 @@ def draw_line(array, x0, x1, y0, y1, colour):
     x = torch.arange(x0, x1).cuda()
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
 
-    print(x)
-    print(x.round().to(torch.int16))
-    print(y.round().to(torch.int16))
-    print(array.shape)
     array[x.round().to(int), y.round().to(int), :] = colour
     return array if not transpose else torch.permute(array, (1, 0, 2))
 
