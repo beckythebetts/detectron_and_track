@@ -39,9 +39,6 @@ def main():
 
     output_directory = (directory / 'segmented' / 'phase')  # Replace this with the path to your desired output directo
     utils.remake_dir(output_directory)
-    # for class_name in train_metadata['thing_classes']:
-    #     (output_directory / class_name).mkdir()
-
     num_images = len(os.listdir(input_images_directory))
     # Loop over the images in the input folder
     for i, image_filename in enumerate(os.listdir(input_images_directory)):
@@ -59,10 +56,16 @@ def main():
         # Assign a unique integer label to each object in the mask
         for i, pred_class in enumerate(outputs["instances"].pred_classes):
             class_name = train_metadata['thing_classes'][pred_class]
-            class_masks[class_name] = torch.where(outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0")),
+            instance_mask = outputs["instances"].pred_masks[i].to(device=torch.device("cuda:0"))
+            # ******* ADJUST FOR NON SQUARE IMAGES*********
+            if SETTINGS.REMOVE_EDGE_CELLS:
+                if torch.any(torch.nonzero(instance_mask)==0) or torch.any(torch.nonzero(instance_mask)==SETTINGS.IMAGE_SIZE[0]):
+                    continue
+            class_masks[class_name] = torch.where(instance_mask,
                                           torch.tensor(i + 1, dtype=torch.float32),
                                           class_masks[class_name].to(dtype=torch.float32))
             class_masks[class_name] = class_masks[class_name].to(dtype=torch.int16)
+
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()

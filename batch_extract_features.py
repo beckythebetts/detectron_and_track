@@ -209,7 +209,8 @@ def main():
     #     plot_features()
     if SETTINGS.TRACKS_PLOT:
         plot_tracks()
-    # show_eating()
+    # if SETTINGS.SHOW_EATING:
+    #     show_eating()
 if __name__ == '__main__':
     main()
 
