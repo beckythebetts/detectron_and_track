@@ -138,7 +138,7 @@ class CellBatch:
         self.eaten = intersection.sum(dim=(1, 2)).int()
 
 def plot_tracks():
-    tracks_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3).cuda()
+    tracks_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3).cuda().to(float)
     print('\n---------------\nPlotting Tracks\n---------------\n')
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features, sep='\t')
