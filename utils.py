@@ -41,7 +41,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
         x0, x1, y0, y1 = x1, x0, y1, y0
     transpose = abs(x1 - x0) < abs(y1 - y0)
     if transpose:
-        array = array.T
+        array = torch.permute(array, (1, 0, 2))
         x0, y0, x1, y1 = y0, x0, y1, x1
     x = torch.arange(x0, x1 + 1).cuda()
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
@@ -51,7 +51,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
     print(y.round().to(torch.int16))
     print(array.shape)
     array[x.round().to(int), y.round().to(int), :] = colour
-    return array if not transpose else array.T
+    return array if not transpose else torch.permute(1, 0, 2)
 
 if __name__ == '__main__':
     array = read_tiff(Path('03') / 't0000_mask.tif')
