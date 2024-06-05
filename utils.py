@@ -35,6 +35,7 @@ def save_tiff(array, path):
 
 def draw_line(array, x0, x1, y0, y1, colour):
     x0, x1, y0, y1 = x0.round(), x1.round(), y0.round(), y1.round()
+    print(x0, x1, y0, y1)
     if (x0-x1).round()==0 and (y0-y1).round()==0:
         return array
     if x0 > x1:
@@ -45,7 +46,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
         x0, y0, x1, y1 = y0, x0, y1, x1
     x = torch.arange(x0, x1).cuda()
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
-    print(x0, x1, y0, y1)
+
     print(x)
     print(x.round().to(torch.int16))
     print(y.round().to(torch.int16))
