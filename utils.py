@@ -34,7 +34,7 @@ def save_tiff(array, path):
     # im.save(path)
 
 def draw_line(array, x0, x1, y0, y1, colour):
-    if x0==x1 and y0==y1:
+    if (x0-x1).round()==0 and (y0-y1).round()==0:
         return array
     if x0 > x1:
         x0, x1, y0, y1 = x1, x0, y1, y0
