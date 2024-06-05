@@ -45,6 +45,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
     x = torch.arange(x0, x1 + 1).cuda()
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
     print(x0, x1, y0, y1)
+    print(x)
     print(x.round().to(torch.int16))
     print(y.round().to(torch.int16))
     array[x.round().to(int), y.round().to(int), :] = colour
