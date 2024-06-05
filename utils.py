@@ -51,7 +51,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
     print(y.round().to(torch.int16))
     print(array.shape)
     array[x.round().to(int), y.round().to(int), :] = colour
-    return array if not transpose else torch.permute(1, 0, 2)
+    return array if not transpose else torch.permute(array, (1, 0, 2))
 
 if __name__ == '__main__':
     array = read_tiff(Path('03') / 't0000_mask.tif')
