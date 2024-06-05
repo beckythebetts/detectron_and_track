@@ -36,14 +36,15 @@ def save_tiff(array, path):
 def draw_line(array, x0, x1, y0, y1, colour):
     x0, x1, y0, y1 = x0.round(), x1.round(), y0.round(), y1.round()
     print(x0, x1, y0, y1)
-    if (x0-x1).round()==0 and (y0-y1).round()==0:
-        return array
-    if x0 > x1:
-        x0, x1, y0, y1 = x1, x0, y1, y0
     transpose = abs(x1 - x0) < abs(y1 - y0)
     if transpose:
         array = torch.permute(array, (1, 0, 2))
         x0, y0, x1, y1 = y0, x0, y1, x1
+    if (x0-x1).round()==0 and (y0-y1).round()==0:
+        return array
+    if x0 > x1:
+        x0, x1, y0, y1 = x1, x0, y1, y0
+
     x = torch.arange(x0, x1).cuda()
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
 
