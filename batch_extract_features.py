@@ -145,7 +145,7 @@ def plot_tracks():
         colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
         centres = torch.tensor(data.loc[:, 'xcentre':'ycentre'].values).cuda()
         #print(data.loc[:, 'xcentre':''])
-        for i in range(len(centres) - 1)[:10]:
+        for i in range(len(centres) - 1):
             if not torch.any(centres[i:i+2].isnan()):
                 tracks_plot = utils.draw_line(tracks_plot, centres[i, 0], centres[i+1, 0], centres[i, 1], centres[i+1, 1], colour)
                 print(tracks_plot.shape)
