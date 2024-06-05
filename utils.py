@@ -49,6 +49,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
     print(x)
     print(x.round().to(torch.int16))
     print(y.round().to(torch.int16))
+    print(array.shape)
     array[x.round().to(int), y.round().to(int), :] = colour
     return array if not transpose else array.T
 
