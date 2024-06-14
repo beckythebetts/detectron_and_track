@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DIRECTORY = Path('03_test')
+DIRECTORY = Path("/home/ubuntu/Documents/det_proj/detectron_and_track/kfold_half_old/train6/test('00',)")
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
 REMOVE_EDGE_CELLS = True
@@ -18,6 +18,7 @@ NUM_FRAMES_TO_VIEW = None # Set as None to view all (slow)
 
 
 # ******* FEATURE EXTRACTION *******
+BATCH_SIZE = 100
 PLOT_FEATURES = True
 TRACKS_PLOT = True
 SHOW_EATING = True

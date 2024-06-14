@@ -195,22 +195,19 @@ def show_eating():
 
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
 
-        #print(features.stem, eaten_frames)
-
-
 def main():
-    # torch.cuda.empty_cache()
-    # gc.enable()
-    # with torch.no_grad():
-    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-    #     cell_batch.run_feature_extraction()
-    # if SETTINGS.PLOT_FEATURES:
-    #     plot_features()
+    torch.cuda.empty_cache()
+    gc.enable()
+    with torch.no_grad():
+        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+        cell_batch.run_feature_extraction()
+    if SETTINGS.PLOT_FEATURES:
+        plot_features()
     if SETTINGS.TRACKS_PLOT:
         plot_tracks()
-    # if SETTINGS.SHOW_EATING:
-    #     show_eating()
+    if SETTINGS.SHOW_EATING:
+        show_eating()
 if __name__ == '__main__':
     main()
 
