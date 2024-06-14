@@ -173,7 +173,7 @@ def train(directory):
     # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
     cfg.INPUT.MIN_SIZE_TRAIN = (600,)
     cfg.INPUT.MAX_SIZE_TRAIN = 600
-    cfg.INPUT.MIN_SIZE_TEST = (1200,)
+    cfg.INPUT.MIN_SIZE_TEST = (1200, )
     cfg.INPUT.MAX_SIZE_TEST = 1200
     cfg.TEST.EVAL_PERIOD = 100
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
