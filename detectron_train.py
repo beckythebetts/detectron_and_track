@@ -174,10 +174,15 @@ def train(directory):
 
     cfg.INPUT.MIN_SIZE_TRAIN = (600,)
     cfg.INPUT.MAX_SIZE_TRAIN = 600
-    cfg.INPUT.MIN_SIZE_TEST = (1200, )
-    cfg.INPUT.MAX_SIZE_TEST = 1200
-    cfg.TEST.MIN_SIZES = (1200,)  # Minimum sizes for testing in TEST settings
-    cfg.TEST.MAX_SIZE = 1200  # Maximum size for testing in TEST settings
+    cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
+
+    cfg.INPUT.MIN_SIZE_TEST = 1200  # Set as an integer
+    cfg.INPUT.MAX_SIZE_TEST = 1200  # Set as an integer
+
+    # Adjust the TEST section parameters if necessary
+    cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
+    cfg.TEST.AUG["MAX_SIZE"] = 1200  # Ensure consistency with max size
+    cfg.TEST.AUG["MIN_SIZES"] = [1200]  # Ensure consistency with min size
 
     cfg.TEST.EVAL_PERIOD = 100
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
