@@ -30,7 +30,7 @@ def show_frame(image, mask, save_as):
             if j + 1 not in colour_dict.keys():
                 colour_dict[j + 1] = torch.tensor(np.random.uniform(0, 2 ** (8) - 1, size=3)).cpu()
             single_mask = torch.where(mask == j + 1, 1, 0)
-            outline = mask_funcs.mask_outline(single_mask, 3)
+            outline = mask_funcs.mask_outline(single_mask, 1)
             for c in range(3):
                 print(outline.shape, colour_dict[j + 1][c], im_rgb[c].shape, im_rgb.shape)
                 im_rgb[c] = torch.where(outline, colour_dict[j + 1][c], im_rgb[c])
@@ -40,7 +40,7 @@ def show_frame(image, mask, save_as):
     utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), save_as)
 
 def main():
-    show_frame(Path('ims_for_report/0.22/00.jpg'), Path('ims_for_report/0.22/00_mask.tif'), Path('ims_for_report/0.22/view.jpg'))
+    show_frame(Path('ims_for_report/0.88/00.jpg'), Path('ims_for_report/0.88/00_mask.tif'), Path('ims_for_report/0.88/view.png'))
 
 if __name__ == '__main__':
     main()
