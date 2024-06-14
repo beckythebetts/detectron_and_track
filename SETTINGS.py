@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DIRECTORY = Path("/home/ubuntu/Documents/det_proj/detectron_and_track/kfold_test/train7/test('11a',)")
+DIRECTORY = Path("/home/ubuntu/Documents/det_proj/detectron_and_track/kfold_test/train1/test('00', '01', '10', '11', '00a', '01a', '10a')")
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
 IMAGE_SIZE = (822, 920)
