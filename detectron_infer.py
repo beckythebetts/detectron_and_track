@@ -34,7 +34,6 @@ def main():
     cfg.MODEL.WEIGHTS = str(config_directory / 'model_final.pth') # path to the model we just trained
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5   # set a custom testing threshold
     cfg.MODEL.DEVICE = "cuda"
-    cfg.INPUT.MIN_SIZE_TEST = (1200, )
     # cfg.MODEL.DEVICE = 'cpu'
     predictor = DefaultPredictor(cfg)
 
