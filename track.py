@@ -122,7 +122,8 @@ class Tracker:
 
 
 def main():
-    trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
+    # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
+    trackers = [Tracker(phase)]
     if SETTINGS.TRACK:
         for tracker in trackers:
             tracker.track()
