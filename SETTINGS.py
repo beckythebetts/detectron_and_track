@@ -1,10 +1,9 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DIRECTORY = Path("/home/ubuntu/Documents/det_proj/detectron_and_track/kfold_test/train7/test('11a',)")
+DIRECTORY = Path("04")
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
-IMAGE_SIZE = (822, 920)
 REMOVE_EDGE_CELLS = True
 
 # ******* EPI THRESHOLDING *******
