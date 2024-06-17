@@ -175,10 +175,10 @@ def show_eating():
         if len(eaten_frames) > 0:
             (SETTINGS.DIRECTORY / 'show_eating' / features.stem).mkdir()
             for eaten_frame in eaten_frames:
-                image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ('t' + "{0:04}".format(eaten_frame) + '.jpg'))).cuda()
-                epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ('t' + "{0:04}".format(eaten_frame) + '.tif')).astype(np.float32)).cuda()
+                image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ("{0:04}".format(eaten_frame) + '.jpg'))).cuda()
+                epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ("{0:04}".format(eaten_frame) + '.tif')).astype(np.float32)).cuda()
                 mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / ("{0:04}".format(eaten_frame)+'.tif')).astype(np.int16)).cuda()
-                outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=3)
+                outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=1)
                 epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
                 im_rgb = torch.stack((image, image, image), axis=0)
 
@@ -198,14 +198,14 @@ def show_eating():
 def main():
     torch.cuda.empty_cache()
     gc.enable()
-    with torch.no_grad():
-        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-        cell_batch.run_feature_extraction()
-    if SETTINGS.PLOT_FEATURES:
-        plot_features()
-    if SETTINGS.TRACKS_PLOT:
-        plot_tracks()
+    # with torch.no_grad():
+    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+    #     cell_batch.run_feature_extraction()
+    # if SETTINGS.PLOT_FEATURES:
+    #     plot_features()
+    # if SETTINGS.TRACKS_PLOT:
+    #     plot_tracks()
     if SETTINGS.SHOW_EATING:
         show_eating()
 if __name__ == '__main__':
