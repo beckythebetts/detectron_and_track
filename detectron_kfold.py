@@ -56,12 +56,13 @@ class KFold:
 
     def split_all(self):
         for names in [('00',),
+                      ('00a',),
                       ('01',),
-                      ('02'),
-                      ('03',),
-                      ('04',),
-                      ('05',),
-                      ('06',)]:
+                      ('01a',),
+                      ('10',),
+                      ('10a',),
+                      ('11',),
+                      ('11a',)]:
             self.make_split(names)
         # for names in [('00', '01'), ('01', '10'), ('10', '11'), ('11', '10')]:
         #     self.make_split(names)
@@ -97,7 +98,7 @@ def unregister_coco_instances(name):
 
 
 def main():
-    my_kfold = KFold(Path('kfold_16_old'))
+    my_kfold = KFold(Path('koflds') / 'kfold_test')
     my_kfold.split_all()
     my_kfold.train()
 

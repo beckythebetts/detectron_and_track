@@ -119,7 +119,7 @@ class MyTrainer(DefaultTrainer):
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-        return COCOEvaluator(dataset_name, cfg, True, output_folder)
+        return COCOEvaluator(dataset_name, cfg, True, output_folder, max_dets_per_image=1000)
 
     def build_hooks(self):
         hooks = super().build_hooks()
@@ -176,13 +176,13 @@ def train(directory):
     cfg.INPUT.MAX_SIZE_TRAIN = 600
     cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
 
-    cfg.INPUT.MIN_SIZE_TEST = 1200  # Set as an integer
-    cfg.INPUT.MAX_SIZE_TEST = 1200  # Set as an integer
+    cfg.INPUT.MIN_SIZE_TEST = 600  # Set as an integer
+    cfg.INPUT.MAX_SIZE_TEST = 600  # Set as an integer
 
     # Adjust the TEST section parameters if necessary
     cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
-    cfg.TEST.AUG["MAX_SIZE"] = 1200  # Ensure consistency with max size
-    cfg.TEST.AUG["MIN_SIZES"] = [1200]  # Ensure consistency with min size
+    cfg.TEST.AUG["MAX_SIZE"] = 600 # Ensure consistency with max size
+    cfg.TEST.AUG["MIN_SIZES"] = [600]  # Ensure consistency with min size
 
     cfg.TEST.EVAL_PERIOD = 100
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
