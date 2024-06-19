@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DIRECTORY = Path("03")
+DIRECTORY = Path("04")
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
 REMOVE_EDGE_CELLS = True
