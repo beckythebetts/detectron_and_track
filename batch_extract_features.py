@@ -158,9 +158,9 @@ def plot_features():
     for features_path in (SETTINGS.DIRECTORY / 'features').iterdir():
         data = pd.read_csv(features_path, sep='\t')
         fig, axs = plt.subplots(5, sharex=True, figsize=(10, 10))
-        colours=['firebrick', 'darkorange', 'yellowgreen', 'lightseagreen', 'royalblue']
+        # colours=['firebrick', 'darkorange', 'yellowgreen', 'lightseagreen', 'royalblue']
         for i in range(5):
-            axs[i].plot(data.iloc[:, i], color=colours[i])
+            axs[i].plot(data.iloc[:, i], color='k')
             axs[i].set(ylabel=data.columns.values.tolist()[i])
             axs[i].grid()
 
@@ -198,24 +198,24 @@ def show_eating():
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
 
 def main():
-    torch.cuda.empty_cache()
-    gc.enable()
-    with torch.no_grad():
-        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-        cell_batch.run_feature_extraction()
-        cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).cuda())
-        cell_batch.run_feature_extraction()
-        cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).cuda())
-        cell_batch.run_feature_extraction()
-        cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).cuda())
-        cell_batch.run_feature_extraction()
+    # torch.cuda.empty_cache()
+    # gc.enable()
+    # with torch.no_grad():
+    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+    #     cell_batch.run_feature_extraction()
+    #     cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).cuda())
+    #     cell_batch.run_feature_extraction()
+    #     cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).cuda())
+    #     cell_batch.run_feature_extraction()
+    #     cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).cuda())
+    #     cell_batch.run_feature_extraction()
     if SETTINGS.PLOT_FEATURES:
         plot_features()
-    if SETTINGS.TRACKS_PLOT:
-        plot_tracks()
-    if SETTINGS.SHOW_EATING:
-        show_eating()
+    # if SETTINGS.TRACKS_PLOT:
+    #     plot_tracks()
+    # if SETTINGS.SHOW_EATING:
+    #     show_eating()
 if __name__ == '__main__':
     main()
 
