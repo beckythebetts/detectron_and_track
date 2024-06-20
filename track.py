@@ -112,7 +112,7 @@ class Tracker:
                     if j+1 not in colour_dict.keys():
                         colour_dict[j+1] = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
                     single_mask = torch.where(mask==j+1, 1, 0)
-                    outline = mask_funcs.mask_outline(single_mask, 3)
+                    outline = mask_funcs.mask_outline(single_mask, 1)
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, colour_dict[j+1][c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)
