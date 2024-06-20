@@ -169,6 +169,9 @@ def plot_features():
         plt.savefig(SETTINGS.DIRECTORY / 'features_plots' / str(features_path.stem+'.png'))
         plt.close()
 
+
+
+
 def show_eating():
     utils.remake_dir(SETTINGS.DIRECTORY / 'show_eating')
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
