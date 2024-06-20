@@ -12,7 +12,7 @@ THRESHOLD = 17469
 # ******* TRACKING *******
 OVERLAP_THRESHOLD = 0.2
 FRAME_MEMORY = 3
-TRACK = False
+TRACK = True
 VIEW_TRACKS = True # Save labelled tracked images
 NUM_FRAMES_TO_VIEW = 50 # Set as None to view all (slow)
 
