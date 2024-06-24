@@ -8,6 +8,7 @@ import numpy as np
 
 import SETTINGS
 import utils
+import mask_funcs
 
 
 def init(lines):
