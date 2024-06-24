@@ -172,7 +172,7 @@ def train(directory):
     # cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
     # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
 
-    cfg.INPUT.MIN_SIZE_TRAIN = (400, 600, 800)
+    cfg.INPUT.MIN_SIZE_TRAIN = (600,)
     cfg.INPUT.MAX_SIZE_TRAIN = 800
     cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
 
