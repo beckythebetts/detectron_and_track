@@ -47,12 +47,12 @@ def animate_plot_features(cell_number):
 
 
 
-    ani = FuncAnimation(fig, update, fargs=(lines, data, axs), frames=range(1, 1000), init_func=lambda: init(lines), blit=False)
+    ani = FuncAnimation(fig, update, fargs=(lines, data, axs), frames=range(1, 1000), init_func=lambda: init(lines), blit=True)
 
     # Save the animation as a GIF
     animation_path = SETTINGS.DIRECTORY / 'features_animated' / (
             features_path.stem + '.gif')  # Replace with your save directory path
-    ani.save(animation_path, writer='pillow', fps=30)
+    ani.save(animation_path, writer='pillow', fps=100)
 
 def show_cell(cell_index):
     utils.remake_dir(SETTINGS.DIRECTORY / 'show_cell')
@@ -68,8 +68,8 @@ def show_cell(cell_index):
         epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
         im_rgb = torch.stack((image, image, image), axis=0)
 
-        im_rgb[0] = torch.where(outline, 0, im_rgb[0])
-        im_rgb[1] = torch.where(outline, 0, im_rgb[1])
+        im_rgb[0] = torch.where(outline, 100, im_rgb[0])
+        im_rgb[1] = torch.where(outline, 100, im_rgb[1])
         im_rgb[2] = torch.where(outline, 255, im_rgb[2])
 
         im_rgb[0] = torch.where(epi_image > SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
@@ -83,8 +83,8 @@ def show_cell(cell_index):
 
 
 def main():
-    #animate_plot_features(17)
-    show_cell(17)
+    animate_plot_features(17)
+    #show_cell(17)
 
 if __name__ == '__main__':
     main()

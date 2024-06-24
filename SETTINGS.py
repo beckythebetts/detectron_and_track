@@ -21,7 +21,7 @@ NUM_FRAMES_TO_VIEW = 50 # Set as None to view all (slow)
 BATCH_SIZE = 100
 PLOT_FEATURES = True
 TRACKS_PLOT = False
-SHOW_EATING = True
+SHOW_EATING = False
 
 # ******* DIRECTORY STRUCTURE ********
 # - 'training_dataset'

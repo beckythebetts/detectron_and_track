@@ -207,13 +207,13 @@ def main():
         utils.remake_dir(SETTINGS.DIRECTORY / 'features')
         cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
         cell_batch.run_feature_extraction()
-        cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).cuda())
-        cell_batch.run_feature_extraction()
-        cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).cuda())
-        cell_batch.run_feature_extraction()
-        cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).cuda())
-        cell_batch.run_feature_extraction()
-    if SETTINGS.PLOT_FEATURES:
+    #     cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).cuda())
+    #     cell_batch.run_feature_extraction()
+    #     cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).cuda())
+    #     cell_batch.run_feature_extraction()
+    #     cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).cuda())
+    #     cell_batch.run_feature_extraction()
+    # if SETTINGS.PLOT_FEATURES:
         plot_features()
     if SETTINGS.TRACKS_PLOT:
         plot_tracks()
