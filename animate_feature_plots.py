@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from PIL import Image
 from pathlib import Path
+import torch
 
 import SETTINGS
 import utils
