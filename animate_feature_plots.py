@@ -53,7 +53,7 @@ def animate_plot_features(cell_number):
 
 def show_cell(cell_index):
     utils.remake_dir(SETTINGS.DIRECTORY / 'show_cell')
-    for frame in (SETTINGS.DIRECTORY / 'phase' / 'inference_dataset'):
+    for frame in (SETTINGS.DIRECTORY / 'phase' / 'inference_dataset').iterdir():
         image = torch.tensor(utils.read_tiff(frame)).cuda()
         epi_image = torch.tensor(utils.read_tiff(
             SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / (frame.stem + '.tif')).astype(
@@ -76,7 +76,7 @@ def show_cell(cell_index):
         im_rgb = im_rgb.permute(1, 2, 0)
 
         utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8),
-                        SETTINGS.DIRECTORY / 'show_cell' ("{0:04}".format(frame) + '.jpg'))
+                        SETTINGS.DIRECTORY / 'show_cell' / ("{0:04}".format(frame) + '.jpg'))
 
 
 def main():
