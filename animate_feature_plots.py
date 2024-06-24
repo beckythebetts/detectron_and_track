@@ -83,8 +83,8 @@ def show_cell(cell_index):
 
 
 def main():
-    animate_plot_features(17)
-    #show_cell(17)
+    # animate_plot_features(7)
+    show_cell(7)
 
 if __name__ == '__main__':
     main()
