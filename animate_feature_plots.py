@@ -79,7 +79,7 @@ def show_cell(cell_index):
         im_rgb = im_rgb.permute(1, 2, 0)
 
         utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8),
-                        SETTINGS.DIRECTORY / 'show_cell' / ("{0:04}".format(frame) + '.jpg'))
+                        SETTINGS.DIRECTORY / 'show_cell' / ("{0:04}".format(int(frame.stem)) + '.jpg'))
 
 
 def main():
