@@ -101,6 +101,8 @@ class Tracker:
                 if index !=0:
                     length_of_tracks[index] += 1
         tracks_to_remove = torch.tensor([index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
+        print(length_of_tracks)
+        print(tracks_to_remove)
         for i, frame_path in enumerate(self.tracked_masks):
             sys.stdout.write(
                 f'\rCleaning frame {i + 1} / {len(self.tracked_masks)}')
