@@ -95,7 +95,7 @@ class Tracker:
             sys.stdout.write(
                 f'\rReading frame {i + 1} / {len(self.tracked_masks)}')
             sys.stdout.flush()
-            frame = torch.tensor(utils.read_tiff(frame_path).astype(np.uint16)).cuda()
+            frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
             for index in torch.unique(frame):
                 index = index.item()
                 if index !=0:
@@ -107,7 +107,7 @@ class Tracker:
             sys.stdout.write(
                 f'\rCleaning frame {i + 1} / {len(self.tracked_masks)}')
             sys.stdout.flush()
-            frame = torch.tensor(utils.read_tiff(frame_path).astype(np.uint16)).cuda()
+            frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
             cleaned_frame = torch.where(frame==tracks_to_remove.any(), 0, frame)
             utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
 
@@ -126,7 +126,7 @@ class Tracker:
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {num_frames}')
             sys.stdout.flush()
-            mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.uint16)).cuda()
+            mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
             #image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
             image = torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda()
             im_rgb = torch.stack((image, image, image), axis=0)
