@@ -90,7 +90,7 @@ class Tracker:
     def clean_up(self, threshold=200):
         # Removinf cells which are seen for < threshold number of frames
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
-        #length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
+        # length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
         length_of_tracks = {}
         for i, frame_path in enumerate(self.tracked_masks):
             sys.stdout.write(
@@ -99,11 +99,12 @@ class Tracker:
             frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
             for index in torch.unique(frame):
                 index = index.item()
-                if index !=0:
+                if index != 0:
                     if index not in length_of_tracks.keys():
                         length_of_tracks[index] = 0
                     length_of_tracks[index] += 1
-        tracks_to_remove = torch.tensor([index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
+        tracks_to_remove = torch.tensor(
+            [index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
         print(length_of_tracks)
         print(tracks_to_remove)
         for i, frame_path in enumerate(self.tracked_masks):
@@ -111,9 +112,10 @@ class Tracker:
                 f'\rCleaning frame {i + 1} / {len(self.tracked_masks)}')
             sys.stdout.flush()
             frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
-            cleaned_frame = torch.where(frame==tracks_to_remove.any(), 0, frame)
+            cleaned_frame = frame.clone()
+            for track in tracks_to_remove:
+                cleaned_frame[frame == track] = 0
             utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
-
 
     def show_tracks(self, num_frames=None):
         print('\n--------------------\nSHOWING TRACKS - ', self.name, '\n--------------------')
