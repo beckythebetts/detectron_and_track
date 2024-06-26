@@ -91,7 +91,7 @@ class Tracker:
         # Removinf cells which are seen for < threshold number of frames
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
         length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
-        for frame_path in self.tracked_masks:
+        for i, frame_path in enumerate(self.tracked_masks):
             sys.stdout.write(
                 f'\rReading frame {i + 1} / {num_frames}')
             sys.stdout.flush()
@@ -100,7 +100,7 @@ class Tracker:
                 if index !=0:
                     length_of_tracks[index] += 1
         tracks_to_remove = torch.tensor([index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
-        for frame_path in self.tracked_masks:
+        for i, frame_path in enumerate(self.tracked_masks):
             sys.stdout.write(
                 f'\rCleaning frame {i + 1} / {num_frames}')
             sys.stdout.flush()
