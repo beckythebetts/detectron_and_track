@@ -97,6 +97,7 @@ class Tracker:
             sys.stdout.flush()
             frame = torch.tensor(utils.read_tiff(frame_path).astype(np.uint8)).cuda()
             for index in torch.unique(frame):
+                index = index.item()
                 if index !=0:
                     length_of_tracks[index] += 1
         tracks_to_remove = torch.tensor([index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
