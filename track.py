@@ -87,6 +87,21 @@ class Tracker:
             self.old_frame = self.new_frame
             utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
 
+    def clean_up(self, threshold=200):
+        # Removinf cells which are seen for < threshold number of frames
+        self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
+        length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
+        for frame_path in self.tracked_masks:
+            frame = torch.tensor(utils.read_tiff(frame_path)).cuda()
+            for index in torch.unique(frame):
+                length_of_tracks[index] += 1
+        tracks_to_remove = torch.tensor([index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
+        for frame_path in self.tracked_masks:
+            frame = torch.tensor(utils.read_tiff(frame_path)).cuda()
+            cleaned_frame = torch.where(frame==tracks_to_remove.any(), 0, frame)
+            utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
+
+
     def show_tracks(self, num_frames=None):
         print('\n--------------------\nSHOWING TRACKS - ', self.name, '\n--------------------')
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
@@ -121,12 +136,17 @@ class Tracker:
             utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
 
+
+
 def main():
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
     trackers = [Tracker('phase')]
     if SETTINGS.TRACK:
         for tracker in trackers:
             tracker.track()
+    if SETTINGS.CLEAN_TRACKS:
+        for tracker in trackers:
+            tracker.clean_up()
     if SETTINGS.VIEW_TRACKS:
         for tracker in trackers:
             tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)

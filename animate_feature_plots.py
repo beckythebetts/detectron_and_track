@@ -141,27 +141,27 @@ def create_video_from_frames(frames, output_path, fps=30):
 
 def main():
     #my_animate_plot(7)
-    show_cell(7)
+    #show_cell(7)
 
-    # # Paths to the folders containing images
-    # folder1 = '04/features_animated'
-    # folder2 = '04/show_cell'
-    #
-    # # Read images from folders
-    # images1 = read_images_from_folder(folder1)
-    # images2 = read_images_from_folder(folder2)
-    #
-    # # Ensure both sets have the same number of images
-    # assert len(images1) == len(images2), "The two sets of images must have the same number of images."
-    #
-    # # Create combined frames
-    # combined_frames = create_combined_frames(images1, images2)
-    #
-    # # Path to the output video file
-    # output_video_path = '04/output_video.mp4'
-    #
-    # # Create video from combined frames
-    # create_video_from_frames(combined_frames, output_video_path)
+    # Paths to the folders containing images
+    folder1 = '04/features_animated'
+    folder2 = '04/show_cell'
+
+    # Read images from folders
+    images1 = read_images_from_folder(folder1)
+    images2 = read_images_from_folder(folder2)
+
+    # Ensure both sets have the same number of images
+    assert len(images1) == len(images2), "The two sets of images must have the same number of images."
+
+    # Create combined frames
+    combined_frames = create_combined_frames(images1, images2)
+
+    # Path to the output video file
+    output_video_path = '04/output_video.mp4'
+
+    # Create video from combined frames
+    create_video_from_frames(combined_frames, output_video_path)
 
 if __name__ == '__main__':
     main()
