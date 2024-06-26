@@ -92,11 +92,18 @@ class Tracker:
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
         length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
         for frame_path in self.tracked_masks:
+            sys.stdout.write(
+                f'\rReading frame {i + 1} / {num_frames}')
+            sys.stdout.flush()
             frame = torch.tensor(utils.read_tiff(frame_path).astype(np.uint8)).cuda()
             for index in torch.unique(frame):
-                length_of_tracks[index] += 1
+                if index !=0:
+                    length_of_tracks[index] += 1
         tracks_to_remove = torch.tensor([index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
         for frame_path in self.tracked_masks:
+            sys.stdout.write(
+                f'\rCleaning frame {i + 1} / {num_frames}')
+            sys.stdout.flush()
             frame = torch.tensor(utils.read_tiff(frame_path)).cuda()
             cleaned_frame = torch.where(frame==tracks_to_remove.any(), 0, frame)
             utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
