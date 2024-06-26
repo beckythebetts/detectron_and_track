@@ -105,7 +105,7 @@ class Tracker:
             sys.stdout.write(
                 f'\rCleaning frame {i + 1} / {len(self.tracked_masks)}')
             sys.stdout.flush()
-            frame = torch.tensor(utils.read_tiff(frame_path)).cuda()
+            frame = torch.tensor(utils.read_tiff(frame_path).astype(np.uint8)).cuda()
             cleaned_frame = torch.where(frame==tracks_to_remove.any(), 0, frame)
             utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
 
