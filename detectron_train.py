@@ -139,8 +139,8 @@ def train():
 
     dataset_dir = SETTINGS.MASK_RCNN_MODEL / 'Training_Data'
     config_directory = SETTINGS.MASK_RCNN_MODEL / 'Model'
-    register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
-    register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
+    register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'Images'))
+    register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'Images'))
 
     train_metadata = MetadataCatalog.get("my_dataset_train")
     train_dataset_dicts = DatasetCatalog.get("my_dataset_train")
