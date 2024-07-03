@@ -134,7 +134,7 @@ class MyTrainer(DefaultTrainer):
         ))
         return hooks
 
-def train(directory):
+def train():
     setup_logger()
 
     dataset_dir = SETTINGS.MASK_RCNN_MODEL / 'Training_Data'
@@ -211,7 +211,7 @@ def train(directory):
     plt.clf()
 
 def main():
-    train(directory)
+    train()
 
 if __name__ == '__main__':
     main()
