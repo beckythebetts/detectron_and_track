@@ -19,17 +19,16 @@ import yaml
 
 import SETTINGS
 
-directory = SETTINGS.DIRECTORY
 
-def evaluator(directory):
+def evaluator():
     setup_logger()
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
-    dataset_dir = directory / 'training_dataset'
-    config_directory = directory / 'model'
+    dataset_dir = SETTINGS.MASK_RCNN_MODEL / 'Training_Data'
+    config_directory = SETTINGS.MASK_RCNN_MODEL / 'Model'
 
     register_coco_instances("my_dataset_val", {}, str(dataset_dir / 'validate' / 'labels.json'),
-                            str(dataset_dir / 'validate' / 'images'))
+                            str(dataset_dir / 'validate' / 'Images'))
 
     val_metadata = MetadataCatalog.get("my_dataset_val")
     val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
@@ -51,7 +50,7 @@ def evaluator(directory):
         f.write(str(output))
 
 def main():
-    evaluator(directory)
+    evaluator()
 
 if __name__ == '__main__':
     main()

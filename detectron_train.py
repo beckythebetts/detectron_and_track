@@ -171,7 +171,7 @@ def train():
     # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
 
     cfg.INPUT.MIN_SIZE_TRAIN = (600,)
-    cfg.INPUT.MAX_SIZE_TRAIN = 800
+    cfg.INPUT.MAX_SIZE_TRAIN = 600
     cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
 
     cfg.INPUT.MIN_SIZE_TEST = 1200  # Set as an integer

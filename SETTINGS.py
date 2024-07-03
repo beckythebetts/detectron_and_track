@@ -26,7 +26,22 @@ PLOT_FEATURES = True
 TRACKS_PLOT = False
 SHOW_EATING = False
 
-# ******* DIRECTORY STRUCTURE ********
+
+# ******* DIRECTORY STRUCTURE *******
+# - 'Models'
+#   - model name
+#       - 'Training_Data'
+#           - 'train'
+#               - 'Images' .jpeg
+#               - 'lables.json'
+#           - 'validate'
+#               - 'Images' .jpeg
+#               - 'lables.json'
+# - 'Datasets'
+#   - dataset name
+#       - 'Images'
+#           - 'Phase' .jpeg
+# ******* DIRECTORY STRUCTURE ******** REDO
 # - 'training_dataset'
 #       - 'train'
 #           - 'images' (jpegs)
