@@ -7,9 +7,10 @@
 Mac/
 Mac2/
 ims_for_report/
-
-
+Datasets/
+Models/
 RAW_DATA/
+
 External Libraries/
 Scratches and Consoles/
 Lib/

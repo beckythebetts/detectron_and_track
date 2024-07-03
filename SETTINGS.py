@@ -1,7 +1,10 @@
 from pathlib import Path
 
+
+
 # ******* GENERAL *******
-DIRECTORY = Path("04")
+DIRECTORY = Path("Datasets") / '04'
+MASK_RCNN_MODEL = Path("Models") / '00'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
 REMOVE_EDGE_CELLS = True

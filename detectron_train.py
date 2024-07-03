@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import yaml
 import logging
 
+import utils
 import SETTINGS
 
 
@@ -29,7 +30,6 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
 
 torch.cuda.empty_cache()
 
-directory = SETTINGS.DIRECTORY
 
 from detectron2.engine.hooks import HookBase
 from detectron2.evaluation import inference_context
@@ -137,8 +137,8 @@ class MyTrainer(DefaultTrainer):
 def train(directory):
     setup_logger()
 
-    dataset_dir = directory / 'training_dataset'
-    config_directory = directory / 'model'
+    dataset_dir = SETTINGS.MASK_RCNN_MODEL / 'Training_Data'
+    config_directory = SETTINGS.MASK_RCNN_MODEL / 'Model'
     register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'images'))
     register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'images'))
 
@@ -148,9 +148,7 @@ def train(directory):
     val_metadata = MetadataCatalog.get("my_dataset_val")
     val_dataset_dicts = DatasetCatalog.get("my_dataset_val")
 
-    if config_directory.is_dir():
-        shutil.rmtree(str(config_directory))
-    config_directory.mkdir()
+    utils.remake_dir(config_directory)
     with open(str(config_directory / "train_metadata.json"), 'w') as json_file:
         json.dump(train_metadata.as_dict(), json_file)
 

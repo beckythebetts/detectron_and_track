@@ -96,11 +96,19 @@ def unregister_coco_instances(name):
     if name in MetadataCatalog.list():
         MetadataCatalog.pop(name)
 
+def merge_jsons(directory):
+    all_jsons = [f for f in directory.glob('*.json')]
+    json_0 = all_jsons[0]
+    for i in range(1, len(all_jsons)):
+        call(['python', '-m', 'COCO_merger.merge', '--src', json_0, all_jsons[i], '--out', directory / 'labels.json'])
+        json_0 = directory / 'labels.json'
 
 def main():
-    my_kfold = KFold(Path('koflds') / 'kfold_test')
-    my_kfold.split_all()
-    my_kfold.train()
+    # my_kfold = KFold(Path('koflds') / 'kfold_test')
+    # my_kfold.split_all()
+    # my_kfold.train()
+
+    merge_jsons(Path('RAW_DATA/04/training_dataset/kfold/labels'))
 
 if __name__=='__main__':
     main()
