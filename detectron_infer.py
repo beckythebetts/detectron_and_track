@@ -38,7 +38,7 @@ def main():
     predictor = DefaultPredictor(cfg)
 
     with h5py.File(SETTINGS.DATASET, 'r+') as f:
-        del f['Segmentations']
+        #del f['Segmentations']
         for i, im in f['Images']['Phase'].items():
 
             sys.stdout.write(f'\rSegmenting image {int(i)+1} / {f["Images"].attrs["Number of frames"]}')
