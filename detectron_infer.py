@@ -37,11 +37,10 @@ def main():
     # cfg.MODEL.DEVICE = 'cpu'
     predictor = DefaultPredictor(cfg)
 
-    with h5py.File(SETTINGS.DATASET, 'r') as f:
+    with h5py.File(SETTINGS.DATASET, 'r+') as f:
         for i, im in f['Images']['Phase'].items():
             sys.stdout.write(f'\rSegmenting image {int(i)+1} / {f["Images"].attrs["Number of frames"]}')
             sys.stdout.flush()
-            print('IMAGE', np.array(im))
             detectron_outputs = predictor(np.stack([np.array(im)]*3, axis=-1))
             class_masks = {class_name: torch.zeros_like(detectron_outputs["instances"].pred_masks[0], dtype=torch.int16,
                                                         device=device)
