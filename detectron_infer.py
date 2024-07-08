@@ -41,8 +41,7 @@ def main():
         for i, im in enumerate(f['Images']['Phase']):
             sys.stdout.write(f'\rSegmenting image {i+1} / {f["Images"].attrs["Number of frames"]}')
             sys.stdout.flush()
-            im = im.read_direct(im[()])
-            print('IMAGE', im)
+            print('IMAGE', im[()])
             detectron_output = predictor(np.array(im))
             class_masks = {class_name: torch.zeros_like(detectron_outputs["instances"].pred_masks[0], dtype=torch.int16,
                                                         device=device)
