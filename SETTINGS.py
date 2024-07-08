@@ -1,9 +1,7 @@
 from pathlib import Path
 
-
-
 # ******* GENERAL *******
-DIRECTORY = Path("Datasets") / '04'
+DATASET = Path("Datasets") / '04.h5'
 MASK_RCNN_MODEL = Path("Models") / '00'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
@@ -32,26 +30,16 @@ SHOW_EATING = False
 #   - model name
 #       - 'Training_Data'
 #           - 'train'
-#               - 'Images' .jpeg
+#               - 'Images' .jpegs
 #               - 'lables.json'
 #           - 'validate'
-#               - 'Images' .jpeg
-#               - 'lables.json'
+#               - 'Images' .jpegs
+#               - 'labels.json'
 # - 'Datasets'
 #   - dataset name
 #       - 'Images'
-#           - 'Phase' .jpeg
-# ******* DIRECTORY STRUCTURE ******** REDO
-# - 'training_dataset'
-#       - 'train'
-#           - 'images' (jpegs)
-#           - 'labels.json'
-#       - 'validate'
-#           - 'images' (jpegs)
-#           - 'labels.json'
-# - 'inference_datset'
-#       - 'epi' (tiffs)
-#       - 'phase' (jpegs)
-# *ALL IMAGES 8-BIT*
+#           - 'Phase' .jpegs
+#           - 'Epi' .TIFs
+
 
 
