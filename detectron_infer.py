@@ -38,8 +38,9 @@ def main():
     predictor = DefaultPredictor(cfg)
 
     with h5py.File(SETTINGS.DATASET, 'r+') as f:
+        del f['Segmentations']
         for i, im in f['Images']['Phase'].items():
-            del f['Segmentations']
+
             sys.stdout.write(f'\rSegmenting image {int(i)+1} / {f["Images"].attrs["Number of frames"]}')
             sys.stdout.flush()
             detectron_outputs = predictor(np.stack([np.array(im)]*3, axis=-1))
@@ -62,7 +63,6 @@ def main():
             for class_name, class_mask in class_masks.items():
                 class_mask_np = class_mask.cpu().numpy()
                 mask = f.create_dataset(f'Segmentations/Phase/{i}', dtype='i2', data=class_mask_np)
-                print(f.keys())
                 #f['Segmentations']['Phase'][i] = class_mask_np
 
 
