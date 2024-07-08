@@ -42,7 +42,7 @@ def main():
             sys.stdout.write(f'\rSegmenting image {int(i)+1} / {f["Images"].attrs["Number of frames"]}')
             sys.stdout.flush()
             print('IMAGE', np.array(im))
-            detectron_output = predictor(np.stack([np.array(im)]*3, axis=-1)
+            detectron_output = predictor(np.stack([np.array(im)]*3, axis=-1))
             class_masks = {class_name: torch.zeros_like(detectron_outputs["instances"].pred_masks[0], dtype=torch.int16,
                                                         device=device)
                            for class_name in train_metadata['thing_classes']}
