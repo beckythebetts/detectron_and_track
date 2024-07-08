@@ -39,6 +39,8 @@ def main():
 
     with h5py.File(SETTINGS.DATASET, 'r+') as f:
         for i, im in f['Images']['Phase'].items():
+            del f['Segmentations']
+            print(i)
             sys.stdout.write(f'\rSegmenting image {int(i)+1} / {f["Images"].attrs["Number of frames"]}')
             sys.stdout.flush()
             detectron_outputs = predictor(np.stack([np.array(im)]*3, axis=-1))
