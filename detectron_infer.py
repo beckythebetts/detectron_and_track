@@ -38,10 +38,10 @@ def main():
     predictor = DefaultPredictor(cfg)
 
     with h5py.File(SETTINGS.DATASET, 'r') as f:
-        for i, im in enumerate(f['Images']['Phase']):
-            sys.stdout.write(f'\rSegmenting image {i+1} / {f["Images"].attrs["Number of frames"]}')
+        for i, im in f['Images']['Phase'].items():
+            sys.stdout.write(f'\rSegmenting image {int(i)+1} / {f["Images"].attrs["Number of frames"]}')
             sys.stdout.flush()
-            print('IMAGE', im.value)
+            print('IMAGE', im)
             detectron_output = predictor(np.array(im))
             class_masks = {class_name: torch.zeros_like(detectron_outputs["instances"].pred_masks[0], dtype=torch.int16,
                                                         device=device)
