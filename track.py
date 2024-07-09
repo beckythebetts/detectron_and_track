@@ -31,6 +31,7 @@ class Tracker:
         self.frames_list = list(self.file['Segmentations']['Phase'].keys())
         self.frames_list.sort()
         self.images_list = list(self.file['Segmentations']['Phase'].keys())
+        self.images_list.sort()
         self.old_frame = self.read_frame(0)
         self.new_frame = self.read_frame(1)
         self.max_index = torch.max(self.old_frame)
@@ -143,8 +144,8 @@ class Tracker:
 
     def show_tracks(self, num_frames=None):
         print('\n--------------------\nSHOWING TRACKS - ', self.name, '\n--------------------')
-        self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
-        view_track_dir = SETTINGS.DIRECTORY / 'tracked' / (self.name+'_view')
+        #self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
+        view_track_dir = Path('Datasets') / '04_view'
         utils.remake_dir(view_track_dir)
         #total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
         #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
@@ -155,9 +156,12 @@ class Tracker:
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {num_frames}')
             sys.stdout.flush()
-            mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
+            mask = self.read_frame(i)
+            #mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
             #image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
-            image = torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda()
+            # image = torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda()
+            image = torch.tensor(self.file['Segmentations']['Images'][self.images_list[frame_index]][()].astype(np.int16)).to(
+                device)
             im_rgb = torch.stack((image, image, image), axis=0)
             #print(mask.shape)
             #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
@@ -180,7 +184,8 @@ class Tracker:
 def main():
     my_tracker = Tracker('Phase')
     #my_tracker.track()
-    my_tracker.clean_up()
+    #my_tracker.clean_up()
+    my_tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
     my_tracker.close()
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
     # trackers = [Tracker('phase')]
