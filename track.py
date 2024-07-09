@@ -110,11 +110,13 @@ class Tracker:
         self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
         # length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
         length_of_tracks = {}
-        for i, frame_path in enumerate(self.tracked_masks):
+        for i in range(len(self.frames_list)):
+        #for i, frame_path in enumerate(self.tracked_masks):
             sys.stdout.write(
-                f'\rReading frame {i + 1} / {len(self.tracked_masks)}')
+                f'\rReading frame {i + 1} / {len(self.frames_list)}')
             sys.stdout.flush()
-            frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
+            frame = self.read_frame(i)
+            # frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
             for index in torch.unique(frame):
                 index = index.item()
                 if index != 0:
@@ -130,11 +132,13 @@ class Tracker:
             sys.stdout.write(
                 f'\rCleaning frame {i + 1} / {len(self.tracked_masks)}')
             sys.stdout.flush()
-            frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
+            frame = self.read_frame(i)
+            # frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
             cleaned_frame = frame.clone()
             for track in tracks_to_remove:
                 cleaned_frame[frame == track] = 0
-            utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
+            self.write_frame(i, self.cleaned_frame.cpu())
+            #utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
 
     def show_tracks(self, num_frames=None):
         print('\n--------------------\nSHOWING TRACKS - ', self.name, '\n--------------------')
@@ -174,7 +178,8 @@ class Tracker:
 
 def main():
     my_tracker = Tracker('Phase')
-    my_tracker.track()
+    #my_tracker.track()
+    my_tracker.clean_up()
     my_tracker.close()
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
     # trackers = [Tracker('phase')]
