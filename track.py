@@ -138,7 +138,7 @@ class Tracker:
             cleaned_frame = frame.clone()
             for track in tracks_to_remove:
                 cleaned_frame[frame == track] = 0
-            self.write_frame(i, self.cleaned_frame.cpu())
+            self.write_frame(i, cleaned_frame.cpu())
             #utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
 
     def show_tracks(self, num_frames=None):
