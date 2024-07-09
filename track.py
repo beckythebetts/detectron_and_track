@@ -39,7 +39,7 @@ class Tracker:
         # self.old_frame = torch.tensor(utils.read_tiff(self.mask_ims[0]).astype(np.int16)).cuda()
         # self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
         # self.max_index = torch.max(self.old_frame)
-        # self.missing_cells = {} # key is cell index, value is MissingCell class
+        self.missing_cells = {} # key is cell index, value is MissingCell class
     def read_frame(self, frame_index):
         return torch.tensor(self.file['Segmentations']['Phase'][self.frames_list[frame_index]][()].astype(np.int16)).to(device)
 
