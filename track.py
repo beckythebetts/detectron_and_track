@@ -107,7 +107,7 @@ class Tracker:
 
     def clean_up(self, threshold=50):
         # Removinf cells which are seen for < threshold number of frames
-        self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
+        # self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
         # length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
         length_of_tracks = {}
         for i in range(len(self.frames_list)):
