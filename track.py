@@ -160,7 +160,7 @@ class Tracker:
             #mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
             #image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
             # image = torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda()
-            image = torch.tensor(self.file['Images']['Phase'][self.images_list[frame_index]][()].astype(np.int16)).to(
+            image = torch.tensor(self.file['Images']['Phase'][self.images_list[i]][()].astype(np.int16)).to(
                 device)
             im_rgb = torch.stack((image, image, image), axis=0)
             #print(mask.shape)
