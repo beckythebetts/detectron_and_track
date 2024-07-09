@@ -44,7 +44,7 @@ class Tracker:
         return torch.tensor(self.file['Segmentations']['Phase'][self.frames_list[frame_index]][()].astype(np.int16)).to(device)
 
     def write_frame(self, frame_index, dataset):
-        self.file['Segmentations']['Phase'][self.frames_list[frame_index]] = dataset
+        self.file['Segmentations']['Phase'][self.frames_list[frame_index]][...] = dataset
 
     def close(self):
         self.file.close()
