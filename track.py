@@ -88,15 +88,14 @@ class Tracker:
 
     def track(self):
         print('\n--------------------\nTRACKING - ', self.name, '\n--------------------')
-        utils.remake_dir(SETTINGS.DIRECTORY / 'tracked' / self.name)
+        #utils.remake_dir(SETTINGS.DIRECTORY / 'tracked' / self.name)
         # im = Image.fromarray(self.old_frame.cpu().numpy().astype(np.int16))
         # im.save(SETTINGS.DIRECTORY / 'tracking' / self.name / ("{0:03}".format(0) + '.tif'))
-        utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16),
-                        SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(0) + '.tif'))
+        #utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16),SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(0) + '.tif'))
 
-        for i in range(1, len(self.mask_ims)):
+        for i in range(1, len(self.frames_list)):
             sys.stdout.write(
-                f'\rAdding frame {i+1} / {len(self.mask_ims)}')
+                f'\rAdding frame {i+1} / {len(self.frames_list)}')
             sys.stdout.flush()
 
             self.new_frame = self.read_frame(i)
