@@ -25,12 +25,20 @@ class Tracker:
 
     def __init__(self, name):
         self.name = name
-        self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'segmented' / self.name).iterdir()])
-        self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / self.name).iterdir()])
-        self.old_frame = torch.tensor(utils.read_tiff(self.mask_ims[0]).astype(np.int16)).cuda()
-        self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
-        self.max_index = torch.max(self.old_frame)
-        self.missing_cells = {} # key is cell index, value is MissingCell class
+        self.file = h5py.File(SETTINGS.DATASET, 'r+')
+        self.frames_list = list(self.file['Segmentations']['Phase'].keys()).sort()
+        self.images_list = list(self.file['Segmentations']['Phase'].keys())
+        #self.old_frame = torch.tensor(self.file['Segmentaions']['Phase'][self.frames_list])
+        print(self.frames_list)
+        # self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'segmented' / self.name).iterdir()])
+        # self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / self.name).iterdir()])
+        # self.old_frame = torch.tensor(utils.read_tiff(self.mask_ims[0]).astype(np.int16)).cuda()
+        # self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
+        # self.max_index = torch.max(self.old_frame)
+        # self.missing_cells = {} # key is cell index, value is MissingCell class
+
+    def close(self):
+        self.file.close()
 
     def add_missing_masks(self):
         for missing_index in self.missing_cells.keys():
@@ -155,17 +163,20 @@ class Tracker:
 
 
 def main():
+    my_tracker = Tracker('Phase')
+    my_tracker.close()
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
-    trackers = [Tracker('phase')]
-    if SETTINGS.TRACK:
-        for tracker in trackers:
-            tracker.track()
-    if SETTINGS.CLEAN_TRACKS:
-        for tracker in trackers:
-            tracker.clean_up()
-    if SETTINGS.VIEW_TRACKS:
-        for tracker in trackers:
-            tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
+    # trackers = [Tracker('phase')]
+    # if SETTINGS.TRACK:
+    #     for tracker in trackers:
+    #         tracker.track()
+    # if SETTINGS.CLEAN_TRACKS:
+    #     for tracker in trackers:
+    #         tracker.clean_up()
+    # if SETTINGS.VIEW_TRACKS:
+    #     for tracker in trackers:
+    #         tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
+    # for tracker
 
     # test_tracker = Tracker('epi')
     # #test_tracker.track()
