@@ -30,6 +30,7 @@ class Tracker:
         self.frames_list = list(self.file['Segmentations']['Phase'].keys()).sort()
         self.images_list = list(self.file['Segmentations']['Phase'].keys())
         #self.old_frame = torch.tensor(self.file['Segmentaions']['Phase'][self.frames_list])
+        print(self.file)
         print(self.frames_list)
         # self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'segmented' / self.name).iterdir()])
         # self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / self.name).iterdir()])
