@@ -16,6 +16,7 @@ import mask_funcs
 import SETTINGS
 import utils
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class MissingCell:
     def __init__(self, mask):
@@ -30,14 +31,20 @@ class Tracker:
         self.frames_list = list(self.file['Segmentations']['Phase'].keys())
         self.frames_list.sort()
         self.images_list = list(self.file['Segmentations']['Phase'].keys())
-        self.old_frame = torch.tensor(self.file['Segmentations']['Phase'][self.frames_list[0]][()].astype(np.int16)).cuda()
-        print(self.old_frame)
+        self.old_frame = self.read_frame(0)
+        self.new_frame = self.read_frame(1)
+        self.max_index = torch.max(self.old_frame)
         # self.mask_ims = sorted([mask for mask in (SETTINGS.DIRECTORY / 'segmented' / self.name).iterdir()])
         # self.images = sorted([image for image in (SETTINGS.DIRECTORY / 'inference_dataset' / self.name).iterdir()])
         # self.old_frame = torch.tensor(utils.read_tiff(self.mask_ims[0]).astype(np.int16)).cuda()
         # self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
         # self.max_index = torch.max(self.old_frame)
         # self.missing_cells = {} # key is cell index, value is MissingCell class
+    def read_frame(self, frame_index):
+        return torch.tensor(self.file['Segmentations']['Phase'][self.frames_list[frame_index]][()].astype(np.int16)).to(device)
+
+    def write_frame(self, frame_index, dataset):
+        self.file['Segmenetations']['Phase'][self.frames_list[frame_index]] = dataset
 
     def close(self):
         self.file.close()
@@ -92,10 +99,12 @@ class Tracker:
                 f'\rAdding frame {i+1} / {len(self.mask_ims)}')
             sys.stdout.flush()
 
-            self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
+            self.new_frame = self.read_frame(i)
+            #self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[i]).astype(np.int16)).cuda()
             self.update_new_frame()
             self.old_frame = self.new_frame
-            utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
+            self.write_frame(i, self.old_frame.cpu())
+            #utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
 
     def clean_up(self, threshold=50):
         # Removinf cells which are seen for < threshold number of frames
@@ -166,6 +175,7 @@ class Tracker:
 
 def main():
     my_tracker = Tracker('Phase')
+    my_tracker.track()
     my_tracker.close()
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
     # trackers = [Tracker('phase')]
