@@ -27,7 +27,8 @@ class Tracker:
     def __init__(self, name):
         self.name = name
         self.file = h5py.File(SETTINGS.DATASET, 'r+')
-        self.frames_list = list(self.file.keys()).sort()
+        self.frames_list = list(self.file['Segmentations']['Phase'].keys())
+        self.frames_list.sort()
         self.images_list = list(self.file['Segmentations']['Phase'].keys())
         #self.old_frame = torch.tensor(self.file['Segmentaions']['Phase'][self.frames_list])
         print(self.file)
