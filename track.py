@@ -131,7 +131,7 @@ class Tracker:
         # for i, frame_path in enumerate(self.tracked_masks):
             # BATCHES NEEDED TO SPEED THIS BIT UP
             sys.stdout.write(
-                f'\rCleaning frame {i + 1} / {len(self.tracked_masks)}')
+                f'\rCleaning frame {i + 1} / {len(self.frames_list)}')
             sys.stdout.flush()
             frame = self.read_frame(i)
             # frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
