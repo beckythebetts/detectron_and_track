@@ -127,7 +127,8 @@ class Tracker:
             [index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
         print(length_of_tracks)
         print(tracks_to_remove)
-        for i, frame_path in enumerate(self.tracked_masks):
+        for i in range(len(self.frames_list)):
+        # for i, frame_path in enumerate(self.tracked_masks):
             # BATCHES NEEDED TO SPEED THIS BIT UP
             sys.stdout.write(
                 f'\rCleaning frame {i + 1} / {len(self.tracked_masks)}')
