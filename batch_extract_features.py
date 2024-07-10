@@ -7,23 +7,38 @@ import gc
 import matplotlib.pyplot as plt
 import subprocess
 import os
+import h5py
 
 import utils
 import mask_funcs
 import SETTINGS
 
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Cell:
     def __init__(self, index):
         self.index = index
-        self.file = self.file = SETTINGS.DIRECTORY / 'features' / ("{0:04}".format(self.index) + '.txt')
-        with open(self.file, 'w') as f:
-            f.write('area\tspeed\tperimeter\tdist_nearest\teaten\txcentre\tycentre')
+        self.features_dataset_name = f'Features/cell{index}'
+        with h5py.File(SETTINGS.DATASET, 'r+') as f:
+            if 'Features' in f:
+                del f['Features']
+            dtype = np.dtype([
+                ('area', 'u2'),
+                ('speed', 'f4'),
+                ('perimeter', 'u2'),
+                ('dist_nearest', 'f4'),
+                ('eaten', 'u2'),
+                ('xcentre', 'f4'),
+                ('ycentre', 'f4')
+            ])
+            features_dataset = f.create_dataset(self.features_dataset_name, shape=(0,), maxshape=(None,), dtype=dtype)
 
-    def write_features(self, line):
-        with open(self.file, 'a') as f:
-            f.write(line)
+    def write_features(self, features_list):
+        with h5py.File(SETTINGS.DATASET, 'a') as f:
+            features_dataset = f[self.features_dataset_name]
+            features_dataset.resize(len(features_dataset)+1, axis=0)
+            features_dataset[-1] = features_list
 
 class CellBatch:
     def __init__(self, indices):
@@ -33,25 +48,20 @@ class CellBatch:
         self.centres = None
         self.last_centres = None
         self.batch_size = len(self.indices)
-        self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
+        self.frames_list = list(self.file['Segmentations']['Phase'].keys())
+        self.frames_list.sort()
+        # self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
         self.num_frames = len(self.paths)
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
-        self.memory_usage = SETTINGS.DIRECTORY / 'features_memory.txt'
-
-    def print_gpu_memory(self):
-        result = subprocess.run(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'],
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        memory_used = result.stdout.decode('utf-8').strip().split('\n')[0]
-        with open(self.memory_usage, 'a') as f:
-            f.write(f'{memory_used}\n')
 
     def run_feature_extraction(self):
-        for i, path in enumerate(self.paths):
+        for i, frame_name in enumerate(self.frames_list):
             sys.stdout.write(f'\rFrame {i+1} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} ')
             sys.stdout.flush()
             if i == 0:
-                full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
+                full_mask = torch.tensor(self.file['Segmentations']['Phase'][frame_name][()].astype(np.int16)).to(device)
+                # full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
                 full_mask = None
             self.print_gpu_memory()
@@ -91,7 +101,14 @@ class CellBatch:
 
     def write_features(self):
         for i, cell in enumerate(self.cells):
-            new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.eaten[i], self.centres[i, 0], self.centres[i, 1])])
+            new_line = (self.areas[i],
+                        self.speeds[i],
+                        self.perimeters[i],
+                        self.dists[i],
+                        self.eaten[i],
+                        self.centres[i, 0],
+                        self.centres[i, 1])
+            #new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.eaten[i], self.centres[i, 0], self.centres[i, 1])])
             cell.write_features(new_line)
 
     def get_areas(self):
@@ -169,9 +186,6 @@ def plot_features():
         plt.savefig(SETTINGS.DIRECTORY / 'features_plots' / str(features_path.stem+'.png'))
         plt.close()
 
-
-
-
 def show_eating():
     utils.remake_dir(SETTINGS.DIRECTORY / 'show_eating')
     for features in (SETTINGS.DIRECTORY / 'features').iterdir():
@@ -201,24 +215,29 @@ def show_eating():
                 utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
 
 def main():
-    torch.cuda.empty_cache()
-    gc.enable()
-    with torch.no_grad():
-        utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-        cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
-        cell_batch.run_feature_extraction()
-    #     cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).cuda())
+
+
+    test_cell = Cell(32)
+    test_cell.write_features((93, 32, 2, 2, 2, 2, 6))
+    test_cell.write_features(1)
+    # torch.cuda.empty_cache()
+    # gc.enable()
+    # with torch.no_grad():
+    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
+    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
     #     cell_batch.run_feature_extraction()
-    #     cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).cuda())
-    #     cell_batch.run_feature_extraction()
-    #     cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).cuda())
-    #     cell_batch.run_feature_extraction()
-    # if SETTINGS.PLOT_FEATURES:
-        plot_features()
-    if SETTINGS.TRACKS_PLOT:
-        plot_tracks()
-    if SETTINGS.SHOW_EATING:
-        show_eating()
+    # #     cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).cuda())
+    # #     cell_batch.run_feature_extraction()
+    # #     cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).cuda())
+    # #     cell_batch.run_feature_extraction()
+    # #     cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).cuda())
+    # #     cell_batch.run_feature_extraction()
+    # # if SETTINGS.PLOT_FEATURES:
+    #     plot_features()
+    # if SETTINGS.TRACKS_PLOT:
+    #     plot_tracks()
+    # if SETTINGS.SHOW_EATING:
+    #     show_eating()
 if __name__ == '__main__':
     main()
 

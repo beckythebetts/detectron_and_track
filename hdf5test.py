@@ -40,25 +40,27 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
         print('\nConverting Phase Images\n')
         i=1
         for im in Path(phase_tiffs_path).iterdir():
-            sys.stdout.write(f'\rFrame {i} / {Images.attrs["Number of frames"]}')
-            sys.stdout.flush()
-            Phase.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
-            i += 1
+            if i < 50:
+                sys.stdout.write(f'\rFrame {i} / {Images.attrs["Number of frames"]}')
+                sys.stdout.flush()
+                Phase.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
+                i += 1
         print('\nConverting Epi Images\n')
         i = 1
         for im in Path(epi_tiffs_path).iterdir():
-            sys.stdout.write(
-                f'\rFrame {i} / {Images.attrs["Number of frames"]}')
-            sys.stdout.flush()
-            Epi.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
-            i += 1
+            if i < 50:
+                sys.stdout.write(
+                    f'\rFrame {i} / {Images.attrs["Number of frames"]}')
+                sys.stdout.flush()
+                Epi.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
+                i += 1
 
 
 
 
 
 def main():
-    create_hdf5('RAW_DATA/04/04.h5', 'RAW_DATA/04/Phase_tiffs', 'RAW_DATA/04/Epi_tiffs_8bit')
+    create_hdf5('RAW_DATA/04/04_short.h5', 'RAW_DATA/04/Phase_tiffs', 'RAW_DATA/04/Epi_tiffs_8bit')
 
 if __name__=='__main__':
     main()

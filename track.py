@@ -126,8 +126,12 @@ class Tracker:
                     length_of_tracks[index] += 1
         tracks_to_remove = torch.tensor(
             [index for index, track_length in length_of_tracks.items() if track_length < threshold]).cuda()
-        print(length_of_tracks)
-        print(tracks_to_remove)
+        index_mapping = {}
+        new_index = 1
+        for old_index in length_of_tracks.keys():
+            if old_index not in tracks_to_remove:
+                index_mapping[old_index] = new_index
+                new_index += 1
         for i in range(len(self.frames_list)):
         # for i, frame_path in enumerate(self.tracked_masks):
             # BATCHES NEEDED TO SPEED THIS BIT UP
@@ -136,9 +140,12 @@ class Tracker:
             sys.stdout.flush()
             frame = self.read_frame(i)
             # frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
-            cleaned_frame = frame.clone()
-            for track in tracks_to_remove:
-                cleaned_frame[frame == track] = 0
+            # cleaned_frame = frame.clone()
+            cleaned_frame = torch.zeros(SETTINGS.IMAGE_SIZE)
+            for old_index, new_index in index_mapping:
+                cleaned_frame = torch.where(frame==old_index, new_index, frame)
+            # for track in tracks_to_remove:
+            #     cleaned_frame[frame == track] = 0
             self.write_frame(i, cleaned_frame.cpu())
             #utils.save_tiff(cleaned_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), frame_path)
 
@@ -151,7 +158,7 @@ class Tracker:
         #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
         colour_dict = {}
         if num_frames is None:
-            num_frames = len(self.tracked_masks)
+            num_frames = len(self.images_list)
         for i in range(num_frames):
             sys.stdout.write(
                 f'\rAdding frame {i + 1} / {num_frames}')

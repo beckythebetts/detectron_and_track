@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DATASET = Path("Datasets") / '04.h5'
+DATASET = Path("Datasets_orig") / '04.h5'
 MASK_RCNN_MODEL = Path("Models") / '00'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
