@@ -144,8 +144,9 @@ class Tracker:
             # frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
             # cleaned_frame = frame.clone()
             cleaned_frame = torch.zeros(SETTINGS.IMAGE_SIZE)
-            for old_i, new_i in index_mapping:
-                cleaned_frame = torch.where(frame==old_i, new_i, cleaned_frame)
+            for old_i, new_i in index_mapping.items():
+                cleaned_frame[frame==old_i] = new_i
+                #cleaned_frame = torch.where(frame==old_i, new_i, cleaned_frame)
             # for track in tracks_to_remove:
             #     cleaned_frame[frame == track] = 0
             self.write_frame(i, cleaned_frame.cpu())
