@@ -106,7 +106,7 @@ class Tracker:
             self.write_frame(i, self.old_frame.cpu())
             #utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
 
-    def clean_up(self, threshold=50):
+    def clean_up(self, threshold=10):
         print('\n----------\nCLEANING TRACKS\n----------\n')
         # Removinf cells which are seen for < threshold number of frames
         # self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
@@ -133,6 +133,7 @@ class Tracker:
             if old_index not in tracks_to_remove:
                 index_mapping[old_index] = new_index
                 new_index += 1
+        print(index_mapping)
         for i in range(len(self.frames_list)):
         # for i, frame_path in enumerate(self.tracked_masks):
             # BATCHES NEEDED TO SPEED THIS BIT UP
@@ -144,7 +145,7 @@ class Tracker:
             # cleaned_frame = frame.clone()
             cleaned_frame = torch.zeros(SETTINGS.IMAGE_SIZE)
             for old_index, new_index in index_mapping:
-                cleaned_frame = torch.where(frame==old_index, new_index, frame)
+                cleaned_frame = torch.where(frame==old_index, new_index, cleaned_frame)
             # for track in tracks_to_remove:
             #     cleaned_frame[frame == track] = 0
             self.write_frame(i, cleaned_frame.cpu())
