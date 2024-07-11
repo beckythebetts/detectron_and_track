@@ -107,6 +107,7 @@ class Tracker:
             #utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
 
     def clean_up(self, threshold=50):
+        print('\n----------\nCLEANING TRACKS\n----------\n')
         # Removinf cells which are seen for < threshold number of frames
         # self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
         # length_of_tracks = {index : 0 for index in range(1, self.max_index+1)}
@@ -190,8 +191,8 @@ class Tracker:
 
 def main():
     my_tracker = Tracker('Phase')
-    my_tracker.track()
-    #my_tracker.clean_up()
+    # my_tracker.track()
+    my_tracker.clean_up()
     #my_tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
     my_tracker.close()
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
