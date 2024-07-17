@@ -19,7 +19,7 @@ def read_hdf5():
         plt.show()
 
 def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
-    os.remove(hdf5_filename)
+    #os.remove(hdf5_filename)
     with h5py.File(hdf5_filename, 'w') as f:
         Images = f.create_group('Images')
         # ****** Image MetaData ********
@@ -59,7 +59,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
 
 
 def main():
-    create_hdf5(r'H:\rebecca\filter_test\filter\filter00.h5', r'H:\rebecca\filter_test\filter\00\phase', r'H:\rebecca\filter_test\filter\00\epi')
+    create_hdf5(r'H:\rebecca\filter_test\filter\filter01.h5', r'H:\rebecca\filter_test\filter\01\phase', r'H:\rebecca\filter_test\filter\01\epi')
 
 if __name__=='__main__':
     main()
