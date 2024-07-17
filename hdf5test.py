@@ -58,7 +58,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
 
 
 def main():
-    create_hdf5(r'H:\rebecca\filter_test\filter\filter00.h5', r'H:\rebecca\filter_test\filter\00\phase', r'H:\rebecca\filter_test\filter\00\epi')
+    create_hdf5(r'H:\rebecca\filter_test\filter\filter01.h5', r'H:\rebecca\filter_test\filter\01\phase', r'H:\rebecca\filter_test\filter\01\epi')
 
 if __name__=='__main__':
     main()
