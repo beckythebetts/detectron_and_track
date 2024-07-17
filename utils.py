@@ -5,6 +5,8 @@ from PIL import Image
 import numpy as np
 import imageio
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 def remake_dir(path):
     if path.is_dir():
         check = input(f'Delete directory {str(path)}? [y,n] ')
@@ -44,7 +46,7 @@ def draw_line(array, x0, x1, y0, y1, colour):
     if x0 > x1:
         x0, x1, y0, y1 = x1, x0, y1, y0
 
-    x = torch.arange(x0, x1).cuda()
+    x = torch.arange(x0, x1).to(device)
     y = ((y1-y0)/(x1-x0))*(x-x0) + y0
 
     array[x.round().to(int), y.round().to(int), :] = colour

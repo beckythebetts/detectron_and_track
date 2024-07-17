@@ -8,10 +8,13 @@ import matplotlib.pyplot as plt
 import subprocess
 import os
 import h5py
+import imageio
+from pathlib import Path
 
 import utils
 import mask_funcs
 import SETTINGS
+
 
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -19,24 +22,23 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class Cell:
     def __init__(self, index):
         self.index = index
-        self.features_dataset_name = f'Features/cell{index}'
+        self.features_dataset_name = f'Features/Cell{index:04}'
+
         with h5py.File(SETTINGS.DATASET, 'r+') as f:
-            if 'Features' in f:
-                del f['Features']
             dtype = np.dtype([
-                ('area', 'u2'),
+                ('area', 'f4'),
                 ('speed', 'f4'),
-                ('perimeter', 'u2'),
+                ('perimeter', 'f4'),
                 ('dist_nearest', 'f4'),
-                ('eaten', 'u2'),
+                ('eaten', 'f4'),
                 ('xcentre', 'f4'),
                 ('ycentre', 'f4')
             ])
-            features_dataset = f.create_dataset(self.features_dataset_name, shape=(0,), maxshape=(None,), dtype=dtype)
+            f.create_dataset(self.features_dataset_name, shape=(0,), maxshape=(None,), dtype=dtype)
 
     def write_features(self, features_list):
         with h5py.File(SETTINGS.DATASET, 'a') as f:
-            features_dataset = f[self.features_dataset_name]
+            features_dataset = f['Features'][f'Cell{self.index:04}']
             features_dataset.resize(len(features_dataset)+1, axis=0)
             features_dataset[-1] = features_list
 
@@ -48,48 +50,40 @@ class CellBatch:
         self.centres = None
         self.last_centres = None
         self.batch_size = len(self.indices)
+        self.file = h5py.File(SETTINGS.DATASET, 'r+')
         self.frames_list = list(self.file['Segmentations']['Phase'].keys())
         self.frames_list.sort()
         # self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
-        self.num_frames = len(self.paths)
-        self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).cuda(),
-                                                              torch.arange(SETTINGS.IMAGE_SIZE[1]).cuda())
+        #self.num_frames = len(self.paths)
+        self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).to(device),
+                                                              torch.arange(SETTINGS.IMAGE_SIZE[1]).to(device))
 
     def run_feature_extraction(self):
+        print('\nFEATURE EXTRACTION\n')
         for i, frame_name in enumerate(self.frames_list):
             sys.stdout.write(f'\rFrame {i+1} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} ')
             sys.stdout.flush()
             if i == 0:
                 full_mask = torch.tensor(self.file['Segmentations']['Phase'][frame_name][()].astype(np.int16)).to(device)
-                # full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
+                # full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).to(device)
                 self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1,0)
                 full_mask = None
-            self.print_gpu_memory()
-            torch.cuda.empty_cache()
-            self.next_frame(path)
-            self.print_gpu_memory()
-            torch.cuda.empty_cache()
+            self.next_frame(i)
             self.read_features()
-            self.print_gpu_memory()
-            torch.cuda.empty_cache()
             self.epi_mask = None
-            torch.cuda.empty_cache()
-            self.print_gpu_memory()
-            torch.cuda.empty_cache()
             self.write_features()
-            torch.cuda.empty_cache()
-            self.print_gpu_memory()
-            torch.cuda.empty_cache()
             gc.collect()
+        self.file.close()
 
+    def read_frame(self, frame_index, type='Phase'):
+        return torch.tensor(self.file['Segmentations'][type][self.frames_list[frame_index]][()].astype(np.int16)).to(device)
 
-    def next_frame(self, path):
-        full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).cuda()
+    def next_frame(self, frame_index):
+        #full_mask = torch.tensor(utils.read_tiff(path).astype(np.int16)).to(device)
+        full_mask = self.read_frame(frame_index)
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         full_mask = None
-        self.epi_mask = torch.tensor(
-            utils.read_tiff(SETTINGS.DIRECTORY / 'segmented' / 'epi' / path.name).astype(np.int16)).cuda()
-
+        self.epi_mask = self.read_frame(frame_index, type='Epi')
     def read_features(self):
         self.get_areas()
         self.get_centres()
@@ -136,7 +130,7 @@ class CellBatch:
     def get_perimeters(self):
         kernel = torch.tensor([[1, 1, 1],
                                [1, 9, 1],
-                               [1, 1, 1]]).cuda()
+                               [1, 1, 1]]).to(device)
 
         padded_masks = torch.nn.functional.pad(self.masks, (1, 1, 1, 1), mode='constant', value=0)
         conv_result = torch.nn.functional.conv2d(padded_masks.unsqueeze(1).float(), kernel.unsqueeze(0).unsqueeze(0).float(),
@@ -154,83 +148,118 @@ class CellBatch:
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
         self.eaten = intersection.sum(dim=(1, 2)).int()
 
-def plot_tracks():
-    tracks_plot = torch.zeros(*SETTINGS.IMAGE_SIZE, 3).cuda().to(float)
-    print('\n---------------\nPlotting Tracks\n---------------\n')
-    for features in (SETTINGS.DIRECTORY / 'features').iterdir():
-        data = pd.read_csv(features, sep='\t')
-        colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).cuda()
-        centres = torch.tensor(data.loc[:, 'xcentre':'ycentre'].values).cuda()
-        #print(data.loc[:, 'xcentre':''])
-        for i in range(len(centres) - 1):
-            if not torch.any(centres[i:i+2].isnan()):
-                tracks_plot = utils.draw_line(tracks_plot, centres[i, 0], centres[i+1, 0], centres[i, 1], centres[i+1, 1], colour)
-                print(tracks_plot.shape)
-    utils.save_tiff(tracks_plot.cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'tracks_plot.png')
+def plot_tracks(save_as):
+    tracks_plot = torch.zeros((*SETTINGS.IMAGE_SIZE, 3), dtype=torch.uint8).to(device)
+    print('\nPLOTTING TRACKS\n')
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        for cell in f['Features']:
+            colour = torch.tensor(np.random.uniform(0, 2 ** (8) - 1, size=3), dtype=torch.uint8).to(device)
+            xcentres = torch.tensor(f['Features'][cell]['xcentre']).to(device)
+            ycentres = torch.tensor(f['Features'][cell]['ycentre']).to(device)
+            xcentres, ycentres = xcentres[~torch.isnan(xcentres)], ycentres[~torch.isnan(ycentres)]
+            for i in range(len(xcentres) - 1):
+                tracks_plot = utils.draw_line(tracks_plot, xcentres[i], xcentres[i+1], ycentres[i], ycentres[i+1], colour)
+    print(tracks_plot.shape)
+    imageio.imwrite(save_as, tracks_plot)
+    # for features in (SETTINGS.DIRECTORY / 'features').iterdir():
+    #     data = pd.read_csv(features, sep='\t')
+    #     colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).to(device)
+    #     centres = torch.tensor(data.loc[:, 'xcentre':'ycentre'].values).to(device)
+    #     #print(data.loc[:, 'xcentre':''])
+    #     for i in range(len(centres) - 1):
+    #         if not torch.any(centres[i:i+2].isnan()):
+    #             tracks_plot = utils.draw_line(tracks_plot, centres[i, 0], centres[i+1, 0], centres[i, 1], centres[i+1, 1], colour)
+    #             print(tracks_plot.shape)
+    # utils.save_tiff(tracks_plot.cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'tracks_plot.png')
 
-def plot_features():
+def plot_features(save_as):
     plt.rcParams["font.family"] = 'serif'
-    print('\n---------------\nPlotting Features\n---------------\n')
-    utils.remake_dir(SETTINGS.DIRECTORY / 'features_plots')
-    for features_path in (SETTINGS.DIRECTORY / 'features').iterdir():
-        data = pd.read_csv(features_path, sep='\t')
-        fig, axs = plt.subplots(5, sharex=True, figsize=(10, 10))
-        # colours=['firebrick', 'darkorange', 'yellowgreen', 'lightseagreen', 'royalblue']
-        for i in range(5):
-            axs[i].plot(data.iloc[:, i], color='k')
-            axs[i].set(ylabel=data.columns.values.tolist()[i])
-            axs[i].grid()
+    print('\nPLOTTING FEATURES\n')
+    utils.remake_dir(Path(save_as))
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        for cell in f['Features']:
+            data = pd.DataFrame(f['Features'][cell][:])
+            #print(data)
+            fig, axs = plt.subplots(5, sharex=True, figsize=(10, 10))
+            # colours=['firebrick', 'darkorange', 'yellowgreen', 'lightseagreen', 'royalblue']
+            for i in range(5):
+                axs[i].plot(data.iloc[:, i], color='k')
+                axs[i].set(ylabel=data.columns.values.tolist()[i])
+                axs[i].grid()
 
-        fig.suptitle('Amoeba '+ features_path.stem)
-        axs[-1].set(xlabel='frames')
-        plt.savefig(SETTINGS.DIRECTORY / 'features_plots' / str(features_path.stem+'.png'))
-        plt.close()
+            fig.suptitle(cell)
+            axs[-1].set(xlabel='frames')
+            plt.savefig(Path(save_as) / (cell+'.png'))
+            plt.close()
 
-def show_eating():
-    utils.remake_dir(SETTINGS.DIRECTORY / 'show_eating')
-    for features in (SETTINGS.DIRECTORY / 'features').iterdir():
-        data = pd.read_csv(features, delimiter='\t')
-        eaten_frames = data.index[data['eaten']>=1].tolist()
-        if len(eaten_frames) > 0:
-            (SETTINGS.DIRECTORY / 'show_eating' / features.stem).mkdir()
-            for eaten_frame in eaten_frames:
-                image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'phase' / ("{0:04}".format(eaten_frame) + '.jpg'))).cuda()
-                epi_image = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'inference_dataset' / 'epi' / ("{0:04}".format(eaten_frame) + '.tif')).astype(np.float32)).cuda()
-                mask = torch.tensor(utils.read_tiff(SETTINGS.DIRECTORY / 'tracked' / 'phase' / ("{0:04}".format(eaten_frame)+'.tif')).astype(np.int16)).cuda()
-                outline = mask_funcs.mask_outline(torch.where(mask==int(features.stem), 1, 0), thickness=1)
-                epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
-                im_rgb = torch.stack((image, image, image), axis=0)
+def show_eating(directory):
+    utils.remake_dir(Path(directory))
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        for cell in f['Features']:
+            data = pd.DataFrame(f['Features'][cell][:])
+            eaten_frames = data.index[data['eaten']>=1].tolist()
+            if len(eaten_frames) > 0:
+                (Path(directory) / cell).mkdir()
+                for eaten_frame in eaten_frames:
+                    image = torch.tensor(f['Images']['Phase'][f'{eaten_frame:04}']).to(device)
+                    epi_image = torch.tensor(f['Images']['Epi'][f'{eaten_frame:04}']).to(device)
+                    mask = torch.tensor(f['Segmentations']['Phase'][f'{eaten_frame:04}']).to(device)
+                    outline = mask_funcs.mask_outline(torch.where(mask==int(cell[-4:]), 1, 0), thickness=2)
+                    epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
+                    im_rgb = torch.stack((image, image, image), axis=0)
 
-                im_rgb[0] = torch.where(outline, 0, im_rgb[0])
-                im_rgb[1] = torch.where(outline, 0, im_rgb[1])
-                im_rgb[2] = torch.where(outline, 255, im_rgb[2])
+                    im_rgb[0] = torch.where(outline, 255, im_rgb[0])
+                    im_rgb[1] = torch.where(outline, 255, im_rgb[1])
+                    im_rgb[2] = torch.where(outline, 0, im_rgb[2])
 
-                im_rgb[0] = torch.where(epi_image > SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
-                im_rgb[1] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[1])
-                im_rgb[2] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[2])
+                    im_rgb[0] = torch.where(epi_image > SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
+                    im_rgb[1] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[1])
+                    im_rgb[2] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[2])
 
 
-                im_rgb = im_rgb.permute(1, 2, 0)
+                    im_rgb = im_rgb.permute(1, 2, 0)
 
-                utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'show_eating' / features.stem /("{0:04}".format(eaten_frame) + '.jpg'))
+                    imageio.imwrite(Path(directory) / cell / ("{0:04}".format(eaten_frame) + '.jpg'), (im_rgb).cpu().numpy().astype(np.uint8))
+                    #utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), directory /("{0:04}".format(eaten_frame) + '.jpg'))
+
+def get_batches(batchsize):
+    max_cell_index = 0
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        for i, frame in enumerate(f['Segmentations']['Phase']):
+            frame = np.array(f['Segmentations']['Phase'][frame])
+            max = np.max(frame)
+            if max > max_cell_index:
+                max_cell_index = max
+    num_batches, remainder = divmod(max_cell_index, batchsize)
+    batches = [np.arange(i*batchsize+1, min(((i+1)*batchsize)+1, max_cell_index)) for i in range(0, num_batches+1)]
+    return batches
 
 def main():
+    # with h5py.File(SETTINGS.DATASET, 'r+') as f:
+    #     if 'Features' in f:
+    #         del(f['Features'])
+    # batches = get_batches(SETTINGS.BATCH_SIZE)
+    # with torch.no_grad():
+    #     for batch in batches:
+    #         current_cell_batch = CellBatch(torch.tensor(batch).to(device))
+    #         current_cell_batch.run_feature_extraction()
+
+    #plot_features('Datasets/features_test')
+    show_eating('Datasets/show_eating')
 
 
-    test_cell = Cell(32)
-    test_cell.write_features((93, 32, 2, 2, 2, 2, 6))
-    test_cell.write_features(1)
+
     # torch.cuda.empty_cache()
     # gc.enable()
     # with torch.no_grad():
     #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).cuda())
+    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).to(device))
     #     cell_batch.run_feature_extraction()
-    # #     cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).cuda())
+    # #     cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).to(device))
     # #     cell_batch.run_feature_extraction()
-    # #     cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).cuda())
+    # #     cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).to(device))
     # #     cell_batch.run_feature_extraction()
-    # #     cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).cuda())
+    # #     cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).to(device))
     # #     cell_batch.run_feature_extraction()
     # # if SETTINGS.PLOT_FEATURES:
     #     plot_features()

@@ -6,23 +6,24 @@ import cv2
 from scipy.ndimage import label
 import sys
 import numpy as np
+import h5py
 
 
 def main():
     print('--------------------\nTHRESHOLDING - ', SETTINGS.CLASSES['epi'], '\n--------------------')
-    images_dir = SETTINGS.DIRECTORY / 'inference_dataset' / 'epi'
-    segmented_dir = SETTINGS.DIRECTORY / 'segmented' / 'epi'
-    utils.remake_dir(segmented_dir)
-    images = sorted([im for im in images_dir.iterdir()])
-    num_frames = len(images)
-    for i, image in enumerate(images):
-        sys.stdout.write(
-            f'\rAdding frame {i + 1} / {num_frames}')
-        sys.stdout.flush()
-        image = utils.read_tiff(image)
-        image = np.where(image > SETTINGS.THRESHOLD, 1, 0)
-        image, num_objects = label(image)
-        utils.save_tiff(image.astype(np.uint16), segmented_dir/ ("{0:04}".format(i) + '.tif'))
+    with h5py.File(SETTINGS.DATASET, 'r+') as f:
+        if 'Epi' in f['Segmentations']:
+            del(f['Segmentations']['Epi'])
+        num_frames = f['Images'].attrs['Number of frames']
+        for i, frame in enumerate(f['Images']['Epi']):
+            sys.stdout.write(
+                f'\rAdding frame {i + 1} / {num_frames}')
+            sys.stdout.flush()
+            image = f['Images']['Epi'][frame][...]
+            image = np.where(image > SETTINGS.THRESHOLD, 1, 0)
+            image, num_objects = label(image)
+            f.create_dataset(f'Segmentations/Epi/{frame}', dtype='i2', data=image)
+
 
 if __name__ == '__main__':
     main()

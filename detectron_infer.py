@@ -63,7 +63,7 @@ def main():
 
             for class_name, class_mask in class_masks.items():
                 class_mask_np = class_mask.cpu().numpy()
-                mask = f.create_dataset(f'Segmentations/Phase/{frame}', dtype='i2', data=class_mask_np)
+                mask = f.create_dataset(f'Segmentations/Phase/{frame:04}', dtype='i2', data=class_mask_np)
                 #f['Segmentations']['Phase'][i] = class_mask_np
 
 
