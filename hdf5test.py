@@ -43,6 +43,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
             sys.stdout.write(f'\rFrame {i} / {Images.attrs["Number of frames"]}')
             sys.stdout.flush()
             Phase.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
+            i += 1
         print('\nConverting Epi Images\n')
         i = 1
         for im in Path(epi_tiffs_path).iterdir():
@@ -50,6 +51,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
                 f'\rFrame {i} / {Images.attrs["Number of frames"]}')
             sys.stdout.flush()
             Epi.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
+            i += 1
 
 
 
