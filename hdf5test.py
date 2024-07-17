@@ -32,7 +32,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
         Images.attrs['Epi exposure / ms'] = 10
         Images.attrs['Time interval / s'] = 3
         Images.attrs['Number of frames'] = 1200
-        Images.attrs['Filter'] = True
+        Images.attrs['Filter'] = False
 
         Images.attrs['Resolution / um'] = Images.attrs['Pixel Size / um'] / Images.attrs['Objective magnification']
         Images.attrs['FOV / um'] = Images.attrs['Image size / pixels'] * Images.attrs['Resolution / um']
@@ -60,7 +60,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
 
 
 def main():
-    create_hdf5(r'H:\rebecca\filter_test\filter\filter01.h5', r'H:\rebecca\filter_test\filter\01\phase', r'H:\rebecca\filter_test\filter\01\epi')
+    create_hdf5(r'H:\rebecca\filter_test\no_filter\no_filter00.h5', r'H:\rebecca\filter_test\no_filter\00\phase', r'H:\rebecca\filter_test\no_filter\00\epi')
 
 if __name__=='__main__':
     main()
