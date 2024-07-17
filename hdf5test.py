@@ -19,7 +19,7 @@ def read_hdf5():
         plt.show()
 
 def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
-    #os.remove(hdf5_filename)
+    os.remove(hdf5_filename)
     with h5py.File(hdf5_filename, 'w') as f:
         Images = f.create_group('Images')
         # ****** Image MetaData ********
@@ -43,7 +43,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
         for im in Path(phase_tiffs_path).iterdir():
             sys.stdout.write(f'\rFrame {i} / {Images.attrs["Number of frames"]}')
             sys.stdout.flush()
-            Phase.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
+            Phase.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')), chunks=(1024, 1024))
             i += 1
         print('\nConverting Epi Images\n')
         i = 1
@@ -51,7 +51,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
             sys.stdout.write(
                 f'\rFrame {i} / {Images.attrs["Number of frames"]}')
             sys.stdout.flush()
-            Epi.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')))
+            Epi.create_dataset(im.stem, data=np.array(Image.open(im, mode='r')), chunks=(1024, 1024))
             i += 1
 
 
