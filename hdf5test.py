@@ -60,7 +60,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
 
 
 def main():
-    create_hdf5('RAW_DATA/04/04_short.h5', 'RAW_DATA/04/Phase_tiffs', 'RAW_DATA/04/Epi_tiffs_8bit')
+    create_hdf5(r'H:\rebecca\filter_test\filter\filter00.h5', r'H:\rebecca\filter_test\filter\00\phase', r'H:\rebecca\filter_test\filter\00\epi')
 
 if __name__=='__main__':
     main()
