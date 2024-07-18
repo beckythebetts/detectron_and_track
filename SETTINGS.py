@@ -1,10 +1,10 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DATASET = Path("Datasets") / '04_short.h5'
-MASK_RCNN_MODEL = Path("Models") / '00'
+DATASET = Path("Datasets") / 'filter_test' / 'filter00.h5'
+MASK_RCNN_MODEL = Path("Models") / 'filter_test'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
-IMAGE_SIZE = (1200, 1200)
+IMAGE_SIZE = (2048, 2048)
 REMOVE_EDGE_CELLS = True
 
 # ******* EPI THRESHOLDING *******
@@ -31,15 +31,11 @@ SHOW_EATING = False
 #       - 'Training_Data'
 #           - 'train'
 #               - 'Images' .jpegs
-#               - 'lables.json'
+#               - 'labels.json'
 #           - 'validate'
 #               - 'Images' .jpegs
 #               - 'labels.json'
-# - 'Datasets'
-#   - dataset name
-#       - 'Images'
-#           - 'Phase' .jpegs
-#           - 'Epi' .TIFs
+
 
 
 

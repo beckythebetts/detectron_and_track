@@ -162,7 +162,7 @@ def train():
     cfg.DATALOADER.NUM_WORKERS = 4
     cfg.SOLVER.IMS_PER_BATCH = 2  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-    cfg.SOLVER.MAX_ITER = 2000 # iteration = run through one batch
+    cfg.SOLVER.MAX_ITER = 1000 # iteration = run through one batch
     cfg.SOLVER.STEPS = []  # do not decay learning rate
     cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32  # (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
@@ -170,17 +170,17 @@ def train():
     # cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
     # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
 
-    cfg.INPUT.MIN_SIZE_TRAIN = (600,)
-    cfg.INPUT.MAX_SIZE_TRAIN = 600
-    cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
-
-    cfg.INPUT.MIN_SIZE_TEST = 1200  # Set as an integer
-    cfg.INPUT.MAX_SIZE_TEST = 1200  # Set as an integer
-
-    # Adjust the TEST section parameters if necessary
-    cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
-    cfg.TEST.AUG["MAX_SIZE"] = 1200 # Ensure consistency with max size
-    cfg.TEST.AUG["MIN_SIZES"] = [1200]  # Ensure consistency with min size
+    # cfg.INPUT.MIN_SIZE_TRAIN = (600,)
+    # cfg.INPUT.MAX_SIZE_TRAIN = 600
+    # cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
+    #
+    # cfg.INPUT.MIN_SIZE_TEST = 1200  # Set as an integer
+    # cfg.INPUT.MAX_SIZE_TEST = 1200  # Set as an integer
+    #
+    # # Adjust the TEST section parameters if necessary
+    # cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
+    # cfg.TEST.AUG["MAX_SIZE"] = 1200 # Ensure consistency with max size
+    # cfg.TEST.AUG["MIN_SIZES"] = [1200]  # Ensure consistency with min size
 
     cfg.TEST.EVAL_PERIOD = 100
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
