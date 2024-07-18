@@ -159,7 +159,7 @@ def train():
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_DC5_3x.yaml")
     cfg.DATASETS.TRAIN = ("my_dataset_train",)
     cfg.DATASETS.TEST = ("my_dataset_val",)
-    cfg.DATALOADER.NUM_WORKERS = 4
+    cfg.DATALOADER.NUM_WORKERS = 1
     cfg.SOLVER.IMS_PER_BATCH = 1  # This is the real "batch size" commonly known to deep learning people
     cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
     cfg.SOLVER.MAX_ITER = 1000 # iteration = run through one batch
