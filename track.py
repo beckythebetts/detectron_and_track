@@ -57,7 +57,7 @@ class Tracker:
             #self.old_frame += self.missing_cells[missing_index].mask*missing_index
 
     def update_new_frame(self):
-        updated_new_frame = torch.zeros((1200, 1200)).cuda()
+        updated_new_frame = torch.zeros(SETTINGS.IMAGE_SIZE).cuda()
         self.add_missing_masks()
         #print('new ', len(mask_funcs.split_mask(self.new_frame, use_torch=True)))
         for new_mask, mask_index in mask_funcs.SplitMask(self.new_frame):
@@ -193,8 +193,8 @@ class Tracker:
 
 def main():
     my_tracker = Tracker('Phase')
-    # my_tracker.track()
-    #my_tracker.clean_up()
+    my_tracker.track()
+    my_tracker.clean_up()
     my_tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
     my_tracker.close()
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
