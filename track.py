@@ -189,33 +189,15 @@ class Tracker:
             utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
 
-
-
 def main():
     my_tracker = Tracker('Phase')
     my_tracker.track()
-    my_tracker.clean_up()
-    my_tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
+    if SETTINGS.CLEAN_TRACKS:
+        my_tracker.clean_up()
+    if SETTINGS.VIEW_TRACKS:
+        my_tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
     my_tracker.close()
-    # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]
-    # trackers = [Tracker('phase')]
-    # if SETTINGS.TRACK:
-    #     for tracker in trackers:
-    #         tracker.track()
-    # if SETTINGS.CLEAN_TRACKS:
-    #     for tracker in trackers:
-    #         tracker.clean_up()
-    # if SETTINGS.VIEW_TRACKS:
-    #     for tracker in trackers:
-    #         tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
-    # for tracker
 
-    # test_tracker = Tracker('epi')
-    # #test_tracker.track()
-    # test_tracker.show_tracks()
-
-    # test = utils.read_tiff('03/inference_dataset/epi/t0000.tif')
-    # utils.save_tiff(test, 'TEST.png')
 
 if __name__ == '__main__':
     main()

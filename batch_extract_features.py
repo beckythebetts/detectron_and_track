@@ -161,16 +161,6 @@ def plot_tracks(save_as):
                 tracks_plot = utils.draw_line(tracks_plot, xcentres[i], xcentres[i+1], ycentres[i], ycentres[i+1], colour)
     print(tracks_plot.shape)
     imageio.imwrite(save_as, tracks_plot)
-    # for features in (SETTINGS.DIRECTORY / 'features').iterdir():
-    #     data = pd.read_csv(features, sep='\t')
-    #     colour = torch.tensor(np.random.uniform(0, 2**(8)-1, size=3)).to(device)
-    #     centres = torch.tensor(data.loc[:, 'xcentre':'ycentre'].values).to(device)
-    #     #print(data.loc[:, 'xcentre':''])
-    #     for i in range(len(centres) - 1):
-    #         if not torch.any(centres[i:i+2].isnan()):
-    #             tracks_plot = utils.draw_line(tracks_plot, centres[i, 0], centres[i+1, 0], centres[i, 1], centres[i+1, 1], colour)
-    #             print(tracks_plot.shape)
-    # utils.save_tiff(tracks_plot.cpu().numpy().astype(np.uint8), SETTINGS.DIRECTORY / 'tracks_plot.png')
 
 def plot_features(save_as):
     plt.rcParams["font.family"] = 'serif'
@@ -201,9 +191,9 @@ def show_eating(directory):
             if len(eaten_frames) > 0:
                 (Path(directory) / cell).mkdir()
                 for eaten_frame in eaten_frames:
-                    image = torch.tensor(f['Images']['Phase'][f'{eaten_frame:04}']).to(device)
-                    epi_image = torch.tensor(f['Images']['Epi'][f'{eaten_frame:04}']).to(device)
-                    mask = torch.tensor(f['Segmentations']['Phase'][f'{eaten_frame:04}']).to(device)
+                    image = torch.tensor(np.array(f['Images']['Phase'][f'{eaten_frame:04}'])).to(device)
+                    epi_image = torch.tensor(np.array(f['Images']['Epi'][f'{eaten_frame:04}'])).to(device)
+                    mask = torch.tensor(np.array(f['Segmentations']['Phase'][f'{eaten_frame:04}'])).to(device)
                     outline = mask_funcs.mask_outline(torch.where(mask==int(cell[-4:]), 1, 0), thickness=2)
                     epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
                     im_rgb = torch.stack((image, image, image), axis=0)
@@ -235,18 +225,20 @@ def get_batches(batchsize):
     return batches
 
 def main():
-    with h5py.File(SETTINGS.DATASET, 'r+') as f:
-        if 'Features' in f:
-            del(f['Features'])
-    batches = get_batches(SETTINGS.BATCH_SIZE)
-    with torch.no_grad():
-        for batch in batches:
-            current_cell_batch = CellBatch(torch.tensor(batch).to(device))
-            current_cell_batch.run_feature_extraction()
-
-    #plot_features('Datasets/features_test')
-    #plot_features(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'feature_plots'))
-    show_eating(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
+    # with h5py.File(SETTINGS.DATASET, 'r+') as f:
+    #     if 'Features' in f:
+    #         del(f['Features'])
+    # batches = get_batches(SETTINGS.BATCH_SIZE)
+    # with torch.no_grad():
+    #     for batch in batches:
+    #         current_cell_batch = CellBatch(torch.tensor(batch).to(device))
+    #         current_cell_batch.run_feature_extraction()
+    if SETTINGS.PLOT_FEATURES:
+        plot_features(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'feature_plots')))
+    if SETTINGS.TRACKS_PLOT:
+        plot_tracks(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'tracks.png')))
+    if SETTINGS.SHOW_EATING:
+        show_eating(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
 
 
 

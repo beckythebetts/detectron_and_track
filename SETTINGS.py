@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # ******* GENERAL *******
-DATASET = Path("Datasets") / 'filter_test' / 'filter00.h5'
+DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
 MASK_RCNN_MODEL = Path("Models") / 'filter_test'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (2048, 2048)
@@ -20,9 +20,9 @@ NUM_FRAMES_TO_VIEW = 50 # Set as None to view all (slow)
 
 # ******* FEATURE EXTRACTION *******
 BATCH_SIZE = 100
-PLOT_FEATURES = True
-TRACKS_PLOT = False
-SHOW_EATING = False
+PLOT_FEATURES = False
+TRACKS_PLOT = True
+SHOW_EATING = True
 
 
 # ******* DIRECTORY STRUCTURE *******
