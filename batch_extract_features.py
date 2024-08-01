@@ -160,7 +160,7 @@ def plot_tracks(save_as):
             for i in range(len(xcentres) - 1):
                 tracks_plot = utils.draw_line(tracks_plot, xcentres[i], xcentres[i+1], ycentres[i], ycentres[i+1], colour)
     print(tracks_plot.shape)
-    imageio.imwrite(save_as, tracks_plot)
+    imageio.imwrite(save_as, tracks_plot.cpu())
 
 def plot_features(save_as):
     plt.rcParams["font.family"] = 'serif'
