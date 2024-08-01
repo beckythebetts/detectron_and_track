@@ -155,7 +155,7 @@ class Tracker:
     def show_tracks(self, num_frames=None):
         print('\n--------------------\nSHOWING TRACKS - ', self.name, '\n--------------------')
         #self.tracked_masks = sorted([mask for mask in (SETTINGS.DIRECTORY / 'tracked' / self.name).iterdir()])
-        view_track_dir = Path('Datasets') / '04_view'
+        view_track_dir = SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'view_tracks')
         utils.remake_dir(view_track_dir)
         #total_num_cells = np.max(utils.read_tiff(self.tracked_masks[-1]))
         #colours = torch.tensor(np.random.uniform(0, 1, size=(total_num_cells+1, 3))).cuda()
@@ -193,8 +193,8 @@ class Tracker:
 
 def main():
     my_tracker = Tracker('Phase')
-    my_tracker.track()
-    my_tracker.clean_up()
+    # my_tracker.track()
+    # my_tracker.clean_up()
     my_tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
     my_tracker.close()
     # trackers = [Tracker(name) for name in SETTINGS.CLASSES.keys()]

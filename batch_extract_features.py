@@ -235,16 +235,16 @@ def get_batches(batchsize):
     return batches
 
 def main():
-    # with h5py.File(SETTINGS.DATASET, 'r+') as f:
-    #     if 'Features' in f:
-    #         del(f['Features'])
-    # batches = get_batches(SETTINGS.BATCH_SIZE)
-    # with torch.no_grad():
-    #     for batch in batches:
-    #         current_cell_batch = CellBatch(torch.tensor(batch).to(device))
-    #         current_cell_batch.run_feature_extraction()
+    with h5py.File(SETTINGS.DATASET, 'r+') as f:
+        if 'Features' in f:
+            del(f['Features'])
+    batches = get_batches(SETTINGS.BATCH_SIZE)
+    with torch.no_grad():
+        for batch in batches:
+            current_cell_batch = CellBatch(torch.tensor(batch).to(device))
+            current_cell_batch.run_feature_extraction()
 
-    #plot_features('Datasets/features_test')
+    plot_features('Datasets/features_test')
     show_eating('Datasets/show_eating')
 
 
