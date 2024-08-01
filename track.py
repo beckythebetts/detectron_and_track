@@ -193,7 +193,7 @@ class Tracker:
 
 def main():
     my_tracker = Tracker('Phase')
-    # my_tracker.track()
+    my_tracker.track()
     my_tracker.clean_up()
     my_tracker.show_tracks(SETTINGS.NUM_FRAMES_TO_VIEW)
     my_tracker.close()

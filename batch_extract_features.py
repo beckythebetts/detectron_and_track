@@ -244,8 +244,9 @@ def main():
             current_cell_batch = CellBatch(torch.tensor(batch).to(device))
             current_cell_batch.run_feature_extraction()
 
-    plot_features('Datasets/features_test')
-    show_eating('Datasets/show_eating')
+    #plot_features('Datasets/features_test')
+    #plot_features(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'feature_plots'))
+    show_eating(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
 
 
 
