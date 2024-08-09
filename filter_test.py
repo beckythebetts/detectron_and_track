@@ -1,5 +1,6 @@
 import h5py
 import pandas as pd
+from pathlib import Path
 
 
 class FilterDataFrame:
@@ -15,7 +16,7 @@ class FilterDataFrame:
         print(self.dataframe.std())
 
     def add_file(self, file_name):
-        with h5py.File(file_name, 'r') as f:
+        with h5py.File(Path('Datasets') / 'filter_test' / file_name, 'r') as f:
             for cell in f['Features']:
                 features = f['Features'][cell]
                 indices = np.where(~np.isnan(features['area']))
