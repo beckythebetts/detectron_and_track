@@ -28,7 +28,7 @@ class FilterDataFrame:
                 path_av_speed = np.nanmean(features['speed'])
                 av_area = np.nanmean(features['area'])
                 av_perimeter = np.nanmean(features['perimeter'])
-                pd.concat(self.dataframe, [path_av_speed, displacement_av_speed, av_area, av_perimeter])
+                pd.concat([self.dataframe, [path_av_speed, displacement_av_speed, av_area, av_perimeter]])
 
 
 
