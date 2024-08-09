@@ -25,7 +25,6 @@ class FilterDataFrame:
                 start_index, end_index = indices[0], indices[-1]
                 x_0, y_0 = features['xcentre'][start_index], features['ycentre'][start_index]
                 x_1, y_1 = features['xcentre'][end_index], features['ycentre'][end_index]
-                print(x_0)
                 displacement_av_speed = np.sqrt((x_1-x_0)**2 + (y_1-y_0)**2) / (end_index - start_index)
                 path_av_speed = np.nanmean(features['speed'])
                 av_area = np.nanmean(features['area'])
