@@ -32,7 +32,7 @@ class FilterDataFrame:
 
 
 def main():
-    filter = FilterDataFrame(True, ['filter_00.h5'])
+    filter = FilterDataFrame(True, ['filter00.h5'])
     no_filter = FilterDataFrame(False, ['no_filter00.h5'])
 
 if __name__ =='__main__':
