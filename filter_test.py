@@ -13,12 +13,13 @@ class FilterDataFrame:
         self.h5_files = h5_files
         for file in self.h5_files:
             self.add_file(file)
+        print(self.dataframe)
         print(self.dataframe.mean())
         print(self.dataframe.std())
 
     def add_file(self, file_name):
         with h5py.File(Path('Datasets') / 'filter_test' / file_name, 'r') as f:
-            for cell in f['Features']:
+            for cell_num, cell in enumerate(f['Features']):
                 features = f['Features'][cell]
                 indices = np.where(~np.isnan(features['area']))
                 start_index, end_index = indices[0], indices[-1]
@@ -28,7 +29,8 @@ class FilterDataFrame:
                 path_av_speed = np.nanmean(features['speed'])
                 av_area = np.nanmean(features['area'])
                 av_perimeter = np.nanmean(features['perimeter'])
-                pd.concat([self.dataframe, [path_av_speed, displacement_av_speed, av_area, av_perimeter]])
+                self.dataframe.loc[cell_num+1] = [path_av_speed, displacement_av_speed, av_area, av_perimeter]
+                #pd.concat([self.dataframe, [path_av_speed, displacement_av_speed, av_area, av_perimeter]])
 
 
 
