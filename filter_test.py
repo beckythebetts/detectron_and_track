@@ -1,6 +1,7 @@
 import h5py
 import pandas as pd
 from pathlib import Path
+import numpy as np
 
 
 class FilterDataFrame:
