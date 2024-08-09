@@ -5,8 +5,9 @@ import pandas as pd
 class FilterDataFrame:
     def __init__(self, filter, h5_files):
         self.filter = filter
+        print('Filter?', self.filter)
         self.measurements = ['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']
-        self.dataframe = pd.dataframe(columns=self.measurements)
+        self.dataframe = pd.DataFrame(columns=self.measurements)
         self.h5_files = h5_files
         for file in self.h5_files:
             self.add_file(file)
