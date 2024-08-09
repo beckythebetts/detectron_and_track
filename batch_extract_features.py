@@ -59,7 +59,7 @@ class CellBatch:
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).to(device))
 
     def run_feature_extraction(self):
-        print('\nFEATURE EXTRACTION\n')
+
         for i, frame_name in enumerate(self.frames_list):
             sys.stdout.write(f'\rFrame {i+1} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} ')
             sys.stdout.flush()
@@ -229,6 +229,7 @@ def main():
         if 'Features' in f:
             del(f['Features'])
     batches = get_batches(SETTINGS.BATCH_SIZE)
+    print('\nFEATURE EXTRACTION\n')
     with torch.no_grad():
         for batch in batches:
             current_cell_batch = CellBatch(torch.tensor(batch).to(device))
