@@ -14,7 +14,7 @@ class FilterDataFrame:
         for file in self.h5_files:
             self.add_file(file)
         #print(self.dataframe)
-        self.dataframe.to_csv(Path('Datasets') / 'filter_test' / ('filter' + filter + '.csv'))
+        self.dataframe.to_csv(Path('Datasets') / 'filter_test' / ('filter' + str(filter) + '.csv'))
         print(self.dataframe.mean())
         print(self.dataframe.std())
 
