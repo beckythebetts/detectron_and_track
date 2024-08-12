@@ -48,8 +48,8 @@ def plot():
         plt.savefig(Path('Datasets') / 'filter_test' / 'results.jpg')
 
 def main():
-    filter = FilterDataFrame(True, ['filter00.h5', 'filter01.h5'])
-    #no_filter = FilterDataFrame(False, ['no_filter00.h5'])
+    #filter = FilterDataFrame(True, ['filter00.h5', 'filter01.h5'])
+    no_filter = FilterDataFrame(False, ['no_filter00.h5', 'no_filter01.h5'])
 
 if __name__ =='__main__':
     main()
