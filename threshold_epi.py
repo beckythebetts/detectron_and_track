@@ -10,7 +10,7 @@ import h5py
 
 
 def main():
-    print('--------------------\nTHRESHOLDING - ', SETTINGS.CLASSES['epi'], '\n--------------------')
+    print(\n'--------------------\nTHRESHOLDING - ', SETTINGS.CLASSES['epi'], '\n--------------------')
     with h5py.File(SETTINGS.DATASET, 'r+') as f:
         if 'Epi' in f['Segmentations']:
             del(f['Segmentations']['Epi'])

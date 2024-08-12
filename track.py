@@ -133,7 +133,7 @@ class Tracker:
             if old_index not in tracks_to_remove:
                 index_mapping[old_index] = new_index
                 new_index += 1
-        print(index_mapping)
+        #print(index_mapping)
         for i in range(len(self.frames_list)):
         # for i, frame_path in enumerate(self.tracked_masks):
             # BATCHES NEEDED TO SPEED THIS BIT UP
