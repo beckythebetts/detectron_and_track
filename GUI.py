@@ -6,7 +6,7 @@ from pathlib import Path
 
 class Gui:
     def __init__(self, hdf5dataset):
-        self.images = self.get_images(hdf5dataset)[:20]
+        self.images = self.get_images(hdf5dataset)
         self.current_image_index = 0
 
     def create_gui(self):
@@ -58,9 +58,9 @@ class Gui:
     def get_images(self, dataset):
         with h5py.File(dataset, 'r') as f:
             phase_data = np.array([f['Images']['Phase'][frame][:]
-                                   for frame in f['Images']['Phase'].keys()], dtype='uint8')
+                                   for frame in f['Images']['Phase'].keys()[:20]], dtype='uint8')
             epi_data = np.array([f['Images']['Epi'][frame][:]
-                                 for frame in f['Images']['Epi'].keys()], dtype='uint8')
+                                 for frame in f['Images']['Epi'].keys()[:20]], dtype='uint8')
 
         epi_channel = make_rgb(epi_data)
         epi_channel[:, :, :, 1:3] = 0
