@@ -37,19 +37,39 @@ class FilterDataFrame:
 def plot():
     plt.rcParams["font.family"] = 'serif'
 
-    withfilter = pd.read_csv(Path('Datasets') / 'filter_test' / ('filter' + True + '.csv'))
-    withoutfilter = pd.read_csv(Path('Datasets') / 'filter_test' / ('filter' + True + '.csv'))
+    withfilter = pd.read_csv(Path('RAW_DATA') / 'test_filter' / ('filter' + 'True' + '.txt'))
+    withoutfilter = pd.read_csv(Path('RAW_DATA') / 'test_filter' / ('filter' + 'False' + '.txt'))
 
-    fig, axs = plt.subplots(1, 4)
+    fig, axs = plt.subplots(1, 4, figsize=(12, 3))
+    fig.tight_layout()
+    # for i, measurement in enumerate(['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']):
+    #     axs[i].scatter(np.zeros(len(withfilter)), withfilter[measurement], color='gray', marker ='o', alpha=0.3, s=(300./fig.dpi)**2)
+    #     axs[i].scatter(np.ones(len(withoutfilter)), withoutfilter[measurement], color='gray', marker = 'o', alpha=0.3, s=(300./fig.dpi)**2)
+    #     axs[i].errorbar((0, 1), (withfilter[measurement].mean(), withoutfilter[measurement].mean()),
+    #                     yerr=(withfilter[measurement].std(), withoutfilter[measurement].std()),
+    #                     marker = 'x', color='k', ls='none', capsize=10)
+    #     axs[i].set_ylabel(measurement)
+    #     axs[i].grid()
+    #     axs[i].set_xticks((0, 1))
+    #     axs[i].set_xlim(left = -0.5, right = 1.5)
+    #     axs[i].set_xticklabels(['With Filter', 'Without Filter'])
+    # plt.savefig(Path('RAW_DATA') / 'test_filter' / 'results.jpg')
+    # plt.show()
+    measurment_names = ['Average path length per frame', 'Average displacement per frame', 'Average area', 'Average Perimeter']
     for i, measurement in enumerate(['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']):
-        axs[i].scatter(np.zeros(len(withfilter), withfilter[measurement]), color='gray')
-        axs[i].scatter(np.ones(len(withoutfilter), withoutfilter[measurement]), color='gray')
-        axs[i].errorbar((0, 1), (withfilter[measurement].mean(), withoutfilter[measurement].mean()), yerr=(withfilter[measurement].std(), withoutfilter[measurement].std()), color='black')
-        plt.savefig(Path('Datasets') / 'filter_test' / 'results.jpg')
+        axs[i].hist(withfilter[measurement], bins=75, alpha=0.5, color='Blue', label='With Filter')
+        axs[i].hist(withoutfilter[measurement], bins=75, alpha=0.5, color='Red', label='Without Filter')
+        axs[i].grid()
+        axs[i].set_xlabel(measurment_names[i])
+    fig.subplots_adjust(bottom=0.15)
+    plt.legend()
+    plt.savefig(Path('RAW_DATA') / 'test_filter' / 'histograms.jpg')
+    plt.show()
+
 
 def main():
     #filter = FilterDataFrame(True, ['filter00.h5', 'filter01.h5'])
-    no_filter = FilterDataFrame(False, ['no_filter00.h5', 'no_filter01.h5'])
-
+    #no_filter = FilterDataFrame(False, ['no_filter00.h5', 'no_filter01.h5'])
+    plot()
 if __name__ =='__main__':
     main()
