@@ -6,7 +6,7 @@ from pathlib import Path
 
 class Gui:
     def __init__(self, hdf5dataset):
-        self.images = self.get_images(hdf5dataset)
+        self.images = self.get_images(hdf5dataset)[:20]
         self.current_image_index = 0
 
     def create_gui(self):
