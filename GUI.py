@@ -2,6 +2,7 @@ import h5py
 import numpy as np
 import tkinter as tk
 from PIL import Image, ImageTk
+from pathlib import Path
 
 class Gui:
     def __init__(self, hdf5dataset):
@@ -76,7 +77,7 @@ def make_rgb(greyscale_im):
     return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=-1)
 
 def main():
-    my_gui = Gui('Datasets/04_short.h5')
+    my_gui = Gui(str(Path('Datasets') / 'filter_test' / 'no_filter00.h5'))
     my_gui.create_gui()
 
 if __name__ == '__main__':
