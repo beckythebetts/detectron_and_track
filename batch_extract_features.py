@@ -221,30 +221,31 @@ def show_eating_2(directory):
             sys.stdout.flush()
             data = pd.DataFrame(f['Features'][cell][:])
             eaten_frames = data.index[data['eaten']>=1].tolist()
-            consecutive_eaten_frames = utils.split_list_into_sequences(eaten_frames)
-            for sequence in consecutive_eaten_frames:
-                if len(sequence) >= SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
-                    (Path(directory) / cell / str(sequence[0])).mkdir(parents=True)
-                    for eaten_frame in sequence:
-                        image = torch.tensor(np.array(f['Images']['Phase'][f'{eaten_frame:04}'])).to(device)
-                        epi_image = torch.tensor(np.array(f['Images']['Epi'][f'{eaten_frame:04}'])).to(device)
-                        mask = torch.tensor(np.array(f['Segmentations']['Phase'][f'{eaten_frame:04}'])).to(device)
-                        outline = mask_funcs.mask_outline(torch.where(mask == int(cell[-4:]), 1, 0), thickness=2)
-                        epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
-                        im_rgb = torch.stack((image, image, image), axis=0)
+            if len(eaten_frames) > 0:
+                consecutive_eaten_frames = utils.split_list_into_sequences(eaten_frames)
+                for sequence in consecutive_eaten_frames:
+                    if len(sequence) >= SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
+                        (Path(directory) / cell / str(sequence[0])).mkdir(parents=True)
+                        for eaten_frame in sequence:
+                            image = torch.tensor(np.array(f['Images']['Phase'][f'{eaten_frame:04}'])).to(device)
+                            epi_image = torch.tensor(np.array(f['Images']['Epi'][f'{eaten_frame:04}'])).to(device)
+                            mask = torch.tensor(np.array(f['Segmentations']['Phase'][f'{eaten_frame:04}'])).to(device)
+                            outline = mask_funcs.mask_outline(torch.where(mask == int(cell[-4:]), 1, 0), thickness=2)
+                            epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
+                            im_rgb = torch.stack((image, image, image), axis=0)
 
-                        im_rgb[0] = torch.where(outline, 255, im_rgb[0])
-                        im_rgb[1] = torch.where(outline, 255, im_rgb[1])
-                        im_rgb[2] = torch.where(outline, 0, im_rgb[2])
+                            im_rgb[0] = torch.where(outline, 255, im_rgb[0])
+                            im_rgb[1] = torch.where(outline, 255, im_rgb[1])
+                            im_rgb[2] = torch.where(outline, 0, im_rgb[2])
 
-                        im_rgb[0] = torch.where(epi_image > SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
-                        im_rgb[1] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[1])
-                        im_rgb[2] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[2])
+                            im_rgb[0] = torch.where(epi_image > SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
+                            im_rgb[1] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[1])
+                            im_rgb[2] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[2])
 
-                        im_rgb = im_rgb.permute(1, 2, 0)
+                            im_rgb = im_rgb.permute(1, 2, 0)
 
-                        imageio.imwrite(Path(directory) / cell / str(sequence[0]) / ("{0:04}".format(eaten_frame) + '.jpg'),
-                                        (im_rgb).cpu().numpy().astype(np.uint8))
+                            imageio.imwrite(Path(directory) / cell / str(sequence[0]) / ("{0:04}".format(eaten_frame) + '.jpg'),
+                                            (im_rgb).cpu().numpy().astype(np.uint8))
 
 
 
