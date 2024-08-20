@@ -55,12 +55,15 @@ def draw_line(array, x0, x1, y0, y1, colour):
     return array if not transpose else torch.permute(array, (1, 0, 2))
 
 def split_list_into_sequences(the_list):
+    print(the_list)
     sequences = [[the_list[0]]]
     for i, list_item in enumerate(the_list[1:]):
         if list_item - the_list[i] <= SETTINGS.FRAME_MEMORY:
             sequences[-1].append(list_item)
         else:
             sequences.append([list_item])
+
+    print(sequences)
     return sequences
 
 
