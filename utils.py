@@ -1,5 +1,7 @@
 from pathlib import Path
 import shutil
+
+import SETTINGS
 import torch
 from PIL import Image
 import numpy as np
@@ -52,9 +54,21 @@ def draw_line(array, x0, x1, y0, y1, colour):
     array[x.round().to(int), y.round().to(int), :] = colour
     return array if not transpose else torch.permute(array, (1, 0, 2))
 
+def split_list_into_sequences(the_list):
+    sequences = [[the_list[0]]]
+    for i, list_item in enumerate(the_list[1:]):
+        if list_item - the_list[i] <= SETTINGS.FRAME_MEMORY:
+            sequences[-1].append(list_item)
+        else:
+            sequences.append([list_item])
+    return sequences
+
+
 if __name__ == '__main__':
-    array = read_tiff(Path('03') / 't0000_mask.tif')
-    print(np.shape(array))
-    save_tiff(array, Path('03') / 't0000_mask_test.tif')
-    array = read_tiff(Path('03') / 't0000_mask_test.tif')
-    print(np.shape(array))
+
+    print(split_list_into_sequences([0, 1, 2, 5, 7, 8, 54, 76, 79, 80]))
+    # array = read_tiff(Path('03') / 't0000_mask.tif')
+    # print(np.shape(array))
+    # save_tiff(array, Path('03') / 't0000_mask_test.tif')
+    # array = read_tiff(Path('03') / 't0000_mask_test.tif')
+    # print(np.shape(array))

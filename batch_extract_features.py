@@ -212,6 +212,41 @@ def show_eating(directory):
                     imageio.imwrite(Path(directory) / cell / ("{0:04}".format(eaten_frame) + '.jpg'), (im_rgb).cpu().numpy().astype(np.uint8))
                     #utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), directory /("{0:04}".format(eaten_frame) + '.jpg'))
 
+def show_eating_2(directory):
+    print('\nSAVING IMAGES OF PHAGOCYTSOSIS\n')
+    utils.remake_dir(Path(directory))
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        for cell in f['Features']:
+            sys.stdout.write(f'\r{cell}')
+            sys.stdout.flush()
+            data = pd.DataFrame(f['Features'][cell][:])
+            eaten_frames = data.index[data['eaten']>=1].tolist()
+            consecutive_eaten_frames = utils.split_list_into_sequences(eaten_frames)
+            for sequence in consecutive_eaten_frames:
+                if len(sequence) >= SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
+                    image = torch.tensor(np.array(f['Images']['Phase'][f'{eaten_frame:04}'])).to(device)
+                    epi_image = torch.tensor(np.array(f['Images']['Epi'][f'{eaten_frame:04}'])).to(device)
+                    mask = torch.tensor(np.array(f['Segmentations']['Phase'][f'{eaten_frame:04}'])).to(device)
+                    outline = mask_funcs.mask_outline(torch.where(mask == int(cell[-4:]), 1, 0), thickness=2)
+                    epi_image_normalised = (epi_image - epi_image.min()) / (epi_image.max() - epi_image.min()) * 255
+                    im_rgb = torch.stack((image, image, image), axis=0)
+
+                    im_rgb[0] = torch.where(outline, 255, im_rgb[0])
+                    im_rgb[1] = torch.where(outline, 255, im_rgb[1])
+                    im_rgb[2] = torch.where(outline, 0, im_rgb[2])
+
+                    im_rgb[0] = torch.where(epi_image > SETTINGS.THRESHOLD, epi_image_normalised, im_rgb[0])
+                    im_rgb[1] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[1])
+                    im_rgb[2] = torch.where(epi_image > SETTINGS.THRESHOLD, 0, im_rgb[2])
+
+                    im_rgb = im_rgb.permute(1, 2, 0)
+
+                    imageio.imwrite(Path(directory) / cell / sequence[0] / ("{0:04}".format(eaten_frame) + '.jpg'),
+                                    (im_rgb).cpu().numpy().astype(np.uint8))
+
+
+
+
 def get_batches(batchsize):
     max_cell_index = 0
     with h5py.File(SETTINGS.DATASET, 'r') as f:
@@ -239,7 +274,7 @@ def main():
     if SETTINGS.TRACKS_PLOT:
         plot_tracks(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'tracks.png')))
     if SETTINGS.SHOW_EATING:
-        show_eating(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
+        show_eating_2(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
 
 
 
