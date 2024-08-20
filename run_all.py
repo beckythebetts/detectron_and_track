@@ -5,7 +5,7 @@ import batch_extract_features
 
 def main():
     #detectron_infer.main()
-    track.main()
+    #track.main()
     threshold_epi.main()
     batch_extract_features.main()
 
