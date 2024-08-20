@@ -170,17 +170,17 @@ def train():
     # cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
     # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
 
-    cfg.INPUT.MIN_SIZE_TRAIN = (2048,)
-    cfg.INPUT.MAX_SIZE_TRAIN = 2048
-    cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
-
-    cfg.INPUT.MIN_SIZE_TEST = 2048  # Set as an integer
-    cfg.INPUT.MAX_SIZE_TEST = 2048  # Set as an integer
-
-    # Adjust the TEST section parameters if necessary
-    cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
-    cfg.TEST.AUG["MAX_SIZE"] = 2048 # Ensure consistency with max size
-    cfg.TEST.AUG["MIN_SIZES"] = [2048]  # Ensure consistency with min size
+    # cfg.INPUT.MIN_SIZE_TRAIN = (2048,)
+    # cfg.INPUT.MAX_SIZE_TRAIN = 2048
+    # cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
+    #
+    # cfg.INPUT.MIN_SIZE_TEST = 2048  # Set as an integer
+    # cfg.INPUT.MAX_SIZE_TEST = 2048  # Set as an integer
+    #
+    # # Adjust the TEST section parameters if necessary
+    # cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
+    # cfg.TEST.AUG["MAX_SIZE"] = 2048 # Ensure consistency with max size
+    # cfg.TEST.AUG["MIN_SIZES"] = [2048]  # Ensure consistency with min size
 
     cfg.TEST.EVAL_PERIOD = 100
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
