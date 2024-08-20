@@ -242,7 +242,7 @@ def show_eating_2(directory):
 
                         im_rgb = im_rgb.permute(1, 2, 0)
 
-                        imageio.imwrite(Path(directory) / cell / sequence[0] / ("{0:04}".format(eaten_frame) + '.jpg'),
+                        imageio.imwrite(Path(directory) / cell / str(sequence[0]) / ("{0:04}".format(eaten_frame) + '.jpg'),
                                         (im_rgb).cpu().numpy().astype(np.uint8))
 
 
