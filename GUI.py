@@ -62,9 +62,9 @@ class Gui:
         with h5py.File(dataset, 'r') as f:
             phase_data = np.array([f['Images']['Phase'][frame][:]
                                    for frame in list(f['Images']['Phase'].keys())[:20]], dtype='uint8')
-            epi_data = np.array([f['Images']['Epi'][frame][:]
-                                 for frame in list(f['Images']['Epi'].keys())[:20]], dtype='uint8')
-
+            epi_data = np.array([f['Segmentations']['Epi'][frame][:]
+                                 for frame in list(f['Segmentations']['Epi'].keys())[:20]], dtype='uint8')
+        epi_data[epi_data > 0] = 255
         epi_channel = make_rgb(epi_data)
         epi_channel[:, :, :, 1:3] = 0
         print('EPiData max: ',epi_channel.max())
