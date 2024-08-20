@@ -80,7 +80,7 @@ def make_rgb(greyscale_im):
     return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=-1)
 
 def main():
-    my_gui = Gui(str(Path('Datasets') / 'dan3.h5'))
+    my_gui = Gui(str(Path('Datasets') / 'danhighres' / 'dan3.h5'))
     my_gui.create_gui()
 
 if __name__ == '__main__':
