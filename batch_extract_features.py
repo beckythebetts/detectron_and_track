@@ -220,7 +220,7 @@ def show_eating_2(directory):
             sys.stdout.write(f'\r{cell}')
             sys.stdout.flush()
             data = pd.DataFrame(f['Features'][cell][:])
-            eaten_frames = data.index[data['eaten']>=1].tolist()
+            eaten_frames = data.index[data['eaten']>=10].tolist()
             if len(eaten_frames) > 0:
                 consecutive_eaten_frames = utils.split_list_into_sequences(eaten_frames)
                 for sequence in consecutive_eaten_frames:
