@@ -22,7 +22,7 @@ NUM_FRAMES_TO_VIEW = 50 # Set as None to view all (slow)
 # ******* FEATURE EXTRACTION *******
 BATCH_SIZE = 100
 PLOT_FEATURES = False
-TRACKS_PLOT = True
+TRACKS_PLOT = False
 SHOW_EATING = True
 NUM_FRAMES_EATEN_THRESHOLD = 10
 
