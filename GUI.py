@@ -47,12 +47,15 @@ class Gui:
         self.update_image(self.slider.get())
 
     def resize_image_to_fit(self, image):
-        max_width = self.root.winfo_width()
-        max_height = self.root.winfo_height()
+        max_width = max(self.root.winfo_width(), 1)  # Ensure non-zero dimensions
+        max_height = max(self.root.winfo_height(), 1)  # Ensure non-zero dimensions
         img_width, img_height = image.size
         ratio = min(max_width / img_width, max_height / img_height)
-        new_width = int(img_width * ratio)
-        new_height = int(img_height * ratio)
+
+        # Calculate new dimensions ensuring they're greater than zero
+        new_width = max(int(img_width * ratio), 1)
+        new_height = max(int(img_height * ratio), 1)
+
         return image.resize((new_width, new_height))
 
     def get_images(self, dataset):
@@ -77,7 +80,7 @@ def make_rgb(greyscale_im):
     return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=-1)
 
 def main():
-    my_gui = Gui(str(Path('Datasets') / 'filter_test' / 'no_filter00.h5'))
+    my_gui = Gui(str(Path('Datasets') / 'dan3.h5'))
     my_gui.create_gui()
 
 if __name__ == '__main__':

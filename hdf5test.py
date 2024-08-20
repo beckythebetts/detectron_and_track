@@ -10,9 +10,7 @@ import sys
 
 def read_hdf5():
     with h5py.File('RAW_DATA/04/Phase.h5', 'r') as f:
-        print(list(f['t00000']['s00']['0'].keys()))
         first_image = f['t00000']['s00']['0']['cells']
-        print(f['t00000']['s00']['0'].attrs['cells'])
         image = np.array(first_image)
         image = np.squeeze(image)
         plt.imshow(image, cmap='gray')
@@ -24,15 +22,16 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
     with h5py.File(hdf5_filename, 'w') as f:
         Images = f.create_group('Images')
         # ****** Image MetaData ********
-        Images.attrs['Camera'] = 'Andor Sona 4BV11'
-        Images.attrs['Pixel Size / um'] = 11
-        Images.attrs['Objective magnification'] = 30
-        Images.attrs['Image size / pixels'] = [2048, 2048]
-        Images.attrs['Phase exposure / ms'] = 2000
-        Images.attrs['Epi exposure / ms'] = 10
-        Images.attrs['Time interval / s'] = 3
-        Images.attrs['Number of frames'] = 1200
+        Images.attrs['Camera'] = 'Daniels, higher reoslution one???? CHECK VALUES'
+        Images.attrs['Pixel Size / um'] = 1
+        Images.attrs['Objective magnification'] = 1
+        Images.attrs['Image size / pixels'] = [1004,1002]
+        Images.attrs['Phase exposure / ms'] = 1
+        Images.attrs['Epi exposure / ms'] = 1
+        Images.attrs['Time interval / s'] = 10
+        Images.attrs['Number of frames'] = 541
         Images.attrs['Filter'] = False
+        Images.attrs['NA'] = 1
 
         Images.attrs['Resolution / um'] = Images.attrs['Pixel Size / um'] / Images.attrs['Objective magnification']
         Images.attrs['FOV / um'] = Images.attrs['Image size / pixels'] * Images.attrs['Resolution / um']
@@ -60,7 +59,7 @@ def create_hdf5(hdf5_filename, phase_tiffs_path, epi_tiffs_path):
 
 
 def main():
-    create_hdf5(r'H:\rebecca\filter_test\no_filter\no_filter01.h5', r'H:\rebecca\filter_test\no_filter\01\phase', r'H:\rebecca\filter_test\no_filter\01\epi')
+    create_hdf5(r'Datasets\dan10.h5', r'C:\Users\php23rjb\Documents\detectron_and_track\RAW_DATA\Daniels\Higher_res\10sec_interval\Phase', r'C:\Users\php23rjb\Documents\detectron_and_track\RAW_DATA\Daniels\Higher_res\10sec_interval\Epi')
 
 if __name__=='__main__':
     main()

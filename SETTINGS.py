@@ -1,10 +1,11 @@
 from pathlib import Path
+import h5py
 
 # ******* GENERAL *******
-DATASET = Path("Datasets") / 'filter_test' / 'no_filter01.h5'
-MASK_RCNN_MODEL = Path("Models") / 'filter_test'
+DATASET = Path("Datasets") / 'danhighres' / 'dan3.h5'
+MASK_RCNN_MODEL = Path("Models") / 'Daniels_highres'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
-IMAGE_SIZE = (2048, 2048)
+IMAGE_SIZE = (1004, 1002)
 REMOVE_EDGE_CELLS = True
 
 # ******* EPI THRESHOLDING *******
