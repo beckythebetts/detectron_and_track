@@ -224,7 +224,7 @@ def show_eating_2(directory):
             consecutive_eaten_frames = utils.split_list_into_sequences(eaten_frames)
             for sequence in consecutive_eaten_frames:
                 if len(sequence) >= SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
-                    (Path(directory) / cell / str(sequence[0])).mkdirs()
+                    (Path(directory) / cell / str(sequence[0])).mkdir(parents=True)
                     for eaten_frame in sequence:
                         image = torch.tensor(np.array(f['Images']['Phase'][f'{eaten_frame:04}'])).to(device)
                         epi_image = torch.tensor(np.array(f['Images']['Epi'][f'{eaten_frame:04}'])).to(device)
