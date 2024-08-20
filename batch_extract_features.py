@@ -226,7 +226,9 @@ def show_eating_2(directory):
                 for sequence in consecutive_eaten_frames:
                     if len(sequence) >= SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
                         (Path(directory) / cell / str(sequence[0])).mkdir(parents=True)
-                        for eaten_frame in sequence:
+                        padded_sequence = np.insert(sequence, 0, np.arange(sequence.min()-10, sequence.min))
+                        padded_sequence = np.append(padded_sequence, np.arange(sequence.max()+1, sequence.max()+11))
+                        for eaten_frame in padded_sequence:
                             image = torch.tensor(np.array(f['Images']['Phase'][f'{eaten_frame:04}'])).to(device)
                             epi_image = torch.tensor(np.array(f['Images']['Epi'][f'{eaten_frame:04}'])).to(device)
                             mask = torch.tensor(np.array(f['Segmentations']['Phase'][f'{eaten_frame:04}'])).to(device)
