@@ -7,6 +7,7 @@ MASK_RCNN_MODEL = Path("Models") / 'Daniel_highres_fixedsize'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1002, 1004)
 REMOVE_EDGE_CELLS = True
+NUM_FRAMES = 1201
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 50
