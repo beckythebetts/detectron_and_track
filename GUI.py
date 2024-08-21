@@ -4,6 +4,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from pathlib import Path
 import torch
+import sys
 
 import mask_funcs
 
