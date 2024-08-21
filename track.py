@@ -167,14 +167,9 @@ class Tracker:
                 f'\rAdding frame {i + 1} / {num_frames}')
             sys.stdout.flush()
             mask = self.read_frame(i)
-            #mask = torch.tensor(utils.read_tiff(self.tracked_masks[i]).astype(np.int16)).cuda()
-            #image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda())
-            # image = torch.tensor(utils.read_tiff(self.images[i]).astype(np.int16)).cuda()
             image = torch.tensor(self.file['Images']['Phase'][self.images_list[i]][()].astype(np.int16)).to(
                 device)
             im_rgb = torch.stack((image, image, image), axis=0)
-            #print(mask.shape)
-            #split_mask = [torch.where(mask == i + 1, 1, 0) for i in range(0, torch.max(mask)) if i + 1 in mask]
             for j in range(torch.max(mask)):
                 if j+1 in mask:
                     if j+1 not in colour_dict.keys():
@@ -184,8 +179,6 @@ class Tracker:
                     for c in range(3):
                         im_rgb[c] = torch.where(outline, colour_dict[j+1][c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)
-            #Image.fromarray((im_rgb*(2**16-1)).cpu().numpy().astype(np.uint16)).save(view_track_dir / ("{0:04}".format(i) + '.jpg'))
-            #print(im_rgb.shape)
             utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), view_track_dir / ("{0:04}".format(i) + '.jpg'))
 
 
