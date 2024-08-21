@@ -91,13 +91,13 @@ class Gui:
                 np.uint8)
 
     def get_tracked_images(self):
-        colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2**8)-1, size=3)).to(device) for cell_index in np.arange(1, self.max_cell_index+2)}
+        colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2**8)-1, size=3)).to(device) for cell_index in np.arange(1, self.max_cell_index+1)}
         print(colour_dict)
         rgb_phase = make_rgb(self.phase_data)
         self.tracked = torch.zeros(size=rgb_phase.shape)
         for i, (phase_image, segmentation) in enumerate(zip(torch.tensor(rgb_phase).to(device), torch.tensor(self.segmentation_data).to(device))):
             print(phase_image.shape)
-            for cell_index in torch.unique(phase_image)[1:]:
+            for cell_index in torch.unique(segmentation)[1:]:
                 print(cell_index.item(), self.max_cell_index)
                 outline = mask_funcs.mask_outline(torch.where(segmentation==cell_index.item(), 1, 0), thickness=3)
                 for c in range(3):
