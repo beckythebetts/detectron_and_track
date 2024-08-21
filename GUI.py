@@ -47,6 +47,7 @@ class Gui:
         img = Image.fromarray(self.images[self.current_image_index], 'RGB')
         # Resize the image to fit the window size
         img = self.resize_image_to_fit(img)
+        img = img.convert("P", palette=Image.ADAPTIVE, colors=256)
 
         img_tk = ImageTk.PhotoImage(img)
         self.label_img.config(image=img_tk)
@@ -104,7 +105,6 @@ class Gui:
                 for c in range(3):
                     phase_image[:, :, c] = torch.where(outline, colour_dict[cell_index.item()][c], phase_image[:, :, c])
             self.tracked[i] = phase_image.cpu().numpy()
-    #
 
 def make_rgb(greyscale_im):
     return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=-1)
