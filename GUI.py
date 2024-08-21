@@ -91,7 +91,7 @@ class Gui:
                 np.uint8)
 
     def get_tracked_images(self):
-        colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2**8)-1, size=3)).to(device) for cell_index in np.arange(1, self.max_cell_index+1)}
+        colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2**8)-1, size=3)).to(device) for cell_index in np.arange(1, self.max_cell_index+2)}
         print(colour_dict)
         rgb_phase = make_rgb(self.phase_data)
         self.tracked = torch.zeros(size=rgb_phase.shape)
