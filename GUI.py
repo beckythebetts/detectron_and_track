@@ -76,7 +76,7 @@ class Gui:
             self.segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
                                                for frame in list(f['Segmentations']['Phase'].keys())], dtype='int16')
             self.max_cell_index = 0
-            for i, frame in enumerate(f['Segmentations']['Phase']):
+            for frame in f['Segmentations']['Phase']:
                 frame = np.array(f['Segmentations']['Phase'][frame])
                 max = np.max(frame)
                 if max > self.max_cell_index:
@@ -98,6 +98,7 @@ class Gui:
         for i, (phase_image, segmentation) in enumerate(zip(torch.tensor(rgb_phase).to(device), torch.tensor(self.segmentation_data).to(device))):
             print(phase_image.shape)
             for cell_index in torch.unique(phase_image)[1:]:
+                print(cell_index.item())
                 outline = mask_funcs.mask_outline(torch.where(segmentation==cell_index.item(), 1, 0), thickness=3)
                 for c in range(3):
                     phase_image[:, :, c] = torch.where(outline, colour_dict[cell_index.item()][c], phase_image[:, :, c])
