@@ -1,6 +1,7 @@
 import h5py
 import imagej
 import numpy as np
+import torch
 
 #from jnius import autoclass
 
@@ -9,11 +10,10 @@ hdf5_file = 'Datasets/danhighres/dan10.h5'
 #ij = imagej.init('sc.fiji:fiji:2.1.0', mode='gui')
 ij = imagej.init('2.1.0', mode='interactive')
 
-def make_rgb(greyscale_im):
-    return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=1)[:, np.newaxis]
+def make_rgb(greyscale_im, axis=1):
+    return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=axis)[:, np.newaxis]
 
 def show_separate_channels():
-
     with h5py.File(hdf5_file, 'r') as f:
         print('Gathering data')
         data = np.array([
@@ -37,22 +37,44 @@ def show_merged_channels():
         epi_data = np.array([f['Images']['Epi'][frame][:]
                                for frame in f['Images']['Epi'].keys()], dtype='uint8')
 
-        epi_channel = make_rgb(epi_data)
-        epi_channel[:,:,1:3] = 0
-        merged_data = ((make_rgb(phase_data).astype(np.float32) + epi_channel.astype(np.float32)) / (2)).astype(np.uint8)
-        print(merged_data.shape)
-        merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
-        ij.ui().show(merged_image)
-        macro = """
-        run("Make Composite")
-        """
-        ij.py.run_macro(macro)
-
+    epi_channel = make_rgb(epi_data)
+    epi_channel[:,:,1:3] = 0
+    merged_data = ((make_rgb(phase_data).astype(np.float32) + epi_channel.astype(np.float32)) / (2)).astype(np.uint8)
+    merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
+    ij.ui().show(merged_image)
+    ij.py.run_macro(macro='run("Make Composite")')
     input("Close ImageJ [ENTER]")
 
+def show_tracked_images():
+    print('\nPREPARING TRACKED IMAGES\n')
+    with h5py.File(hdf5_file, 'r') as f:
+        phase_data = np.array([f['Images']['Phase'][frame][:]
+                               for frame in f['Images']['Phase'].keys()], dtype='uint8')
+        segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
+                                      for frame in list(f['Segmentations']['Phase'].keys())], dtype='int16')
+    max_cell_index=np.max(segmentation_data)
+    colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8')).to(device) for
+                   cell_index in np.arange(1, self.max_cell_index + 1)}
+    rgb_phase = make_rgb(phase_data, axis=-1)
+    tracked = np.zeros(rgb_phase.shape)
+    for i, (phase_image, segmentation) in enumerate(
+            zip(torch.tensor(rgb_phase).to(device), torch.tensor(segmentation_data).to(device))):
+        sys.stdout.write(
+            f'\rFrame {i + 1}')
+        sys.stdout.flush()
+        for cell_index in torch.unique(segmentation)[1:]:
+            outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
+            phase_image[outline] = colour_dict[cell_index.item()]
+
+        tracked[i] = phase_image.cpu().numpy()
+    tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
+    ij.ui().show(tracked_image)
+    ij.py.run_macro(macro=='run("Make Composite')
+    input("Close ImageJ [ENTER]")
 
 def main():
     #show_separate_channels()
-    show_merged_channels()
+    #show_merged_channels()
+    show_tracked_images()
 if __name__ == '__main__':
     main()
