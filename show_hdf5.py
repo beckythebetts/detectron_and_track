@@ -72,7 +72,7 @@ def show_tracked_images():
         tracked[i] = phase_image.cpu().numpy()
     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
-    ij.py.run_macro(macro='run("Make Composite')
+    ij.py.run_macro(macro='run("Make Composite")')
     input("Close ImageJ [ENTER]")
 
 def main():
