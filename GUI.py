@@ -101,30 +101,11 @@ class Gui:
             sys.stdout.write(
                 f'\rReading frame {i + 1}')
             sys.stdout.flush()
-            # for cell_index in torch.unique(segmentation)[1:]:
-            #     outline = mask_funcs.mask_outline(torch.where(segmentation==cell_index.item(), 1, 0), thickness=3)
-            #     phase_image[outline] = colour_dict[cell_index.item()]
-            unique_indices = torch.unique(segmentation)[1:]
+            for cell_index in torch.unique(segmentation)[1:]:
+                outline = mask_funcs.mask_outline(torch.where(segmentation==cell_index.item(), 1, 0), thickness=3)
+                phase_image[outline] = colour_dict[cell_index.item()]
 
-            # Create a batch of masks, one for each unique cell index
-            masks = torch.stack([(segmentation == cell_index).float() for cell_index in unique_indices])
-
-            # Expand each mask for outline computation
-            expanded_masks = F.max_pool2d(masks.unsqueeze(1), kernel_size=7, stride=1, padding=3) > 0
-
-            # Compute outlines for all masks
-            outlines = (expanded_masks.squeeze(1) - masks).bool()
-
-            # Create an empty tensor for the final output image
-            final_phase_image = torch.zeros_like(phase_image)
-
-            # Assign colors to the outlines
-            for i, cell_index in enumerate(unique_indices):
-                final_phase_image[outlines[i]] = colour_dict[cell_index.item()]
-
-            # If necessary, update `phase_image`
-            #phase_image.copy_(final_phase_image)
-            self.tracked[i] = final_phase_image.cpu().numpy()
+            self.tracked[i] = phase_image.cpu().numpy()
 
 
 def make_rgb(greyscale_im):
