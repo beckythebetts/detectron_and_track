@@ -73,7 +73,7 @@ def show_tracked_images():
     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    input("Close ImageJ [ENTER]")
+    ij.ui().waitForUser("Press OK to close ImageJ")
 
 def main():
     #show_separate_channels()
