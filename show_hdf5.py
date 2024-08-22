@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import sys
 
+import mask_funcs
 #from jnius import autoclass
 
 #hdf5_file = 'Datasets/04_short.h5'
