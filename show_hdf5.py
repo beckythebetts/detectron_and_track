@@ -3,6 +3,8 @@ import imagej
 import numpy as np
 import torch
 import sys
+from ij.gui import WaitForUserDialog
+myWait = WaitForUserDialog ("myTitle", "myMessage")
 
 import mask_funcs
 #from jnius import autoclass
@@ -73,7 +75,7 @@ def show_tracked_images():
     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    ij.ui().waitForUser("Press OK to close ImageJ")
+    myWait.show()
 
 def main():
     #show_separate_channels()
