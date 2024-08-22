@@ -16,7 +16,7 @@ class Gui:
     def __init__(self, hdf5dataset):
         self.get_data(hdf5dataset)
         self.get_merged_images()
-        self.get_tracked_images()
+        #self.get_tracked_images()
         self.current_image_index = 0
         self.images = self.merged
 
