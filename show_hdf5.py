@@ -9,6 +9,7 @@ import torch
 hdf5_file = 'Datasets/danhighres/dan10.h5'
 #ij = imagej.init('sc.fiji:fiji:2.1.0', mode='gui')
 ij = imagej.init('2.1.0', mode='interactive')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def make_rgb(greyscale_im, axis=1):
     return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=axis)[:, np.newaxis]
