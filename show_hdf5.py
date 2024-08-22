@@ -3,6 +3,7 @@ import imagej
 import numpy as np
 import torch
 import sys
+import time
 
 
 import mask_funcs
@@ -74,7 +75,7 @@ def show_tracked_images():
     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    ij.py.run_macro(macro='run("Wait For User", "Close window")')
+    time.sleep(2000000)
 
 def main():
     #show_separate_channels()
