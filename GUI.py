@@ -18,7 +18,7 @@ class Gui:
         self.get_merged_images()
         self.get_tracked_images()
         self.current_image_index = 0
-        self.images = self.tracked
+        self.images = self.merged
 
     def create_gui(self):
         self.root = tk.Tk()
@@ -86,6 +86,7 @@ class Gui:
                     self.max_cell_index = max
 
     def get_merged_images(self):
+        print('\nGETTING MERGED IMAGES\n')
         self.epi_data[self.epi_data > 0] = 255
         epi_channel = make_rgb(self.epi_data)
         epi_channel[:, :, :, 1:3] = 0
@@ -94,6 +95,7 @@ class Gui:
                 np.uint8)
 
     def get_tracked_images(self):
+        print('\nGETTING TRACKED IMAGES\n')
         colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2**8)-1, size=3).astype('uint8')).to(device) for cell_index in np.arange(1, self.max_cell_index+1)}
         rgb_phase = make_rgb((self.phase_data))
         self.tracked = np.zeros(rgb_phase.shape)
