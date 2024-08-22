@@ -54,7 +54,7 @@ def show_tracked_images():
                                       for frame in list(f['Segmentations']['Phase'].keys())], dtype='int16')
     max_cell_index=np.max(segmentation_data)
     colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8')).to(device) for
-                   cell_index in np.arange(1, self.max_cell_index + 1)}
+                   cell_index in np.arange(1, max_cell_index + 1)}
     rgb_phase = make_rgb(phase_data, axis=-1)
     tracked = np.zeros(rgb_phase.shape)
     for i, (phase_image, segmentation) in enumerate(
