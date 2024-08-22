@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import sys
 from ij.gui import WaitForUserDialog
-myWait = WaitForUserDialog ("myTitle", "myMessage")
+myWait = WaitForUserDialog("myTitle", "myMessage")
 
 import mask_funcs
 #from jnius import autoclass
