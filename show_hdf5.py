@@ -40,9 +40,9 @@ def show_separate_channels():
 def show_merged_channels():
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
-                               for frame in f['Images']['Phase'].keys()], dtype='uint8')
+                               for frame in f['Images']['Phase'].keys()[:50]], dtype='uint8')
         epi_data = np.array([f['Images']['Epi'][frame][:]
-                               for frame in f['Images']['Epi'].keys()], dtype='uint8')
+                               for frame in f['Images']['Epi'].keys()[:50]], dtype='uint8')
 
     epi_channel = make_rgb(epi_data)
     epi_channel[:,:,1:3] = 0
