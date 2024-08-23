@@ -2,7 +2,7 @@ from pathlib import Path
 import h5py
 
 # ******* GENERAL *******
-DATASET = Path("Datasets") / 'danhighres' / 'dan10.h5'
+DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
 MASK_RCNN_MODEL = Path("Models") / 'Daniel_highres_fixedsize'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1002, 1004)

@@ -7,10 +7,12 @@ import time
 
 
 import mask_funcs
+import SETTINGS
 #from jnius import autoclass
 
 #hdf5_file = 'Datasets/04_short.h5'
-hdf5_file = 'Datasets/danhighres/dan10.h5'
+#hdf5_file = 'Datasets/danhighres/dan10.h5'
+hdf5_file = SETTINGS.DATASET
 #ij = imagej.init('sc.fiji:fiji:2.1.0', mode='gui')
 ij = imagej.init('2.1.0', mode='interactive')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -33,7 +35,7 @@ def show_separate_channels():
         print('opening images')
         #ij.io().open(ij_image)
         ij.ui().show('images', ij_image)
-    input("Close ImageJ [ENTER]")
+    time.sleep(9999999)
 
 def show_merged_channels():
     with h5py.File(hdf5_file, 'r') as f:
@@ -48,7 +50,7 @@ def show_merged_channels():
     merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    input("Close ImageJ [ENTER]")
+    time.sleep(9999999)
 
 def show_tracked_images():
     print('\nPREPARING TRACKED IMAGES\n')
@@ -75,11 +77,11 @@ def show_tracked_images():
     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    time.sleep(2000000)
+    time.sleep(9999999)
 
 def main():
     #show_separate_channels()
-    #show_merged_channels()
-    show_tracked_images()
+    show_merged_channels()
+    #show_tracked_images()
 if __name__ == '__main__':
     main()
