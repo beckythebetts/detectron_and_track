@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import h5py
+imprt sys
 
 import SETTINGS
 import utils
@@ -20,12 +21,14 @@ class PhagocyticEvent:
 def track_phagocytic_events(hdf5file):
     with h5py.File(hdf5file, 'r') as f:
         for cell in f['Features']:
+            sys.stdout.write(f'\r{cell}')
+            sys.stdout.flush()
             phago_events = f['Features'][cell]['PhagocyticFrames'][:]
             # for event in phago_events:
             #     print(phago_events)
             #
             frames = f['Features'][cell]['PhagocyticFrames']['frame'][:]
-            sequences = split_list_into_sequences(frames)
+            sequences = utils.split_list_into_sequences(frames)
             for sequence in sequences:
                 # if sequence of frames contains duplicate values => multiple pathogens are observed simultaneously => need tracking
                 if len(sequences) == len(set(sequences)):
