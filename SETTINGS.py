@@ -2,8 +2,8 @@ from pathlib import Path
 import h5py
 
 # ******* GENERAL *******
-#DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
-DATASET = Path("Datasets") / '04_short_testing.h5'
+DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
+#DATASET = Path("Datasets") / '04_short_testing.h5'
 MASK_RCNN_MODEL = Path("Models") / 'Daniel_highres_fixedsize'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (1200, 1200)
@@ -22,7 +22,7 @@ VIEW_TRACKS = True # Save labelled tracked images
 NUM_FRAMES_TO_VIEW = 50 # Set as None to view all (slow)
 
 # ******* FEATURE EXTRACTION *******
-BATCH_SIZE = 100
+BATCH_SIZE = 200
 PLOT_FEATURES = False
 TRACKS_PLOT = False
 SHOW_EATING = False
