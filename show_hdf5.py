@@ -35,22 +35,23 @@ def show_separate_channels():
         print('opening images')
         #ij.io().open(ij_image)
         ij.ui().show('images', ij_image)
-    time.sleep(9999999)
+    time.sleep(99999)
 
 def show_merged_channels():
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
                                for frame in list(f['Images']['Phase'].keys())[:50]], dtype='uint8')
-        epi_data = np.array([f['Images']['Epi'][frame][:]
+        epi_data = np.array([f['Segmentations']['Epi'][frame][:]
                                for frame in list(f['Images']['Epi'].keys())[:50]], dtype='uint8')
 
+    epi_data[epi_data > 0] = 255
     epi_channel = make_rgb(epi_data)
     epi_channel[:,:,1:3] = 0
     merged_data = ((make_rgb(phase_data).astype(np.float32) + epi_channel.astype(np.float32)) / (2)).astype(np.uint8)
     merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    time.sleep(9999999)
+    time.sleep(99999)
 
 def show_tracked_images():
     print('\nPREPARING TRACKED IMAGES\n')
@@ -77,7 +78,7 @@ def show_tracked_images():
     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    time.sleep(9999999)
+    time.sleep(99999)
 
 def main():
     #show_separate_channels()

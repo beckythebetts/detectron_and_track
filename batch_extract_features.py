@@ -22,7 +22,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class Cell:
     def __init__(self, index):
         self.index = index
-        self.features_dataset_name = f'Features/Cell{index:04}'
+        self.features_dataset_name = f'Features/Cell{index:04}/MorphologicalFeatures'
+        self.phago_dataset_name = f'Features/Cell{index:04}/PhagocyticFrames'
 
         with h5py.File(SETTINGS.DATASET, 'r+') as f:
             dtype = np.dtype([
@@ -30,17 +31,29 @@ class Cell:
                 ('speed', 'f4'),
                 ('perimeter', 'f4'),
                 ('dist_nearest', 'f4'),
-                ('eaten', 'f4'),
                 ('xcentre', 'f4'),
-                ('ycentre', 'f4')
+                ('ycentre', 'f4'),
+                ('num_pathogen_pixels', 'f4')
             ])
             f.create_dataset(self.features_dataset_name, shape=(0,), maxshape=(None,), dtype=dtype)
+            dtype = np.dtype([
+                ('frame', 'f4'),
+                ('pathogen_index', 'f4'),
+                ('num_pathogen_pixels', 'f4')
+            ])
+            f.create_dataset(self.phago_dataset_name, shape=(0,), maxshape=(None,), dtype=dtype)
 
     def write_features(self, features_list):
         with h5py.File(SETTINGS.DATASET, 'a') as f:
-            features_dataset = f['Features'][f'Cell{self.index:04}']
+            features_dataset = f['Features'][f'Cell{self.index:04}']['MorphologicalFeatures']
             features_dataset.resize(len(features_dataset)+1, axis=0)
             features_dataset[-1] = features_list
+
+    def add_phagocytic_frame(self, frame, index, num_pixels):
+        with h5py.File(SETTINGS.DATASET, 'r+') as f:
+            phago_dataset = f['Features'][f'Cell{self.index:04}']['PhagocyticFrames']
+            phago_dataset.resize(len(phago_dataset) + 1, axis=0)
+            phago_dataset[-1] = (frame, index, num_pixels)
 
 class CellBatch:
     def __init__(self, indices):
@@ -53,13 +66,10 @@ class CellBatch:
         self.file = h5py.File(SETTINGS.DATASET, 'r+')
         self.frames_list = list(self.file['Segmentations']['Phase'].keys())
         self.frames_list.sort()
-        # self.paths = sorted([p for p in (SETTINGS.DIRECTORY / 'tracked' / 'phase').iterdir()])
-        #self.num_frames = len(self.paths)
         self.coord_grid_x, self.coord_grid_y = torch.meshgrid(torch.arange(SETTINGS.IMAGE_SIZE[0]).to(device),
                                                               torch.arange(SETTINGS.IMAGE_SIZE[1]).to(device))
 
     def run_feature_extraction(self):
-
         for i, frame_name in enumerate(self.frames_list):
             sys.stdout.write(f'\rFrame {i+1} | Cells {torch.min(self.indices)}-{torch.max(self.indices)} ')
             sys.stdout.flush()
@@ -71,7 +81,7 @@ class CellBatch:
             self.next_frame(i)
             self.read_features()
             self.epi_mask = None
-            self.write_features()
+            self.write_features(i)
             gc.collect()
         self.file.close()
 
@@ -84,26 +94,31 @@ class CellBatch:
         self.masks = torch.where(full_mask.unsqueeze(0).expand(len(self.indices), *full_mask.shape) == self.expanded_indices, 1, 0)
         full_mask = None
         self.epi_mask = self.read_frame(frame_index, type='Epi')
+        self.phase_image = torch.tensor(self.file['Images']['Phase'][self.frames_list[frame_index]][()].astype('uint8')).to(device)
+
     def read_features(self):
         self.get_areas()
         self.get_centres()
         self.get_speeds()
         self.get_perimeters()
-        self.get_eaten()
+        self.get_phagocytosis()
         self.get_nearest()
 
 
-    def write_features(self):
+    def write_features(self, frame_num):
         for i, cell in enumerate(self.cells):
             new_line = (self.areas[i],
                         self.speeds[i],
                         self.perimeters[i],
                         self.dists[i],
-                        self.eaten[i],
                         self.centres[i, 0],
-                        self.centres[i, 1])
-            #new_line = '\n' + '\t'.join([str(a.item()) for a in (self.areas[i], self.speeds[i], self.perimeters[i], self.dists[i], self.eaten[i], self.centres[i, 0], self.centres[i, 1])])
+                        self.centres[i, 1],
+                        self.eaten[i])
             cell.write_features(new_line)
+            if len(self.pathogen_indices[i][0]) > 0:
+                for index, count in zip(self.pathogen_indices[i][0], self.pathogen_indices[i][1]):
+                    if index != 0:
+                        cell.add_phagocytic_frame(frame_num, index, count)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2)).float()
@@ -144,9 +159,12 @@ class CellBatch:
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(0) - non_zero_pixels.unsqueeze(1))**2, dim=2))
         self.dists, i = torch.min(distances, dim=0)
 
-    def get_eaten(self):
+    def get_phagocytosis(self):
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
         self.eaten = intersection.sum(dim=(1, 2)).int()
+        self.pathogen_indices = [torch.unique(array, return_counts=True) for array in torch.where(intersection, self.epi_mask.unsqueeze(0), 0)]
+
+
 
 def plot_tracks(save_as):
     tracks_plot = torch.zeros((*SETTINGS.IMAGE_SIZE, 3), dtype=torch.uint8).to(device)
@@ -154,8 +172,8 @@ def plot_tracks(save_as):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         for cell in f['Features']:
             colour = torch.tensor(np.random.uniform(0, 2 ** (8) - 1, size=3), dtype=torch.uint8).to(device)
-            xcentres = torch.tensor(f['Features'][cell]['xcentre']).to(device)
-            ycentres = torch.tensor(f['Features'][cell]['ycentre']).to(device)
+            xcentres = torch.tensor(f['Features'][cell]['MorphologicalFeatures']['xcentre']).to(device)
+            ycentres = torch.tensor(f['Features'][cell]['MorphologicalFeatures']['ycentre']).to(device)
             xcentres, ycentres = xcentres[~torch.isnan(xcentres)], ycentres[~torch.isnan(ycentres)]
             for i in range(len(xcentres) - 1):
                 tracks_plot = utils.draw_line(tracks_plot, xcentres[i], xcentres[i+1], ycentres[i], ycentres[i+1], colour)
@@ -168,7 +186,7 @@ def plot_features(save_as):
     utils.remake_dir(Path(save_as))
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         for cell in f['Features']:
-            data = pd.DataFrame(f['Features'][cell][:])
+            data = pd.DataFrame(f['Features'][cell]['MorpholigicalFeatures'][:])
             #print(data)
             fig, axs = plt.subplots(5, sharex=True, figsize=(10, 10))
             # colours=['firebrick', 'darkorange', 'yellowgreen', 'lightseagreen', 'royalblue']
@@ -186,7 +204,7 @@ def show_eating(directory):
     utils.remake_dir(Path(directory))
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         for cell in f['Features']:
-            data = pd.DataFrame(f['Features'][cell][:])
+            data = pd.DataFrame(f['Features'][cell]['MorpholigicalFeatures'][:])
             eaten_frames = data.index[data['eaten']>=1].tolist()
             if len(eaten_frames) > 0:
                 (Path(directory) / cell).mkdir()
@@ -219,7 +237,7 @@ def show_eating_2(directory):
         for cell in f['Features']:
             sys.stdout.write(f'\r{cell}')
             sys.stdout.flush()
-            data = pd.DataFrame(f['Features'][cell][:])
+            data = pd.DataFrame(f['Features'][cell]['MorpholigicalFeatures'][:])
             eaten_frames = data.index[data['eaten']>=10].tolist()
             if len(eaten_frames) > 0:
                 consecutive_eaten_frames = utils.split_list_into_sequences(eaten_frames)
@@ -280,26 +298,6 @@ def main():
     if SETTINGS.SHOW_EATING:
         show_eating_2(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
 
-
-
-    # torch.cuda.empty_cache()
-    # gc.enable()
-    # with torch.no_grad():
-    #     utils.remake_dir(SETTINGS.DIRECTORY / 'features')
-    #     cell_batch = CellBatch(torch.tensor(np.arange(1, 101)).to(device))
-    #     cell_batch.run_feature_extraction()
-    # #     cell_batch = CellBatch(torch.tensor(np.arange(101, 201)).to(device))
-    # #     cell_batch.run_feature_extraction()
-    # #     cell_batch = CellBatch(torch.tensor(np.arange(201, 301)).to(device))
-    # #     cell_batch.run_feature_extraction()
-    # #     cell_batch = CellBatch(torch.tensor(np.arange(301, 401)).to(device))
-    # #     cell_batch.run_feature_extraction()
-    # # if SETTINGS.PLOT_FEATURES:
-    #     plot_features()
-    # if SETTINGS.TRACKS_PLOT:
-    #     plot_tracks()
-    # if SETTINGS.SHOW_EATING:
-    #     show_eating()
 if __name__ == '__main__':
     main()
 

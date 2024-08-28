@@ -93,3 +93,6 @@ def find_centre(mask):
     y_mean = torch.sum(coords[:, 0]) / len
     return x_mean, y_mean
 
+# def connected_components_labelling(tensor):
+
+
