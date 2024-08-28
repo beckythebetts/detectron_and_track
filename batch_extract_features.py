@@ -118,7 +118,8 @@ class CellBatch:
             if len(self.pathogen_indices[i][0]) > 0:
                 for index, count in zip(self.pathogen_indices[i][0], self.pathogen_indices[i][1]):
                     if index != 0:
-                        cell.add_phagocytic_frame(frame_num, index, count)
+                        if count > SETTINGS.MINIMUM_PIXELS_PER_PATHOGEN:
+                            cell.add_phagocytic_frame(frame_num, index, count)
 
     def get_areas(self):
         self.areas = torch.sum(self.masks, dim=(1, 2)).float()
