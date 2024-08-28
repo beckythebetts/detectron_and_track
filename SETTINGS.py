@@ -6,7 +6,7 @@ DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
 #DATASET = Path("Datasets") / '04_short_testing.h5'
 MASK_RCNN_MODEL = Path("Models") / 'Daniel_highres_fixedsize'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
-IMAGE_SIZE = (1200, 1200)
+IMAGE_SIZE = (2048, 2048)
 REMOVE_EDGE_CELLS = True
 NUM_FRAMES = 1200
 
