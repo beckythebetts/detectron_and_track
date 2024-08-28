@@ -122,7 +122,7 @@ class Tracker:
             for index in torch.unique(frame):
                 index = index.item()
                 if index != 0:
-                    if index not in length_of_tracks.keys():
+                if index not in length_of_tracks.keys():
                         length_of_tracks[index] = 0
                     length_of_tracks[index] += 1
         tracks_to_remove = torch.tensor(

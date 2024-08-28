@@ -24,20 +24,18 @@ def track_phagocytic_events(hdf5file):
             sys.stdout.write(f'\r{cell}')
             sys.stdout.flush()
             phago_events = f['Features'][cell]['PhagocyticFrames'][:]
-            # for event in phago_events:
-            #     print(phago_events)
-            #
             frames = f['Features'][cell]['PhagocyticFrames']['frame'][:]
-            sequences = utils.split_list_into_sequences(frames)
-            for sequence in sequences:
-                # if sequence of frames contains duplicate values => multiple pathogens are observed simultaneously => need tracking
-                if len(sequences) == len(set(sequences)):
-                    # if only one pathogen observed, no need to track
-                    indices = [phago_events[frame.index()][1] for frame in sequence]
-                    phago_event = PhagocyticEvent(sequence, indices)
-                # else:
-                #     # this phagocytic event involves multiple pathogens, so each must be tracked individually
-                #     for frame in np.unique(sequence):
+            if len(frames) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
+                sequences = utils.split_list_into_sequences(frames)
+                for sequence in sequences:
+                    # if sequence of frames contains duplicate values => multiple pathogens are observed simultaneously => need tracking
+                    if len(sequences) == len(set(sequences)):
+                        # if only one pathogen observed, no need to track
+                        indices = [phago_events[frame.index()][1] for frame in sequence]
+                        phago_event = PhagocyticEvent(sequence, indices)
+                    # else:
+                    #     # this phagocytic event involves multiple pathogens, so each must be tracked individually
+                    #     for frame in np.unique(sequence):
 
 
 
