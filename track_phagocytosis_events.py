@@ -28,9 +28,8 @@ def track_phagocytic_events(hdf5file):
             if len(frames) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
                 sequences = utils.split_list_into_sequences(frames)
                 for sequence in sequences:
-                    print(sequence)
                     # if sequence of frames contains duplicate values => multiple pathogens are observed simultaneously => need tracking
-                    if len(sequences) == len(set(sequences)):
+                    if len(sequence) == len(set(sequence)):
                         # if only one pathogen observed, no need to track
                         indices = [phago_events[frame.index()][1] for frame in sequence]
                         phago_event = PhagocyticEvent(sequence, indices)
