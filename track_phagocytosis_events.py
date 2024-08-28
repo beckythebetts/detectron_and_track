@@ -34,6 +34,7 @@ def track_phagocytic_events(hdf5file):
     with h5py.File(hdf5file, 'r') as f:
         for cell in f['Features']:
             phago_events = f['Features'][cell]['PhagocyticFrames'][:]
+            phago_events = [event for event in phago_events if event[2]>10]
             for event in phago_events:
                 print(event)
 
