@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import h5py
-imprt sys
+import sys
 
 import SETTINGS
 import utils
