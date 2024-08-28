@@ -31,7 +31,7 @@ def track_phagocytic_events(hdf5file):
                     # if sequence of frames contains duplicate values => multiple pathogens are observed simultaneously => need tracking
                     if len(sequence) == len(set(sequence)):
                         # if only one pathogen observed, no need to track
-                        indices = [event[1] for event in phago_events if phago_event[0] in seuqnce]
+                        indices = [event[1] for event in phago_events if phago_events[0] in sequence]
                         phago_event = PhagocyticEvent(sequence, indices)
                     # else:
                     #     # this phagocytic event involves multiple pathogens, so each must be tracked individually
