@@ -16,6 +16,8 @@ class PhagocyticEvent:
         self.frames = np.append(self.frames, frame)
         self.pathogen_indices = np.append(self.pathogen_indices, index)
 
+    def save_event(self, cell):
+
 
 
 def track_phagocytic_events(hdf5file):

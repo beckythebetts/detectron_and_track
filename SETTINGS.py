@@ -2,13 +2,16 @@ from pathlib import Path
 import h5py
 
 # ******* GENERAL *******
-DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
-#DATASET = Path("Datasets") / '04_short_testing.h5'
-MASK_RCNN_MODEL = Path("Models") / 'Daniel_highres_fixedsize'
+#DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
+DATASET = Path("Datasets") / '15sec.hdf5'
+MASK_RCNN_MODEL = Path("Models") / 'filter_test'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (2048, 2048)
+#IMAGE_SIZE = (1200, 1200)
 REMOVE_EDGE_CELLS = True
-NUM_FRAMES = 1200
+with h5py.File(DATASET, 'r') as f:
+    num_frames = f['Images'].attrs['Number of frames']
+NUM_FRAMES = num_frames
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 50
