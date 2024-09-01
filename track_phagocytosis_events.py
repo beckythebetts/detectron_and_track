@@ -17,11 +17,13 @@ class PhagocyticEvent:
         self.pathogen_indices = np.append(self.pathogen_indices, index)
 
     def save_event(self, cell):
-
+        with h5py.File(SETTINGS.DATASET, 'r+') as f:
+            dtype = np.dtype([('frame', 'f4'), ('pathogen_index', 'f4')])
+            f.create_dataset(f'Features/{cell}/{self.frames[0]}_{self.frames[-1]}', np.stack((self.frames, self.pathogen_indices), axis=-1))
 
 
 def track_phagocytic_events(hdf5file):
-    with h5py.File(hdf5file, 'r') as f:
+    with h5py.File(hdf5file, 'r+') as f:
         for cell in f['Features']:
             sys.stdout.write(f'\r{cell}')
             sys.stdout.flush()
@@ -35,6 +37,7 @@ def track_phagocytic_events(hdf5file):
                         # if only one pathogen observed, no need to track
                         indices = [event[1] for event in phago_events if event[0] in sequence]
                         phago_event = PhagocyticEvent(sequence, indices)
+                        phago_event.save_event(cell)
                     # else:
                     #     # this phagocytic event involves multiple pathogens, so each must be tracked individually
                     #     for frame in np.unique(sequence):
