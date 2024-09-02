@@ -19,8 +19,8 @@ class DataFrame:
 
     def add_file(self, file_name):
         with h5py.File(Path('Datasets') / 'interval_test' / file_name, 'r') as f:
-            for cell_num, cell in enumerate(f['Features']['MorphologicalFeatures']):
-                features = f['Features'][cell]
+            for cell_num, cell in enumerate(f['Features']):
+                features = f['Features'][cell]['MorphologicalFeatures']
                 indices = np.where(~np.isnan(features['area']))[0]
                 start_index, end_index = indices[0], indices[-1]
                 x_0, y_0 = features['xcentre'][start_index], features['ycentre'][start_index]
