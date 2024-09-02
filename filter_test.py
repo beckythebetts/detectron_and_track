@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 class DataFrame:
     def __init__(self, interval, h5_files):
         self.interval = interval
-        print('Filter?', self.filter)
         self.measurements = ['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']
         self.dataframe = pd.DataFrame(columns=self.measurements)
         self.h5_files = h5_files
