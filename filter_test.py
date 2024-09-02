@@ -58,6 +58,6 @@ def main():
     #filter = FilterDataFrame(True, ['filter00.h5', 'filter01.h5'])
     #no_filter = FilterDataFrame(False, ['no_filter00.h5', 'no_filter01.h5'])
     interval15 = DataFrame(15, ['15sec.hdf5'])
-    plot()
+    #plot()
 if __name__ =='__main__':
     main()
