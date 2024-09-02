@@ -4,9 +4,9 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 
-class FilterDataFrame:
-    def __init__(self, filter, h5_files):
-        self.filter = filter
+class DataFrame:
+    def __init__(self, interval, h5_files):
+        self.interval = interval
         print('Filter?', self.filter)
         self.measurements = ['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']
         self.dataframe = pd.DataFrame(columns=self.measurements)
@@ -14,12 +14,12 @@ class FilterDataFrame:
         for file in self.h5_files:
             self.add_file(file)
         #print(self.dataframe)
-        self.dataframe.to_csv(Path('Datasets') / 'filter_test' / ('filter' + str(filter) + '.txt'))
+        self.dataframe.to_csv(Path('Datasets') / 'interval_test' / ('interval' + str(interval) + '.txt'))
         print(self.dataframe.mean())
         print(self.dataframe.std())
 
     def add_file(self, file_name):
-        with h5py.File(Path('Datasets') / 'filter_test' / file_name, 'r') as f:
+        with h5py.File(Path('Datasets') / 'interval_test' / file_name, 'r') as f:
             for cell_num, cell in enumerate(f['Features']):
                 features = f['Features'][cell]
                 indices = np.where(~np.isnan(features['area']))[0]
@@ -42,19 +42,6 @@ def plot():
 
     fig, axs = plt.subplots(1, 4, figsize=(12, 3))
     fig.tight_layout()
-    # for i, measurement in enumerate(['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']):
-    #     axs[i].scatter(np.zeros(len(withfilter)), withfilter[measurement], color='gray', marker ='o', alpha=0.3, s=(300./fig.dpi)**2)
-    #     axs[i].scatter(np.ones(len(withoutfilter)), withoutfilter[measurement], color='gray', marker = 'o', alpha=0.3, s=(300./fig.dpi)**2)
-    #     axs[i].errorbar((0, 1), (withfilter[measurement].mean(), withoutfilter[measurement].mean()),
-    #                     yerr=(withfilter[measurement].std(), withoutfilter[measurement].std()),
-    #                     marker = 'x', color='k', ls='none', capsize=10)
-    #     axs[i].set_ylabel(measurement)
-    #     axs[i].grid()
-    #     axs[i].set_xticks((0, 1))
-    #     axs[i].set_xlim(left = -0.5, right = 1.5)
-    #     axs[i].set_xticklabels(['With Filter', 'Without Filter'])
-    # plt.savefig(Path('RAW_DATA') / 'test_filter' / 'results.jpg')
-    # plt.show()
     measurment_names = ['Average path length per frame', 'Average displacement per frame', 'Average area', 'Average Perimeter']
     for i, measurement in enumerate(['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']):
         axs[i].hist(withfilter[measurement], bins=75, alpha=0.5, color='Blue', label='With Filter')
@@ -70,6 +57,7 @@ def plot():
 def main():
     #filter = FilterDataFrame(True, ['filter00.h5', 'filter01.h5'])
     #no_filter = FilterDataFrame(False, ['no_filter00.h5', 'no_filter01.h5'])
+    interval15 = DataFrame(15, ['15sec.hdf5'])
     plot()
 if __name__ =='__main__':
     main()
