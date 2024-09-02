@@ -3,7 +3,7 @@ import h5py
 
 # ******* GENERAL *******
 #DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
-DATASET = Path("Datasets") / 'interval_test' / '15sec.hdf5'
+DATASET = Path("Datasets") / 'interval_test' / '3sec.hdf5'
 #DATASET = Path("Datasets") / '04_short_testing.h5'
 MASK_RCNN_MODEL = Path("Models") / 'filter_test'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
