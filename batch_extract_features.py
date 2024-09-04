@@ -53,7 +53,7 @@ class Cell:
         with h5py.File(SETTINGS.DATASET, 'r+') as f:
             phago_dataset = f['Features'][f'Cell{self.index:04}']['PhagocyticFrames']
             phago_dataset.resize(len(phago_dataset) + 1, axis=0)
-            phago_dataset[-1] = (frame, index, num_pixeltms)
+            phago_dataset[-1] = (frame, index, num_pixels)
 
 class CellBatch:
     def __init__(self, indices):
