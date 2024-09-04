@@ -36,20 +36,23 @@ class DataFrame:
 def plot():
     plt.rcParams["font.family"] = 'serif'
 
-    withfilter = pd.read_csv(Path('RAW_DATA') / 'test_filter' / ('filter' + 'True' + '.txt'))
-    withoutfilter = pd.read_csv(Path('RAW_DATA') / 'test_filter' / ('filter' + 'False' + '.txt'))
+    interval15 = pd.read_csv(Path('RAW_DATA') / 'interval_test' / ('interval15.txt'))
+    interval3 = pd.read_csv(Path('RAW_DATA') / 'interval_test' / ('interval3.txt'))
+
+    interval15[['path_av_speed', 'displacement_av_speed']] = interval15[['path_av_speed', 'displacement_av_speed']] / 15
+    interval3[['path_av_speed', 'displacement_av_speed']] = interval3[['path_av_speed', 'displacement_av_speed']] / 3
 
     fig, axs = plt.subplots(1, 4, figsize=(12, 3))
     fig.tight_layout()
-    measurment_names = ['Average path length per frame', 'Average displacement per frame', 'Average area', 'Average Perimeter']
+    measurment_names = ['Average path length per second', 'Average displacement per second', 'Average area', 'Average Perimeter']
     for i, measurement in enumerate(['path_av_speed', 'displacement_av_speed', 'av_area', 'av_perimeter']):
-        axs[i].hist(withfilter[measurement], bins=75, alpha=0.5, color='Blue', label='With Filter')
-        axs[i].hist(withoutfilter[measurement], bins=75, alpha=0.5, color='Red', label='Without Filter')
+        axs[i].hist(interval15[measurement], bins=75, alpha=0.5, color='Blue', label='15 second interval')
+        axs[i].hist(interval3[measurement], bins=75, alpha=0.5, color='Red', label='3 second interval')
         axs[i].grid()
         axs[i].set_xlabel(measurment_names[i])
     fig.subplots_adjust(bottom=0.15)
     plt.legend()
-    plt.savefig(Path('RAW_DATA') / 'test_filter' / 'histograms.jpg')
+    plt.savefig(Path('RAW_DATA') / 'interval_test' / 'histograms.jpg')
     plt.show()
 
 
@@ -57,7 +60,7 @@ def main():
     #filter = FilterDataFrame(True, ['filter00.h5', 'filter01.h5'])
     #no_filter = FilterDataFrame(False, ['no_filter00.h5', 'no_filter01.h5'])
     #interval15 = DataFrame(15, ['15sec.hdf5'])
-    interval3 = DataFrame(3, ['3sec.hdf5'])
-    #plot()
+    #interval3 = DataFrame(3, ['3sec.hdf5'])
+    plot()
 if __name__ =='__main__':
     main()
