@@ -85,7 +85,7 @@ def show_phagocytic_events(dataset, save_directory):
 def main():
     hdf5file = SETTINGS.DATASET
     track_phagocytic_events(hdf5file)
-    show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
+    #show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
 
 if __name__ == '__main__':
     main()
