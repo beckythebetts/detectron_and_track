@@ -30,8 +30,8 @@ class PhagocyticEvent:
 def track_phagocytic_events(hdf5file):
     with h5py.File(hdf5file, 'r+') as f:
         for cell in f['Features']:
-            sys.stdout.write(f'\r{cell}')
-            sys.stdout.flush()
+            # sys.stdout.write(f'\r{cell}')
+            # sys.stdout.flush()
             phago_events = f['Features'][cell]['PhagocyticFrames'][:]
             frames = f['Features'][cell]['PhagocyticFrames']['frame'][:]
             if len(frames) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
