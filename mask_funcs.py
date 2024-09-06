@@ -12,6 +12,7 @@ def get_centre(mask):
     return (x_centre, y_centre)
 
 def dist_between_points(point_1, point_2):
+    print(point_1, point_2)
     return np.sqrt((point_1[0] - point_2[0])**2 + (point_1[1] - point_2[1])**2)
 
 def to_instance_mask(mask):
