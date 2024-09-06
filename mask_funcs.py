@@ -4,6 +4,15 @@ import cv2
 import torch
 import torch.nn.functional as F
 
+def get_centre(mask):
+    x_mesh_grid, y_mesh_grid = np.meshgrid(np.arange(mask.shape[0]), np.arange(mask.shape[1]))
+    area = np.sum(mask)
+    x_centre = np.sum(mask*x_mesh_grid)/area
+    y_centre = np.sum(mask*y_mesh_grid)/area
+    return (x_centre, y_centre)
+
+def dist_between_points(point_1, point_2):
+    return np.sqrt((point_1[0] - point_2[0])**2 + (point_1[1] - point_2[1])**2)
 
 def to_instance_mask(mask):
     num_labels, labels = cv2.connectedComponents(mask.astype(np.uint8))
@@ -86,13 +95,14 @@ def mask_outline(mask, thickness):
     outline = (expanded_mask.byte().squeeze() - mask).bool()
     return outline
 
-def find_centre(mask):
-    coords = torch.nonzero(mask)
-    len = coords.shape[0]
-    x_mean = torch.sum(coords[:, 1]) / len
-    y_mean = torch.sum(coords[:, 0]) / len
-    return x_mean, y_mean
+# def find_centre(mask):
+#     coords = torch.nonzero(mask)
+#     len = coords.shape[0]
+#     x_mean = torch.sum(coords[:, 1]) / len
+#     y_mean = torch.sum(coords[:, 0]) / len
+#     return x_mean, y_mean
 
-# def connected_components_labelling(tensor):
+if __name__ == '__main__':
+    get_centre(np.zeros((5, 5)))
 
 

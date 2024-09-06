@@ -27,13 +27,15 @@ class PhagocyticEvent:
             data['pathogen_index'] = self.pathogen_indices
             f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
 
+
 def track_phagocytic_events(hdf5file):
     with h5py.File(hdf5file, 'r+') as f:
         for cell in f['Features']:
             # sys.stdout.write(f'\r{cell}')
             # sys.stdout.flush()
             phago_events = f['Features'][cell]['PhagocyticFrames']
-            frames = f['Features'][cell]['PhagocyticFrames']['frame'][:]
+            frames = phago_events['frame'][:]
+            pathogen_indices = phago_events['pathogen_index'][:]
             #print(phago_events['pathogen_index'])
             if len(frames) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
                 sequences = utils.split_list_into_sequences(frames)
@@ -48,8 +50,41 @@ def track_phagocytic_events(hdf5file):
                     else:
                         # this phagocytic event involves multiple pathogens, so each must be tracked individually
                         print('FOUND ', cell, sequence[0] )
+                        phagocytosis_events = []
                         for i, frame in enumerate(np.unique(sequence)):
-                            print(cell, frame, phago_events['pathogen_index'][np.argwhere(frames==frame)])
+                            epi_mask = f['Segmentations']['Epi'][frame][:]
+                            if i == 0:
+                                new_indices = pathogen_indices[np.argwhere(frames==frame)]
+                                new_centres = [mask_funcs.get_centre(np.where(epi_mask == pathogen_index)) for index in new_indices]
+                                for new_index in new_indices:
+                                    phagocytosis_events.append(PhagocyticEvent(frame, new_index))
+                            else:
+                                old_indices = new_indices
+                                old_centres = new_centres
+                                new_indices = pathogen_indices[np.argwhere(frames==frame)]
+                                new_centres = [mask_funcs.get_centre(np.where(epi_mask == pathogen_index)) for index in new_indices]
+                                #calculate distances between all combos
+                                distances = mask_funcs.dist_between_points(old_centre, new_centre[np.newaxis,])
+                                if len(old_indices) >= len(new_indices):
+                                    for j, new_index in enumerate(new_indices):
+                                        old_index = old_indices[np.argmin(distances[:, j])]
+                                        for phagocytosis_event in phagocytosis_events:
+                                            if phagocytosis_event.pathogen_indices[-1] == old_index:
+                                                phagocytosis_event.add_frame(frame, new_index)
+                                else:
+                                    for j, old_index in enumerate(old_indices):
+                                        new_index = new_indices[np.argmin(distances[j])]
+                                        for phagocytosis_event in phagocytosis_events:
+                                            if phagocytosis_event.pathogen_indices[-1] == old_index:
+                                                phagocytosis_event.add_frame(frame, new-index)
+                                    for new_index in new_indices:
+                                        if new_index not in [phagocytosis_event.pathogen_indices[-1] for phagocytosis_event in phagocytosis_events]:
+                                            phagocytosis_events.append(PhagocyticEvent(frame, new_index))
+                        for phagocytosis_event in phagocytosis_events:
+                            phagocytosis_event.save_event(cell)
+
+
+                            #print(cell, frame, phago_events['pathogen_index'][np.argwhere(frames==frame)])
 
 
 def show_phagocytic_events(dataset, save_directory):
