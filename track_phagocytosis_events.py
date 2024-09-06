@@ -52,7 +52,7 @@ def track_phagocytic_events(hdf5file):
                         print('FOUND ', cell, sequence[0] )
                         phagocytosis_events = []
                         for i, frame in enumerate(np.unique(sequence)):
-                            epi_mask = f['Segmentations']['Epi'][frame][:]
+                            epi_mask = f['Segmentations']['Epi'][f'{int(frame):04}'][:]
                             if i == 0:
                                 new_indices = pathogen_indices[np.argwhere(frames==frame)]
                                 new_centres = [mask_funcs.get_centre(np.where(epi_mask == pathogen_index)) for index in new_indices]
