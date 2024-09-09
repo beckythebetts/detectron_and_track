@@ -89,42 +89,42 @@ def track_phagocytic_events(hdf5file):
 
 
 def show_phagocytic_events(dataset, save_directory):
-    with h5py.File(dataset, 'r+') as f:
+    with h5py.File(dataset, 'r') as f:
         for cell in f['Features'].keys():
             for phago_event in f['Features'][cell]:
                 #print(phago_event)
                 if phago_event != 'MorphologicalFeatures' and phago_event != 'PhagocyticFrames':
-                    del(f['Features'][cell][phago_event])
-                    # (Path(save_directory) / cell / phago_event).mkdir(parents=True)
-                    # frames = f['Features'][cell][phago_event]['frame'][:]
-                    # for frame in np.arange(np.max((min(frames)-10, 0)), np.min((max(frames)+11, SETTINGS.NUM_FRAMES))):
-                    #     phase_image = np.array(f['Images']['Phase'][f'{int(frame):04}'])
-                    #     phase_mask = np.array(f['Segmentations']['Phase'][f'{int(frame):04}'])
-                    #     outline = mask_funcs.mask_outline(torch.where(torch.tensor(phase_mask) == int(cell[-4:]), 1, 0), thickness=2).cpu().numpy()
-                    #     epi_image = np.array(f['Images']['Epi'][f'{int(frame):04}'])
-                    #     if frame in frames:
-                    #         pathogen_index = f['Features'][cell][phago_event]['pathogen_index'][np.argwhere(frames==frame)]
-                    #         epi_mask = np.where(f['Segmentations']['Epi'][f'{int(frame):04}']==pathogen_index, 1, 0)
-                    #     else:
-                    #         epi_mask = np.zeros(phase_image.shape)
-                    #     im_rgb = np.stack((phase_image, phase_image, phase_image), axis=0)
-                    #
-                    #     im_rgb[0] = np.where(outline, 255, im_rgb[0])
-                    #     im_rgb[1] = np.where(outline, 255, im_rgb[1])
-                    #     im_rgb[2] = np.where(outline, 0, im_rgb[2])
-                    #
-                    #     im_rgb[0] = np.where(epi_mask, epi_image, im_rgb[0])
-                    #
-                    #     im_rgb = im_rgb.transpose(1, 2, 0)
-                    #
-                    #     imageio.imwrite(Path(save_directory) / cell / phago_event / '{0:04}.jpg'.format(frame), im_rgb.astype(np.uint8))
+                    # del(f['Features'][cell][phago_event])
+                    (Path(save_directory) / cell / phago_event).mkdir(parents=True)
+                    frames = f['Features'][cell][phago_event]['frame'][:]
+                    for frame in np.arange(np.max((min(frames)-10, 0)), np.min((max(frames)+11, SETTINGS.NUM_FRAMES))):
+                        phase_image = np.array(f['Images']['Phase'][f'{int(frame):04}'])
+                        phase_mask = np.array(f['Segmentations']['Phase'][f'{int(frame):04}'])
+                        outline = mask_funcs.mask_outline(torch.where(torch.tensor(phase_mask) == int(cell[-4:]), 1, 0), thickness=2).cpu().numpy()
+                        epi_image = np.array(f['Images']['Epi'][f'{int(frame):04}'])
+                        if frame in frames:
+                            pathogen_index = f['Features'][cell][phago_event]['pathogen_index'][np.argwhere(frames==frame)]
+                            epi_mask = np.where(f['Segmentations']['Epi'][f'{int(frame):04}']==pathogen_index, 1, 0)
+                        else:
+                            epi_mask = np.zeros(phase_image.shape)
+                        im_rgb = np.stack((phase_image, phase_image, phase_image), axis=0)
+
+                        im_rgb[0] = np.where(outline, 255, im_rgb[0])
+                        im_rgb[1] = np.where(outline, 255, im_rgb[1])
+                        im_rgb[2] = np.where(outline, 0, im_rgb[2])
+
+                        im_rgb[0] = np.where(epi_mask, epi_image, im_rgb[0])
+
+                        im_rgb = im_rgb.transpose(1, 2, 0)
+
+                        imageio.imwrite(Path(save_directory) / cell / phago_event / '{0:04}.jpg'.format(frame), im_rgb.astype(np.uint8))
 
 
 
 def main():
     hdf5file = SETTINGS.DATASET
-    #track_phagocytic_events(hdf5file)
-    show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
+    track_phagocytic_events(hdf5file)
+    #show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
 
 if __name__ == '__main__':
     main()
