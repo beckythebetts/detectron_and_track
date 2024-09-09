@@ -22,7 +22,7 @@ class PhagocyticEvent:
     def save_event(self, cell):
         with h5py.File(SETTINGS.DATASET, 'r+') as f:
             dtype = np.dtype([('frame', 'f4'), ('pathogen_index', 'f4')])
-            data = np.zeros(len(self.frames), dtype=dtype)
+            data = np.zeros(self.frames.size, dtype=dtype)
             data['frame'] = self.frames
             data['pathogen_index'] = self.pathogen_indices
             f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
