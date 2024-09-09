@@ -1,5 +1,5 @@
 import h5py
-from pahtlib import Path
+from pathlib import Path
 import numpy as np
 
 def copy_features(orig_dataset, new_dataset):
