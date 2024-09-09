@@ -118,7 +118,8 @@ def show_phagocytic_events(dataset, save_directory):
                         epi_image = np.array(f['Images']['Epi'][f'{int(frame):04}'])
                         if frame in frames:
                             pathogen_index = f['Features'][cell][phago_event]['pathogen_index'][np.argwhere(frames==frame)]
-                            epi_mask = np.where(f['Segmentations']['Epi'][f'{int(frame):04}']==pathogen_index, 1, 0)
+                            print(pathogen_index)
+                            epi_mask = np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][:]==pathogen_index, 1, 0)
                         else:
                             epi_mask = np.zeros(phase_image.shape)
                         im_rgb = np.stack((phase_image, phase_image, phase_image), axis=0)
