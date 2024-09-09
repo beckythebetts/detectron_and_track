@@ -103,6 +103,8 @@ def del_events(dataset):
 def show_phagocytic_events(dataset, save_directory):
     with h5py.File(dataset, 'r') as f:
         for cell in f['Features'].keys():
+            sys.stdout.write(f'\r{cell}')
+            sys.stdout.flush()
             for phago_event in f['Features'][cell]:
                 #print(phago_event)
                 if phago_event != 'MorphologicalFeatures' and phago_event != 'PhagocyticFrames':
