@@ -12,8 +12,8 @@ import mask_funcs
 class PhagocyticEvent:
 
     def __init__(self, frames, pathogen_indices):
-        self.frames = frames
-        self.pathogen_indices = pathogen_indices
+        self.frames = np.array(frames)
+        self.pathogen_indices = np.array(pathogen_indices)
 
     def add_frame(self, frame, index):
         self.frames = np.append(self.frames, frame)
