@@ -16,7 +16,7 @@ class PhagocyticEvent:
         self.pathogen_indices = np.array(pathogen_indices)
 
     def add_frame(self, frame, index):
-        self.frames = np.append(self.frames, frame)
+        self.frames = np.append(self.frames, np.array(frame))
         self.pathogen_indices = np.append(self.pathogen_indices, index)
 
     def save_event(self, cell):
