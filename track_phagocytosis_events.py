@@ -89,7 +89,7 @@ def track_phagocytic_events(hdf5file):
 
 
 def show_phagocytic_events(dataset, save_directory):
-    with h5py.File(dataset, 'r') as f:
+    with h5py.File(dataset, 'r+') as f:
         for cell in f['Features'].keys():
             for phago_event in f['Features'][cell]:
                 #print(phago_event)
