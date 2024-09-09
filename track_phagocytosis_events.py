@@ -26,7 +26,10 @@ class PhagocyticEvent:
             data['frame'] = self.frames
             data['pathogen_index'] = self.pathogen_indices
             print(self.frames)
-            f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
+            try:
+                f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
+            except ValueError:
+                f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}_1', data=data)
 
 
 def track_phagocytic_events(hdf5file):
