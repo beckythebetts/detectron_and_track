@@ -15,6 +15,7 @@ def dist_between_points(point_1, point_2):
     print(point_1, point_2)
     return np.sqrt((point_1[0] - point_2[0])**2 + (point_1[1] - point_2[1])**2)
 
+
 def to_instance_mask(mask):
     num_labels, labels = cv2.connectedComponents(mask.astype(np.uint8))
     separated_cells = np.zeros_like(mask)
@@ -104,6 +105,9 @@ def mask_outline(mask, thickness):
 #     return x_mean, y_mean
 
 if __name__ == '__main__':
-    get_centre(np.zeros((5, 5)))
-
+    #get_centre(np.zeros((5, 5)))
+    array_1 = np.array([[0,0], [1,0], [2, 2]])
+    array_2 = np.array([[0,1], [2, 2], [3, 4], [2, 1]])
+    distances = np.linalg.norm(array_1[:, np.newaxis, :] - array_2[np.newaxis, :, :], axis=2)
+    print(distances)
 

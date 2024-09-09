@@ -64,8 +64,8 @@ def track_phagocytic_events(hdf5file):
                                 new_indices = pathogen_indices[np.argwhere(frames==frame)]
                                 new_centres = np.array([mask_funcs.get_centre(np.where(epi_mask == index, 1, 0)) for index in new_indices])
                                 #calculate distances between all combos
-                                distances = mask_funcs.dist_between_points(old_centres, new_centres[:, np.newaxis])
-                                distances = np.linalg.norm(old_centres[:, np.newaxis]-new_centres[np.newaxis,])
+                                #distances = mask_funcs.dist_between_points(old_centres, new_centres[:, np.newaxis])
+                                distances = np.linalg.norm(old_centres[:, np.newaxis]-new_centres[np.newaxis,], axis=2)
                                 if len(old_indices) >= len(new_indices):
                                     for j, new_index in enumerate(new_indices):
                                         old_index = old_indices[np.argmin(distances[j])]
