@@ -88,6 +88,13 @@ def track_phagocytic_events(hdf5file):
 
                             #print(cell, frame, phago_events['pathogen_index'][np.argwhere(frames==frame)])
 
+def del_events(dataset):
+    with h5py.File(dataset, 'r+') as f:
+        for cell in f['Features'].keys():
+            for phago_event in f['Features'][cell]:
+                #print(phago_event)
+                if phago_event != 'MorphologicalFeatures' and phago_event != 'PhagocyticFrames':
+                    del(f['Features'][cell][phago_event])
 
 def show_phagocytic_events(dataset, save_directory):
     with h5py.File(dataset, 'r') as f:
@@ -124,6 +131,7 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
+    del_events(hdf5file)
     track_phagocytic_events(hdf5file)
     #show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
 
