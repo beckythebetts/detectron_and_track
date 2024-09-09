@@ -77,7 +77,7 @@ def track_phagocytic_events(hdf5file):
                                         new_index = new_indices[np.argmin(distances[:, j])]
                                         for phagocytosis_event in phagocytosis_events:
                                             if phagocytosis_event.pathogen_indices[-1] == old_index:
-                                                phagocytosis_event.add_frame(frame, new-index)
+                                                phagocytosis_event.add_frame(frame, new_index)
                                     for new_index in new_indices:
                                         if new_index not in [phagocytosis_event.pathogen_indices[-1] for phagocytosis_event in phagocytosis_events]:
                                             phagocytosis_events.append(PhagocyticEvent(frame, new_index))
