@@ -58,7 +58,7 @@ def track_phagocytic_events(hdf5file):
                                 new_indices = pathogen_indices[np.argwhere(frames==frame)]
                                 new_centres = np.array([mask_funcs.get_centre(np.where(epi_mask == index, 1, 0)) for index in new_indices])
                                 for new_index in new_indices:
-                                    phagocytosis_events.append(PhagocyticEvent(frame, new_index))
+                                    phagocytosis_events.append(PhagocyticEvent([frame], new_index))
                             else:
                                 old_indices = new_indices
                                 old_centres = new_centres
@@ -81,7 +81,7 @@ def track_phagocytic_events(hdf5file):
                                                 phagocytosis_event.add_frame(frame, new_index)
                                     for new_index in new_indices:
                                         if new_index not in [phagocytosis_event.pathogen_indices[-1] for phagocytosis_event in phagocytosis_events]:
-                                            phagocytosis_events.append(PhagocyticEvent(frame, new_index))
+                                            phagocytosis_events.append(PhagocyticEvent([frame], new_index))
                         for phagocytosis_event in phagocytosis_events:
                             phagocytosis_event.save_event(cell)
 
