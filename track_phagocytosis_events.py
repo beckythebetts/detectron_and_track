@@ -16,7 +16,7 @@ class PhagocyticEvent:
         self.pathogen_indices = np.array(pathogen_indices)
 
     def add_frame(self, frame, index):
-        self.frames = np.append(self.frames, np.array(frame))
+        self.frames = np.append(self.frames, frame)
         self.pathogen_indices = np.append(self.pathogen_indices, index)
 
     def save_event(self, cell):
@@ -131,9 +131,9 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    del_events(hdf5file)
-    track_phagocytic_events(hdf5file)
-    #show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
+    # del_events(hdf5file)
+    # track_phagocytic_events(hdf5file)
+    show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
 
 if __name__ == '__main__':
     main()
