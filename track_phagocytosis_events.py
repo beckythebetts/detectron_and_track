@@ -25,7 +25,6 @@ class PhagocyticEvent:
             data = np.zeros(self.frames.size, dtype=dtype)
             data['frame'] = self.frames
             data['pathogen_index'] = self.pathogen_indices
-            print(self.frames)
             try:
                 f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
             except ValueError:
