@@ -188,13 +188,14 @@ def plot_features(save_as):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         for cell in f['Features']:
             data = pd.DataFrame(f['Features'][cell]['MorpholigicalFeatures'][:])
+            #data = pd.DataFrame(f['Features'][cell][:])
             #print(data)
-            fig, axs = plt.subplots(5, sharex=True, figsize=(10, 10))
-            # colours=['firebrick', 'darkorange', 'yellowgreen', 'lightseagreen', 'royalblue']
-            for i in range(5):
+            fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
+            for i in range(4):
                 axs[i].plot(data.iloc[:, i], color='k')
                 axs[i].set(ylabel=data.columns.values.tolist()[i])
                 axs[i].grid()
+                axs[i].set_xlim(left=0, right=SETTINGS.NUM_FRAMES)
 
             fig.suptitle(cell)
             axs[-1].set(xlabel='frames')
@@ -298,6 +299,7 @@ def main():
         plot_tracks(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'tracks.png')))
     if SETTINGS.SHOW_EATING:
         show_eating_2(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
+    # plot_features(r'Datasets\dan10featureplots')
 
 if __name__ == '__main__':
     main()

@@ -12,7 +12,7 @@ IMAGE_SIZE = (2048, 2048)
 REMOVE_EDGE_CELLS = True
 with h5py.File(DATASET, 'r') as f:
     num_frames = f['Images'].attrs['Number of frames']
-#NUM_FRAMES = 50
+# NUM_FRAMES = 540
 NUM_FRAMES = num_frames
 
 # ******* EPI THRESHOLDING *******
