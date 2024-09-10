@@ -76,9 +76,9 @@ def track_phagocytic_events(hdf5file):
                                     if len(old_indices) >= len(new_indices):
                                         for j, new_index in enumerate(new_indices):
                                             old_index = old_indices[np.argmin(distances[:, j])]
-                                            print('*', distances)
+
                                             distances = np.delete(distances, np.argmin(distances[:, j]), axis=0)
-                                            print(distances)
+
                                             for phagocytosis_event in phagocytosis_events:
                                                 if phagocytosis_event.pathogen_indices[-1] == old_index:
                                                     phagocytosis_event.add_frame(frame, new_index)
@@ -86,7 +86,9 @@ def track_phagocytic_events(hdf5file):
                                         new_new_indices = new_indices.copy()
                                         for j, old_index in enumerate(old_indices):
                                             new_index = new_indices[np.argmin(distances[j])]
+                                            print('*', distances)
                                             distances = np.delete(distances, np.argmin(distances[j]), axis=1)
+                                            print(distances)
                                             new_new_indices = np.delete(new_new_indices, np.argmin(distances[j]))
                                             for phagocytosis_event in phagocytosis_events:
                                                 if phagocytosis_event.pathogen_indices[-1] == old_index:
