@@ -89,7 +89,6 @@ def track_phagocytic_events(hdf5file):
                                                     phagocytosis_event.add_frame(frame, new_index)
                                         for new_new_index in new_new_indices:
                                             phagocytosis_events.append(PhagocyticEvent([frame], new_index))
-                                        print(new_indices, new_new_indices)
                             for phagocytosis_event in phagocytosis_events:
                                 phagocytosis_event.save_event(cell)
 
