@@ -108,6 +108,6 @@ if __name__ == '__main__':
     #get_centre(np.zeros((5, 5)))
     array_1 = np.array([[0,0], [1,0], [2, 2]])
     array_2 = np.array([[0,1], [2, 2], [3, 4], [2, 1]])
-    distances = np.linalg.norm(array_1[:, np.newaxis, :] - array_2[np.newaxis, :, :], axis=2)
+    distances = np.linalg.norm(array_1[:, np.newaxis] - array_2[np.newaxis], axis=2)
     print(distances)
 
