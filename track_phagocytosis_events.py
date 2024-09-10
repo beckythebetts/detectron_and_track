@@ -46,7 +46,7 @@ def track_phagocytic_events(hdf5file):
                 for sequence in sequences:
                     if len(sequence) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
                         # if sequence of frames contains duplicate values => multiple pathogens are observed simultaneously => need tracking
-                        if len(sequence) == len(set(sequence)):
+                        if len(sequence) == len(np.unique(sequence)):
                             # if only one pathogen observed, no need to track
                             indices = [event[1] for event in phago_events[:] if event[0] in sequence]
                             #print(indices)
@@ -71,6 +71,7 @@ def track_phagocytic_events(hdf5file):
                                     #calculate distances between all combos
                                     #distances = mask_funcs.dist_between_points(old_centres, new_centres[:, np.newaxis])
                                     distances = np.linalg.norm(old_centres[:, np.newaxis]-new_centres[np.newaxis,], axis=2)
+
                                     if len(old_indices) >= len(new_indices):
                                         for j, new_index in enumerate(new_indices):
                                             old_index = old_indices[np.argmin(distances[:, j])]
@@ -78,14 +79,15 @@ def track_phagocytic_events(hdf5file):
                                                 if phagocytosis_event.pathogen_indices[-1] == old_index:
                                                     phagocytosis_event.add_frame(frame, new_index)
                                     else:
+                                        new_new_indices = new_indices.copy()
                                         for j, old_index in enumerate(old_indices):
                                             new_index = new_indices[np.argmin(distances[j])]
+                                            new_new_indices = new_new_indices.delete(np.argmin(distances[j]))
                                             for phagocytosis_event in phagocytosis_events:
                                                 if phagocytosis_event.pathogen_indices[-1] == old_index:
                                                     phagocytosis_event.add_frame(frame, new_index)
-                                        for new_index in new_indices:
-                                            if new_index not in [phagocytosis_event.pathogen_indices[-1] for phagocytosis_event in phagocytosis_events]:
-                                                phagocytosis_events.append(PhagocyticEvent([frame], new_index))
+                                        for new_new_index in new_new_indices:
+                                            phagocytosis_events.append(PhagocyticEvent([frame], new_index))
                             for phagocytosis_event in phagocytosis_events:
                                 phagocytosis_event.save_event(cell)
 
@@ -138,9 +140,9 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    # del_events(hdf5file)
-    # track_phagocytic_events(hdf5file)
-    show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
+    del_events(hdf5file)
+    track_phagocytic_events(hdf5file)
+   # show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
 
 if __name__ == '__main__':
     main()
