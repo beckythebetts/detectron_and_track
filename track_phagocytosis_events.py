@@ -29,6 +29,8 @@ class PhagocyticEvent:
                 f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
             except ValueError:
                 f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}_1', data=data)
+            if len(self.frames) != len(np.unique(self.frames)):
+                print('PROBLEM FOUND', self.frames, self.pathogen_indices)
 
 
 def track_phagocytic_events(hdf5file):
@@ -140,9 +142,9 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    # del_events(hdf5file)
-    # track_phagocytic_events(hdf5file)
-    show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
+    del_events(hdf5file)
+    track_phagocytic_events(hdf5file)
+    # show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
 
 if __name__ == '__main__':
     main()
