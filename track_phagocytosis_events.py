@@ -52,7 +52,7 @@ def track_phagocytosis_events(hdf5file):
                         tracker.track()
                         for track in tracker.tracked:
                             event = PhagocyticEvent(track.track_dict.keys(), track.track_dict.values())
-                            event.save_event()
+                            event.save_event(cell)
 
 # def track_phagocytic_events_2(hdf5file):
 #     with h5py.File(hdf5file, 'r+') as f:
