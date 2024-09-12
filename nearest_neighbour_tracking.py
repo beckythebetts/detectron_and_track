@@ -29,12 +29,14 @@ class NearestNeighbourTracking:
                 self.tracked = [Track(frame, index) for index in new_indices]
                 continue
             distances = np.reshape(np.linalg.norm(old_centres[:, np.newaxis] - new_centres[np.newaxis,], axis=2), (len(old_centres), len(new_centres)))
+            print(distances)
             if len(new_indices) >= len(old_indices):
                 new_indices_temp = new_indices.copy()
                 for j, old_index in enumerate(old_indices):
                     new_index = new_indices_temp[np.argmin(distances[j])]
                     new_indices_temp = np.delete(new_indices_temp, np.argwhere(new_indices_temp==new_index))
                     distances = np.delete(distances, np.argmin(distances[j]), axis=1)
+                    print('new>old', distances)
                     for track in current_tracks:
                         if list(track.track_dict.values())[-1]==old_index:
                             track.add_frame(frame, new_index)
@@ -46,13 +48,14 @@ class NearestNeighbourTracking:
                     old_index = old_indices_temp[np.argmin(distances[:, j])]
                     old_indices_temp = np.delete(old_indices_temp, np.argwhere(old_indices_temp==old_index))
                     distances = np.delete(distances, np.argmin(distances[:, j]), axis=0)
+                    print('old>new', distances)
                     for track in current_tracks:
                         if list(track.track_dict.values())[-1]==old_index:
                             track.add_frame(frame, new_index)
 
 
 def main():
-    test = NearestNeighbourTracking(frames=[0, 1, 2, 2, 2, 4, 4, 6], indices=[0, 1, 2, 3, 9, 4, 5, 6], centres=[[0,0], [1,2], [2, 1], [3, 5], [2, 2], [0, 0], [2, 2], [3, 3]])
+    test = NearestNeighbourTracking(frames=[0, 1, 2, 2, 2, 2, 4, 6], indices=[0, 1, 2, 9, 4, 5, 6, 8], centres=[[0,0], [1,2], [2, 1], [3, 5], [2, 2], [0, 0], [2, 2], [3, 3]])
     test.track()
 
 if __name__ == '__main__':
