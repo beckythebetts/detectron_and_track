@@ -9,7 +9,7 @@ def copy_features(orig_dataset, new_dataset):
             orig.copy(data, new, 'Features')
 
 def main():
-    copy_features(Path('Datasets') / 'danhighres' / 'dan10.h5', Path('Datasets') / 'danhighres' / 'dan10features.h5')
+    copy_features(Path('Datasets') / 'filter_test' / 'no_filter00.h5', Path('Datasets') / 'filter_test' / 'no_filter00feat.h5')
 
 if __name__ == '__main__':
     main()
