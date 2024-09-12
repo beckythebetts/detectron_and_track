@@ -8,6 +8,7 @@ import imageio
 import SETTINGS
 import utils
 import mask_funcs
+from nearest_neighbour_tracking import Track, NearestNeighbourTracking
 
 class PhagocyticEvent:
 
@@ -32,8 +33,28 @@ class PhagocyticEvent:
             if len(self.frames) != len(np.unique(self.frames)):
                 print('PROBLEM FOUND', self.frames, self.pathogen_indices)
 
+def track_phagocytosis_events(hdf5file):
+    with h5py.File(hdf5file, 'r') as f:
+        for cell in f['Features']:
+            sys.stdout.write(f'\r{cell}')
+            sys.stdout.flush()
+            phago_events = f['Features'][cell]['PhagocyticFrames']
+            frames = phago_events['frame'][:]
+            pathogen_indices = phago_events['pathogen_index'][:]
+            if len(frames) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
+                sequences = utils.split_list_into_sequences(frames, return_indices=True)
+                for sequence in sequences:
+                    if len(sequence) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
+                        # get pathogen_centres form epi masks:
+                        centres = [mask_funcs.get_centre(np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][:]==index, 1, 0)) for frame, index in zip(frames[sequence], pathogen_indices[sequence])]
+                        # NN tracker
+                        tracker = NearestNeighbourTracking(frames[sequence], pathogen_indices[sequence], centres)
+                        tracker.track()
+                        for track in tracker.tracked:
+                            event = PhagocyticEvent(track.track_dict.keys(), track.track_dict.values())
+                            event.save_event()
 
-def track_phagocytic_events(hdf5file):
+def track_phagocytic_events_2(hdf5file):
     with h5py.File(hdf5file, 'r+') as f:
         for cell in f['Features']:
             sys.stdout.write(f'\r{cell}')
@@ -74,14 +95,18 @@ def track_phagocytic_events(hdf5file):
                                     distances = np.linalg.norm(old_centres[:, np.newaxis]-new_centres[np.newaxis,], axis=2)
                                     #print(old_indices, new_indices)
                                     if len(old_indices) >= len(new_indices):
+                                        old_old_indices = old_indices.copy()
                                         for j, new_index in enumerate(new_indices):
                                             old_index = old_indices[np.argmin(distances[:, j])]
 
                                             distances = np.delete(distances, np.argmin(distances[:, j]), axis=0)
-
+                                            old_old_indices = np.delete(old_old_indices, np.argmin(distances[:, j]))
                                             for phagocytosis_event in phagocytosis_events:
                                                 if phagocytosis_event.pathogen_indices[-1] == old_index:
                                                     phagocytosis_event.add_frame(frame, new_index)
+                                        if len(old_old_indices) > 0:
+                                            for old_old_index in old_indices:
+
                                     else:
                                         new_new_indices = new_indices.copy()
                                         for j, old_index in enumerate(old_indices):
@@ -100,6 +125,7 @@ def track_phagocytic_events(hdf5file):
 
 
                             #print(cell, frame, phago_events['pathogen_index'][np.argwhere(frames==frame)])
+
 
 def del_events(dataset):
     with h5py.File(dataset, 'r+') as f:
@@ -148,8 +174,8 @@ def show_phagocytic_events(dataset, save_directory):
 def main():
     hdf5file = SETTINGS.DATASET
     del_events(hdf5file)
-    track_phagocytic_events(hdf5file)
-    # show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
+    track_phagocytosis_events(hdf5file)
+    show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
 
 if __name__ == '__main__':
     main()

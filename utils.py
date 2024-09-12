@@ -54,14 +54,25 @@ def draw_line(array, x0, x1, y0, y1, colour):
     array[x.round().to(int), y.round().to(int), :] = colour
     return array if not transpose else torch.permute(array, (1, 0, 2))
 
-def split_list_into_sequences(the_list):
-    sequences = [[the_list[0]]]
-    for i, list_item in enumerate(the_list[1:]):
-        if list_item - the_list[i] <= SETTINGS.FRAME_MEMORY:
-            sequences[-1].append(list_item)
-        else:
-            sequences.append([list_item])
-    return sequences
+def split_list_into_sequences(the_list, return_indices=False):
+    if return_indices == False:
+        sequences = [[the_list[0]]]
+        for i, list_item in enumerate(the_list[1:]):
+            if list_item - the_list[i] <= SETTINGS.FRAME_MEMORY:
+                sequences[-1].append(list_item)
+            else:
+                sequences.append([list_item])
+        return sequences
+    else:
+        sequences = [[0]]
+        for i, list_item in enumerate(the_list[1:]):
+            if list_item - the_list[i] <= SETTINGS.FRAME_MEMORY:
+                sequences[-1].append(i)
+            else:
+                sequences.append([i])
+        return sequences
+
+
 
 
 if __name__ == '__main__':
