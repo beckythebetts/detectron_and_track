@@ -34,7 +34,7 @@ class PhagocyticEvent:
                 print('PROBLEM FOUND', self.frames, self.pathogen_indices)
 
 def track_phagocytosis_events(hdf5file):
-    with h5py.File(hdf5file, 'r') as f:
+    with h5py.File(hdf5file, 'r+') as f:
         for cell in f['Features']:
             sys.stdout.write(f'\r{cell}')
             sys.stdout.flush()
