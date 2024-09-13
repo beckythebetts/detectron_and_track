@@ -67,17 +67,19 @@ def split_list_into_sequences(the_list, return_indices=False):
         sequences = [[0]]
         for i, list_item in enumerate(the_list[1:]):
             if list_item - the_list[i] <= SETTINGS.FRAME_MEMORY:
-                sequences[-1].append(i)
+                sequences[-1].append(i+1)
             else:
-                sequences.append([i])
+                sequences.append([i+1])
         return sequences
 
 
 
 
 if __name__ == '__main__':
+    test_list = [0, 1, 2, 5, 7, 8, 12, 54, 76, 79, 80]
+    print(split_list_into_sequences(test_list))
+    print(split_list_into_sequences(test_list, return_indices=True))
 
-    print(split_list_into_sequences([0, 1, 2, 5, 7, 8, 54, 76, 79, 80]))
     # array = read_tiff(Path('03') / 't0000_mask.tif')
     # print(np.shape(array))
     # save_tiff(array, Path('03') / 't0000_mask_test.tif')

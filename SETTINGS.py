@@ -4,7 +4,7 @@ import h5py
 # ******* GENERAL *******
 DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
 #DATASET = Path("Datasets") / 'interval_test' / '3sec.hdf5'
-#DATASET = Path("Datasets") / '04_short_testing.h5'
+# DATASET = Path("Datasets") / '04_short_testing.h5'
 MASK_RCNN_MODEL = Path("Models") / 'filter_test'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 IMAGE_SIZE = (2048, 2048)
@@ -12,7 +12,7 @@ IMAGE_SIZE = (2048, 2048)
 REMOVE_EDGE_CELLS = True
 with h5py.File(DATASET, 'r') as f:
     num_frames = f['Images'].attrs['Number of frames']
-#NUM_FRAMES = 540
+#NUM_FRAMES = 49
 NUM_FRAMES = num_frames
 
 # ******* EPI THRESHOLDING *******

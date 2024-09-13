@@ -44,15 +44,22 @@ def track_phagocytosis_events(hdf5file):
             if len(frames) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
                 sequences = utils.split_list_into_sequences(frames, return_indices=True)
                 for sequence in sequences:
+                    print(sequence)
                     if len(sequence) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
-                        # get pathogen_centres form epi masks:
-                        centres = [mask_funcs.get_centre(np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][:]==index, 1, 0)) for frame, index in zip(frames[sequence], pathogen_indices[sequence])]
-                        # NN tracker
-                        tracker = NearestNeighbourTracking(frames[sequence], pathogen_indices[sequence], centres)
-                        tracker.track()
-                        for track in tracker.tracked:
-                            event = PhagocyticEvent(track.track_dict.keys(), track.track_dict.values())
+                        # if only one pathogen, no need to track
+                        if len(sequence) == len(set(sequence)):
+                            event = PhagocyticEvent(frames[sequence], pathogen_indices[sequence])
                             event.save_event(cell)
+                        else:
+                            # get pathogen_centres form epi masks:
+                            centres = [mask_funcs.get_centre(np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][:]==index, 1, 0)) for frame, index in zip(frames[sequence], pathogen_indices[sequence])]
+                            # NN tracker
+                            tracker = NearestNeighbourTracking(frames[sequence], pathogen_indices[sequence], centres)
+                            tracker.track()
+                            for track in tracker.tracked:
+                                event = PhagocyticEvent(track.track_dict.keys(), track.track_dict.values())
+                                print(track.track_dict)
+                                event.save_event(cell)
 
 # def track_phagocytic_events_2(hdf5file):
 #     with h5py.File(hdf5file, 'r+') as f:
@@ -173,9 +180,9 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    del_events(hdf5file)
-    track_phagocytosis_events(hdf5file)
-    show_phagocytic_events(hdf5file, 'Datasets/filter_test/no_filter00_showeatingNEW')
+    # del_events(hdf5file)
+    # track_phagocytosis_events(hdf5file)
+    show_phagocytic_events(hdf5file, 'Datasets/04_short_show_eating')
 
 if __name__ == '__main__':
     main()
