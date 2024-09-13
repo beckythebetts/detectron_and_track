@@ -182,7 +182,7 @@ def main():
     hdf5file = SETTINGS.DATASET
     # del_events(hdf5file)
     # track_phagocytosis_events(hdf5file)
-    show_phagocytic_events(hdf5file, 'Datasets/04_short_show_eating')
+    show_phagocytic_events(hdf5file, 'Datasets/dan10showeating')
 
 if __name__ == '__main__':
     main()
