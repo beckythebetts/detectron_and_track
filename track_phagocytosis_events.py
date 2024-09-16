@@ -58,7 +58,6 @@ def track_phagocytosis_events(hdf5file):
                             tracker.track()
                             for track in tracker.tracked:
                                 event = PhagocyticEvent(track.track_dict.keys(), track.track_dict.values())
-                                print(track.track_dict)
                                 event.save_event(cell)
 
 # def track_phagocytic_events_2(hdf5file):
@@ -181,8 +180,8 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    del_events(hdf5file)
-    # track_phagocytosis_events(hdf5file)
+    # del_events(hdf5file)
+    track_phagocytosis_events(hdf5file)
     # show_phagocytic_events(hdf5file, 'Datasets/show_nofilter00_eating')
 
 if __name__ == '__main__':
