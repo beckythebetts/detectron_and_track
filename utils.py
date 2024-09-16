@@ -76,7 +76,7 @@ def split_list_into_sequences(the_list, return_indices=False):
 
 
 if __name__ == '__main__':
-    test_list = [0, 1, 2, 5, 7, 8, 12, 54, 76, 79, 80]
+    test_list = [0, 1, 1, 1, 2, 5, 7, 8, 12, 54, 76, 79, 80]
     print(split_list_into_sequences(test_list))
     print(split_list_into_sequences(test_list, return_indices=True))
 

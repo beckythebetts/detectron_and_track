@@ -53,8 +53,8 @@ class NearestNeighbourTracking:
                         if list(track.track_dict.values())[-1]==old_index:
                             track.add_frame(frame, new_index)
 
-        # for tracked in self.tracked:
-        #     print(tracked.track_dict)
+        for tracked in self.tracked:
+            print(tracked.track_dict)
 def main():
     test = NearestNeighbourTracking(frames=[0, 1, 2, 2, 2, 3, 4, 6], indices=[0, 1, 2, 9, 4, 5, 6, 8], centres=[[0,0], [1,2], [2, 1], [3, 5], [2, 2], [0, 0], [2, 2], [3, 3]])
     test.track()
