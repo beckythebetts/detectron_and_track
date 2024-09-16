@@ -34,7 +34,8 @@ def apply_threshold(threshold=SETTINGS.THRESHOLD):
             f.create_dataset(f'Segmentations/Epi/{frame}', dtype='i2', data=image)
 
 def main():
-    test_threshold(200)
+    #test_threshold(200)
+    apply_threshold()
 
 
 if __name__ == '__main__':

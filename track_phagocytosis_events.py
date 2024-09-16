@@ -143,6 +143,7 @@ def del_events(dataset):
                     del(f['Features'][cell][phago_event])
 
 def show_phagocytic_events(dataset, save_directory):
+    utils.remake_dir(save_directory)
     with h5py.File(dataset, 'r') as f:
         for cell in f['Features'].keys():
             sys.stdout.write(f'\r{cell}')
