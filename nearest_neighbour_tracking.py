@@ -37,9 +37,11 @@ class NearestNeighbourTracking:
                     new_indices_temp = np.delete(new_indices_temp, np.argwhere(new_indices_temp==new_index))
                     distances = np.delete(distances, np.argmin(distances[j]), axis=1)
                     #print('new>old', distances)
-                    for track in current_tracks:
+                    for i, track in enumerate(current_tracks):
                         if list(track.track_dict.values())[-1]==old_index:
                             track.add_frame(frame, new_index)
+                            current_tracks = np.delete(current_tracks, i)
+                            continue
                 for new_index in new_indices_temp:
                     self.tracked = np.append(self.tracked, Track(frame, new_index))
             else:
@@ -49,14 +51,16 @@ class NearestNeighbourTracking:
                     old_indices_temp = np.delete(old_indices_temp, np.argwhere(old_indices_temp==old_index))
                     distances = np.delete(distances, np.argmin(distances[:, j]), axis=0)
                     #print('old>new', distances)
-                    for track in current_tracks:
+                    for i, track in enumerate(current_tracks):
                         if list(track.track_dict.values())[-1]==old_index:
                             track.add_frame(frame, new_index)
+                            current_tracks = np.delete(current_tracks, i)
+                            continue
 
         for tracked in self.tracked:
             print(tracked.track_dict)
 def main():
-    test = NearestNeighbourTracking(frames=[0, 1, 2, 2, 3, 3, 4, 6], indices=[0, 1, 2, 9, 2, 9, 9, 8], centres=[[0,0], [1,2], [2, 1], [3, 5], [2, 2], [0, 0], [2, 2], [3, 3]])
+    test = NearestNeighbourTracking(frames=[0, 1, 2, 2, 3, 3, 4, 6], indices=[2, 2, 2, 9, 2, 9, 9, 8], centres=[[0,0], [1,2], [2, 1], [3, 5], [2, 2], [0, 0], [2, 2], [3, 3]])
     test.track()
 
 if __name__ == '__main__':
