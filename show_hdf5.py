@@ -39,9 +39,9 @@ def show_separate_channels():
 
 def show_merged_channels():
     with h5py.File(hdf5_file, 'r') as f:
-        phase_data = np.array([f['Images']['Phase'][frame][:]
+        phase_data = np.array([f['Images']['Phase'][frame][:200]
                                for frame in list(f['Images']['Phase'].keys())[:]], dtype='uint8')
-        epi_data = np.array([f['Segmentations']['Epi'][frame][:]
+        epi_data = np.array([f['Segmentations']['Epi'][frame][:200]
                                for frame in list(f['Images']['Epi'].keys())[:]], dtype='uint8')
 
     epi_data[epi_data > 0] = 255
