@@ -26,7 +26,7 @@ class KFold:
         train_jsons = []
         test_jsons = []
 
-        for f in (self.directory / 'Images').iterdir():
+        for f in (self.directory / 'images').iterdir():
 
             if f.stem in test_image_names:
                 shutil.copy(f, val_dir / 'Images' / f.name)
