@@ -104,11 +104,11 @@ def merge_jsons(directory):
         json_0 = directory / 'labels.json'
 
 def main():
-    # my_kfold = KFold(Path('koflds') / 'kfold_test')
-    # my_kfold.split_all()
-    # my_kfold.train()
+    my_kfold = KFold(Path('Models') / '04_orig')
+    my_kfold.split_all()
+    my_kfold.train()
 
-    merge_jsons(Path('RAW_DATA/04/training_dataset/kfold/labels'))
+    # merge_jsons(Path('RAW_DATA/04/training_dataset/kfold/labels'))
 
 if __name__=='__main__':
     main()

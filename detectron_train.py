@@ -169,18 +169,18 @@ def train():
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
     # cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
     # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
-
-    cfg.INPUT.MIN_SIZE_TRAIN = (1000,)
-    cfg.INPUT.MAX_SIZE_TRAIN = 1000
+    im_size = 600
+    cfg.INPUT.MIN_SIZE_TRAIN = (im_size,)
+    cfg.INPUT.MAX_SIZE_TRAIN = im_size
     cfg.INPUT.MIN_SIZE_TRAIN_SAMPLING = "choice"
 
-    cfg.INPUT.MIN_SIZE_TEST = 1000  # Set as an integer
-    cfg.INPUT.MAX_SIZE_TEST = 1000  # Set as an integer
+    cfg.INPUT.MIN_SIZE_TEST = im_size  # Set as an integer
+    cfg.INPUT.MAX_SIZE_TEST = im_size  # Set as an integer
 
     # Adjust the TEST section parameters if necessary
     cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
-    cfg.TEST.AUG["MAX_SIZE"] = 1000 # Ensure consistency with max size
-    cfg.TEST.AUG["MIN_SIZES"] = [1000]  # Ensure consistency with min size
+    cfg.TEST.AUG["MAX_SIZE"] = im_size # Ensure consistency with max size
+    cfg.TEST.AUG["MIN_SIZES"] = [im_size]  # Ensure consistency with min size
 
     cfg.TEST.EVAL_PERIOD = 100
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
