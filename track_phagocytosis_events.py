@@ -31,7 +31,8 @@ class PhagocyticEvent:
             except ValueError:
                 f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}_1', data=data)
             if len(self.frames) != len(np.unique(self.frames)):
-                print('PROBLEM FOUND', self.frames, self.pathogen_indices)
+                # print('PROBLEM FOUND', self.frames, self.pathogen_indices)
+                print('PROBLEM FOUND', cell)
 
 def track_phagocytosis_events(hdf5file):
     with h5py.File(hdf5file, 'r+') as f:
