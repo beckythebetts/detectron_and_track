@@ -20,8 +20,8 @@ import yaml
 import SETTINGS
 
 
-def evaluator():
-    setup_logger(directory=SETTINGS.MASK_RCNN_MODEL)
+def evaluator(directory=SETTINGS.MASK_RCNN_MODEL):
+    setup_logger()
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
     dataset_dir =  directory / 'Training_Data'
