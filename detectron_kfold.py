@@ -17,22 +17,22 @@ class KFold:
         self.directory = directory
 
     def make_split(self, test_image_names):
-        train_dir = self.directory / ('test'+str(test_image_names)) / 'training_dataset' / 'train'
-        utils.remake_dir(train_dir / 'images')
+        train_dir = self.directory / ('test'+str(test_image_names)) / 'Training_Data' / 'train'
+        utils.remake_dir(train_dir / 'Images')
 
-        val_dir = self.directory / ('test' + str(test_image_names)) / 'training_dataset' / 'validate'
-        utils.remake_dir(val_dir / 'images')
+        val_dir = self.directory / ('test' + str(test_image_names)) / 'Training_Data' / 'validate'
+        utils.remake_dir(val_dir / 'Images')
 
         train_jsons = []
         test_jsons = []
 
-        for f in (self.directory / 'images').iterdir():
+        for f in (self.directory / 'Images').iterdir():
 
             if f.stem in test_image_names:
-                shutil.copy(f, val_dir / 'images' / f.name)
+                shutil.copy(f, val_dir / 'Images' / f.name)
                 test_jsons.append(f.parents[1] / 'labels' / ('labels' + f.stem + '.json'))
             else:
-                shutil.copy(f, train_dir / 'images' / f.name)
+                shutil.copy(f, train_dir / 'Images' / f.name)
                 train_jsons.append(f.parents[1] /'labels' / ('labels'+f.stem+'.json'))
 
         print(train_jsons, test_jsons)
@@ -70,7 +70,7 @@ class KFold:
     def train(self):
         APs = []
         for file in self.directory.glob('*test*'):
-            train(file)
+            train(directory=file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
             evaluator(file)

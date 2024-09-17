@@ -134,11 +134,11 @@ class MyTrainer(DefaultTrainer):
         ))
         return hooks
 
-def train():
+def train(directory = SETTINGS.MASK_RCNN_MODEL):
     setup_logger()
 
-    dataset_dir = SETTINGS.MASK_RCNN_MODEL / 'Training_Data'
-    config_directory = SETTINGS.MASK_RCNN_MODEL / 'Model'
+    dataset_dir = directory / 'Training_Data'
+    config_directory = directory / 'Model'
     register_coco_instances("my_dataset_train", {}, str(dataset_dir / 'train' / 'labels.json'), str(dataset_dir / 'train' / 'Images'))
     register_coco_instances("my_dataset_val", {},str(dataset_dir / 'validate' / 'labels.json'), str(dataset_dir / 'validate' / 'Images'))
 
