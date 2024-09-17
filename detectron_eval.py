@@ -21,11 +21,11 @@ import SETTINGS
 
 
 def evaluator():
-    setup_logger()
+    setup_logger(directory=SETTINGS.MASK_RCNN_MODEL)
     os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
-    dataset_dir = SETTINGS.MASK_RCNN_MODEL / 'Training_Data'
-    config_directory = SETTINGS.MASK_RCNN_MODEL / 'Model'
+    dataset_dir =  directory / 'Training_Data'
+    config_directory = directory / 'Model'
 
     register_coco_instances("my_dataset_val", {}, str(dataset_dir / 'validate' / 'labels.json'),
                             str(dataset_dir / 'validate' / 'Images'))
