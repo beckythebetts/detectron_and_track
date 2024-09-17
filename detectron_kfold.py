@@ -73,7 +73,7 @@ class KFold:
             train(directory=file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
-            evaluator(file)
+            evaluator(directory=file)
             unregister_coco_instances('my_dataset_train')
             unregister_coco_instances('my_dataset_val')
             APs.append(self.getAP(file))
