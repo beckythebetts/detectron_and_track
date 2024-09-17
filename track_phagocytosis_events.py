@@ -21,18 +21,19 @@ class PhagocyticEvent:
         self.pathogen_indices = np.append(self.pathogen_indices, index)
 
     def save_event(self, cell):
-        with h5py.File(SETTINGS.DATASET, 'r+') as f:
-            dtype = np.dtype([('frame', 'f4'), ('pathogen_index', 'f4')])
-            data = np.zeros(self.frames.size, dtype=dtype)
-            data['frame'] = self.frames
-            data['pathogen_index'] = self.pathogen_indices
-            try:
-                f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
-            except ValueError:
-                f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}_1', data=data)
-            if len(self.frames) != len(np.unique(self.frames)):
-                # print('PROBLEM FOUND', self.frames, self.pathogen_indices)
-                print('PROBLEM FOUND', cell)
+        if len(self.frames) >= SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
+            with h5py.File(SETTINGS.DATASET, 'r+') as f:
+                dtype = np.dtype([('frame', 'f4'), ('pathogen_index', 'f4')])
+                data = np.zeros(self.frames.size, dtype=dtype)
+                data['frame'] = self.frames
+                data['pathogen_index'] = self.pathogen_indices
+                try:
+                    f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}', data=data)
+                except ValueError:
+                    f.create_dataset(f'Features/{cell}/{int(self.frames[0])}_{int(self.frames[-1])}_1', data=data)
+                if len(self.frames) != len(np.unique(self.frames)):
+                    # print('PROBLEM FOUND', self.frames, self.pathogen_indices)
+                    print('PROBLEM FOUND', cell)
 
 def track_phagocytosis_events(hdf5file):
     with h5py.File(hdf5file, 'r+') as f:
@@ -61,6 +62,7 @@ def track_phagocytosis_events(hdf5file):
                             for track in tracker.tracked:
                                 event = PhagocyticEvent(track.track_dict.keys(), track.track_dict.values())
                                 event.save_event(cell)
+
 
 # def track_phagocytic_events_2(hdf5file):
 #     with h5py.File(hdf5file, 'r+') as f:
@@ -182,8 +184,8 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    # del_events(hdf5file)
-    # track_phagocytosis_events(hdf5file)
+    del_events(hdf5file)
+    track_phagocytosis_events(hdf5file)
     show_phagocytic_events(hdf5file, 'Datasets/show_nofilter00_eating')
 
 if __name__ == '__main__':
