@@ -81,7 +81,7 @@ class KFold:
 
     def getAP(self, file):
         try:
-            with open(file / 'model' / 'eval.txt', 'r') as f:
+            with open(file / 'Model' / 'eval.txt', 'r') as f:
                 AP_string = f.read()
 
             AP_string = AP_string.replace('nan', 'np.nan').strip()
