@@ -44,14 +44,14 @@ def track_phagocytosis_events(hdf5file):
             if len(frames) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
                 sequences = utils.split_list_into_sequences(frames, return_indices=True)
                 for sequence in sequences:
-                    print(sequence)
+                    #print(sequence)
                     if len(sequence) > SETTINGS.NUM_FRAMES_EATEN_THRESHOLD:
                         # if only one pathogen, no need to track
                         if len(sequence) == len(set(sequence)):
                             event = PhagocyticEvent(frames[sequence], pathogen_indices[sequence])
                             event.save_event(cell)
                         else:
-                            # get pathogen_centres form epi masks:
+                            # get pathogen_centres from epi masks:
                             centres = [mask_funcs.get_centre(np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][:]==index, 1, 0)) for frame, index in zip(frames[sequence], pathogen_indices[sequence])]
                             # NN tracker
                             tracker = NearestNeighbourTracking(frames[sequence], pathogen_indices[sequence], centres)
@@ -182,7 +182,7 @@ def main():
     hdf5file = SETTINGS.DATASET
     del_events(hdf5file)
     track_phagocytosis_events(hdf5file)
-    show_phagocytic_events(hdf5file, 'Datasets/show_nofilter00_eating')
+    #show_phagocytic_events(hdf5file, 'Datasets/show_nofilter00_eating')
 
 if __name__ == '__main__':
     main()

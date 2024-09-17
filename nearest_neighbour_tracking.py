@@ -57,8 +57,8 @@ class NearestNeighbourTracking:
                             current_tracks = np.delete(current_tracks, i)
                             continue
 
-        for tracked in self.tracked:
-            print(tracked.track_dict)
+        # for tracked in self.tracked:
+        #     print(tracked.track_dict)
 def main():
     test = NearestNeighbourTracking(frames=[0, 1, 2, 2, 3, 3, 4, 6], indices=[2, 2, 2, 9, 2, 9, 9, 8], centres=[[0,0], [1,2], [2, 1], [3, 5], [2, 2], [0, 0], [2, 2], [3, 3]])
     test.track()
