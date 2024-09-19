@@ -10,7 +10,7 @@ def plot_average_loss_curves(directory):
     all_val_losses = []
     for folder in directory.iterdir():
 
-        with open(folder / 'model' / 'metrics.json', 'r') as f:
+        with open(folder / 'Model' / 'metrics.json', 'r') as f:
             lines = []
             for line in f:
                 lines.append(json.loads(line))
@@ -44,7 +44,7 @@ def plot_average_loss_curves(directory):
     plt.savefig(directory / 'av_loss_plot.png')
 
 def main():
-    plot_average_loss_curves(Path('kfold_16_old') / 'train6')
+    plot_average_loss_curves(Path('Models') / '04_orig')
 
 if __name__ == '__main__':
     main()
