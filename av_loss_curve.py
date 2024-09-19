@@ -44,7 +44,7 @@ def plot_average_loss_curves(directory):
     plt.savefig(directory / 'av_loss_plot.png')
 
 def main():
-    plot_average_loss_curves(Path('Models') / '04_orig')
+    plot_average_loss_curves(Path('Models') / '04_50_5_5')
 
 if __name__ == '__main__':
     main()
