@@ -31,10 +31,10 @@ def test_filter():
 def filter_ims(directory):
     for im in directory.iterdir():
         im_array = plt.imread(str(im))
-        plt.imsave(str(im), apply_bilateral_filter(im_array, 50, -1, 5, 5))
+        plt.imsave(str(im.parent / (im.stem + '.png')), apply_bilateral_filter(im_array, 50, -1, 5, 5))
 
 def main():
-    filter_ims(Path('RAW_DATA') / '04' / 'training_dataset' / 'kfold_50_5_5' / 'images')
+    filter_ims(Path('RAW_DATA') / '04' / 'training_dataset' / 'kfold_50_5_5_png' / 'images')
     #test_filter()
 
 if __name__ == '__main__':
