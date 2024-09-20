@@ -21,12 +21,12 @@ with h5py.File(DATASET, 'r+') as f:
 THRESHOLD = 250
 
 # ******* TRACKING *******
-OVERLAP_THRESHOLD = 0.2
-FRAME_MEMORY = 5
+OVERLAP_THRESHOLD = 0.5
+FRAME_MEMORY = 10
 TRACK = True
 CLEAN_TRACKS = True
 VIEW_TRACKS = True # Save labelled tracked images
-NUM_FRAMES_TO_VIEW = 50 # Set as None to view all (slow)
+NUM_FRAMES_TO_VIEW = 100 # Set as None to view all (slow)
 
 # ******* FEATURE EXTRACTION *******
 BATCH_SIZE = 50
