@@ -8,14 +8,10 @@ DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
 # DATASET = Path('Datasets') / 'danhighres' / 'dan10.h5'
 MASK_RCNN_MODEL = Path("Models") / 'filter_test'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
-#IMAGE_SIZE = (2048, 2048)
-#IMAGE_SIZE = (1200, 1200)
 REMOVE_EDGE_CELLS = True
 with h5py.File(DATASET, 'r+') as f:
     NUM_FRAMES = f['Images'].attrs['Number of frames']
     IMAGE_SIZE = tuple(f['Images'].attrs['Image size / pixels'])
-#NUM_FRAMES = 49
-#NUM_FRAMES = num_frames
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 250
@@ -25,6 +21,7 @@ OVERLAP_THRESHOLD = 0.5
 FRAME_MEMORY = 10
 TRACK = True
 CLEAN_TRACKS = True
+MINIMUM_TRACK_LENGTH = 100
 VIEW_TRACKS = True # Save labelled tracked images
 NUM_FRAMES_TO_VIEW = 100 # Set as None to view all (slow)
 

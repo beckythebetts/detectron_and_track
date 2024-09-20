@@ -285,6 +285,7 @@ def get_batches(batchsize):
             max = np.max(frame)
             if max > max_cell_index:
                 max_cell_index = max
+    print(max_cell_index, 'cells')
     num_batches, remainder = divmod(max_cell_index, batchsize)
     batches = [np.arange(i*batchsize+1, min(((i+1)*batchsize)+1, max_cell_index)) for i in range(0, num_batches+1)]
     return batches
@@ -296,15 +297,15 @@ def main():
         if 'features' in f:
             del(f['features'])
     batches = get_batches(SETTINGS.BATCH_SIZE)
-    print('\nFEATURE EXTRACTION\n')
-    with torch.no_grad():
-        for batch in batches:
-            current_cell_batch = CellBatch(torch.tensor(batch).to(device))
-            current_cell_batch.run_feature_extraction()
-    if SETTINGS.PLOT_FEATURES:
-        plot_features(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'feature_plots')))
-    if SETTINGS.TRACKS_PLOT:
-        plot_tracks(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'tracks.png')))
+    # print('\nFEATURE EXTRACTION\n')
+    # with torch.no_grad():
+    #     for batch in batches:
+    #         current_cell_batch = CellBatch(torch.tensor(batch).to(device))
+    #         current_cell_batch.run_feature_extraction()
+    # if SETTINGS.PLOT_FEATURES:
+    #     plot_features(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'feature_plots')))
+    # if SETTINGS.TRACKS_PLOT:
+    #     plot_tracks(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'tracks.png')))
     # if SETTINGS.SHOW_EATING:
     #     show_eating_2(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
     # plot_features(r'Datasets\dan10featureplots')
