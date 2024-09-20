@@ -18,11 +18,11 @@ with h5py.File(DATASET, 'r+') as f:
 #NUM_FRAMES = num_frames
 
 # ******* EPI THRESHOLDING *******
-THRESHOLD = 200
+THRESHOLD = 250
 
 # ******* TRACKING *******
 OVERLAP_THRESHOLD = 0.2
-FRAME_MEMORY = 3
+FRAME_MEMORY = 5
 TRACK = True
 CLEAN_TRACKS = True
 VIEW_TRACKS = True # Save labelled tracked images
@@ -31,8 +31,8 @@ NUM_FRAMES_TO_VIEW = 50 # Set as None to view all (slow)
 # ******* FEATURE EXTRACTION *******
 BATCH_SIZE = 50
 PLOT_FEATURES = False
-TRACKS_PLOT = False
-SHOW_EATING = False
+TRACKS_PLOT = True
+SHOW_EATING = True
 NUM_FRAMES_EATEN_THRESHOLD = 20
 MINIMUM_PIXELS_PER_PATHOGEN = 10
 

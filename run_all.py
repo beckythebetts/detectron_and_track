@@ -8,6 +8,7 @@ def main():
     track.main()
     threshold_epi.main()
     batch_extract_features.main()
+    track_phagocytosis_events.main()
 
 if __name__ == '__main__':
     main()

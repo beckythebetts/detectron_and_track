@@ -305,8 +305,8 @@ def main():
         plot_features(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'feature_plots')))
     if SETTINGS.TRACKS_PLOT:
         plot_tracks(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'tracks.png')))
-    if SETTINGS.SHOW_EATING:
-        show_eating_2(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
+    # if SETTINGS.SHOW_EATING:
+    #     show_eating_2(str(SETTINGS.DATASET.parent / (SETTINGS.DATASET.stem + 'show_eating')))
     # plot_features(r'Datasets\dan10featureplots')
 
 if __name__ == '__main__':
