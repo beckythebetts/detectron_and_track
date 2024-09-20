@@ -11,8 +11,9 @@ def apply_bilateral_filter(image_array, iterations, d, sigmaColor, sigmaSpace):
     return image_array
 def test_filter():
     with h5py.File(r'Datasets\04_short_testing.h5', 'r') as f:
-        # test_image = f['Images']['Phase']['0000'][:200, :200]
-        test_image = plt.imread(Path('RAW_DATA') / '04' / 'training_dataset' / 'kfold_50_2_2' / 'images' / '00.jpg')
+        test_image = f['Images']['Phase']['0000'][:200, :200]
+        # test_image = plt.imread(Path('RAW_DATA'))
+        test_image = plt.imread(Path('RAW_DATA') / '04' / 'training_dataset' / 'kfold' / 'images' / '00.jpg')
         test_image = test_image[:100, :100]
         filtered_images = [apply_bilateral_filter(test_image, i, -1, 5, 5) for i in range(0, 100, 10)]
         fig = plt.figure(figsize =(10,4))
@@ -34,8 +35,8 @@ def filter_ims(directory):
         plt.imsave(str(im.parent / (im.stem + '.png')), apply_bilateral_filter(im_array, 50, -1, 5, 5))
 
 def main():
-    filter_ims(Path('RAW_DATA') / '04' / 'training_dataset' / 'kfold_50_5_5_png' / 'images')
-    #test_filter()
+    #filter_ims(Path('RAW_DATA') / '04' / 'training_dataset' / 'kfold_50_5_5_png' / 'images')
+    test_filter()
 
 if __name__ == '__main__':
     main()

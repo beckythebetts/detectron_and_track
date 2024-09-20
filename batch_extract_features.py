@@ -31,6 +31,7 @@ class Cell:
                 ('speed', 'f4'),
                 ('perimeter', 'f4'),
                 ('dist_nearest', 'f4'),
+                ('av_intensity', 'f4'),
                 ('xcentre', 'f4'),
                 ('ycentre', 'f4'),
                 ('num_pathogen_pixels', 'f4')
@@ -103,6 +104,7 @@ class CellBatch:
         self.get_perimeters()
         self.get_phagocytosis()
         self.get_nearest()
+        self.get_av_intensity()
 
 
     def write_features(self, frame_num):
@@ -111,6 +113,7 @@ class CellBatch:
                         self.speeds[i],
                         self.perimeters[i],
                         self.dists[i],
+                        self.av_intensities[i],
                         self.centres[i, 0],
                         self.centres[i, 1],
                         self.eaten[i])
@@ -155,7 +158,7 @@ class CellBatch:
         self.perimeters[self.perimeters == 0] = float('nan')
 
     def get_nearest(self):
-        self.masks = None # Save memory
+        #self.masks = None # Save memory
         non_zero_pixels = torch.nonzero(self.epi_mask)
         distances = torch.sqrt(torch.sum((self.centres.unsqueeze(0) - non_zero_pixels.unsqueeze(1))**2, dim=2))
         self.dists, i = torch.min(distances, dim=0)
@@ -164,6 +167,9 @@ class CellBatch:
         intersection = torch.logical_and(self.masks, self.epi_mask.unsqueeze(0))
         self.eaten = intersection.sum(dim=(1, 2)).int()
         self.pathogen_indices = [torch.unique(array, return_counts=True) for array in torch.where(intersection, self.epi_mask.unsqueeze(0), 0)]
+
+    def get_av_intensity(self):
+        self.av_intensities = torch.sum(self.masks * self.phase_image.unsqueeze(0), dim=(1,2)) / self.areas
 
 
 
@@ -287,6 +293,8 @@ def main():
     with h5py.File(SETTINGS.DATASET, 'r+') as f:
         if 'Features' in f:
             del(f['Features'])
+        if 'features' in f:
+            del(f['features'])
     batches = get_batches(SETTINGS.BATCH_SIZE)
     print('\nFEATURE EXTRACTION\n')
     with torch.no_grad():
