@@ -291,11 +291,11 @@ def get_batches(batchsize):
     return batches
 
 def main():
-    with h5py.File(SETTINGS.DATASET, 'r+') as f:
-        if 'Features' in f:
-            del(f['Features'])
-        if 'features' in f:
-            del(f['features'])
+    # with h5py.File(SETTINGS.DATASET, 'r+') as f:
+    #     if 'Features' in f:
+    #         del(f['Features'])
+    #     if 'features' in f:
+    #         del(f['features'])
     batches = get_batches(SETTINGS.BATCH_SIZE)
     # print('\nFEATURE EXTRACTION\n')
     # with torch.no_grad():
