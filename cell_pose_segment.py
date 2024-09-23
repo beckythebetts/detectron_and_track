@@ -38,8 +38,8 @@ def segment(hdf5_file):
                 epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
                 for idx in np.unique(mask):
                     if idx != 0:
-                        maski = np.logical_and(np.where(mask==idx, 1, 0), epi_mask)
-                        if np.sum(maski, epi_mask) > np.sum(maski):
+                        maski = np.where(mask==idx, 1, 0)
+                        if np.sum(np.logical_and(maski, epi_mask)) > np.sum(maski):
                             mask = np.where(mask==idx, 0, mask)
                 f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)
 
