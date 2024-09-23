@@ -19,7 +19,7 @@ def segment(hdf5_file):
         batchsize = 10 # batchsize for saving
 
         num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
-        batches = [np.arange(i * batchsize + 1, min(((i + 1) * batchsize) + 1, SETTINGS.NUM_FRAMES)) for i in
+        batches = [np.arange(i * batchsize, min(((i + 1) * batchsize), SETTINGS.NUM_FRAMES)) for i in
                    range(0, num_batches + 1)]
 
         for batch in batches:
@@ -28,7 +28,7 @@ def segment(hdf5_file):
             masks, flows, styles, diams = model.eval(ims, diameter=30, flow_threshold=None, channels=channels)
 
             for mask, frame in zip(masks, batch):
-                f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=masks)
+                f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)
 
 def main():
     segment(SETTINGS.DATASET)
