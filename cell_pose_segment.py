@@ -1,6 +1,7 @@
 from cellpose import models, core, plot, io
 from cellpose.io import logger_setup
 import h5py
+import numpy as np
 
 import SETTINGS
 
@@ -20,6 +21,7 @@ def segment(hdf5_file):
         num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
         batches = [np.arange(i * batchsize + 1, min(((i + 1) * batchsize) + 1, SETTINGS.NUM_FRAMES)) for i in
                    range(0, num_batches + 1)]
+
         for batch in batches:
             ims = [f['Images']['Phase'][f'{int(frame):04}'][:] for frame in batch]
 
