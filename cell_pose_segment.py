@@ -19,7 +19,7 @@ def segment(hdf5_file):
         if 'Segmentations' in f:
             del f['Segmentations']
         threshold_epi.main()
-        batchsize = 10 # batchsize for saving
+        batchsize = 2 # batchsize for saving
 
         num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
         batches = [np.arange(i * batchsize, min(((i + 1) * batchsize), SETTINGS.NUM_FRAMES)) for i in
@@ -36,7 +36,7 @@ def segment(hdf5_file):
                 sys.stdout.write(f'\r{j+1} / {batchsize}')
                 sys.stdout.flush()
                 epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
-                for idx in np.unqiue(mask):
+                for idx in np.unique(mask):
                     if idx != 0:
                         maski = np.logical_and(np.where(mask==idx, 1, 0))
                         if np.sum(maski, epi_mask) > np.sum(maski):
