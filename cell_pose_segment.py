@@ -16,7 +16,7 @@ def segment(hdf5_file):
             del f['Segmentations']
         ims = ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase']]
 
-    masks, flows, styles, diams = model.eval(image_arrays, diameter=30, flow_threshold=None, channels=channels)
+    masks, flows, styles, diams = model.eval(ims, diameter=30, flow_threshold=None, channels=channels)
 
     with h5py.File(hdf5_file, 'r+') as f:
         for mask in masks:
