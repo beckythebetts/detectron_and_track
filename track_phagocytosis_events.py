@@ -90,7 +90,7 @@ def show_phagocytic_events(dataset, save_directory):
                         epi_image = np.array(f['Images']['Epi'][f'{int(frame):04}'])
                         if frame in frames:
                             pathogen_index = f['Features'][cell][phago_event]['pathogen_index'][np.argwhere(frames==frame)]
-                            print(pathogen_index)
+                            # print(pathogen_index)
                             epi_mask = np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][:]==pathogen_index, 1, 0)
                         else:
                             epi_mask = np.zeros(phase_image.shape)
@@ -108,8 +108,8 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    # del_events(hdf5file)
-    # track_phagocytosis_events(hdf5file)
+    del_events(hdf5file)
+    track_phagocytosis_events(hdf5file)
     if SETTINGS.SHOW_EATING:
         show_phagocytic_events(hdf5file, str(SETTINGS.DATASET.parent / str(SETTINGS.DATASET.stem + 'show_eating')))
 
