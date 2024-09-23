@@ -6,6 +6,7 @@ import h5py
 import numpy as np
 
 import SETTINGS
+import threshold_epi
 
 def segment(hdf5_file):
     use_GPU = core.use_gpu()
@@ -17,7 +18,7 @@ def segment(hdf5_file):
     with h5py.File(hdf5_file, 'r+') as f:
         if 'Segmentations' in f:
             del f['Segmentations']
-
+        threshold_epi.main()
         batchsize = 10 # batchsize for saving
 
         num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
