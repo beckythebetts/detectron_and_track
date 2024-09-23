@@ -26,14 +26,14 @@ def segment(hdf5_file):
                    range(0, num_batches + 1)]
 
         for i, batch in enumerate(batches):
-            print(f'Segmenting Batch {i} / {num_batches}')
+            print(f'\nSegmenting Batch {i+1} / {num_batches}')
             ims = [f['Images']['Phase'][f'{int(frame):04}'][:] for frame in batch]
 
             masks, flows, styles, diams = model.eval(ims, diameter=30, flow_threshold=None, channels=channels)
 
-            print(f'Saving Batch {i} / {num_batches}')
+            print(f'\nSaving Batch {i+1} / {num_batches}')
             for j, (mask, frame) in enumerate(zip(masks, batch)):
-                sys.stdout.write(f'\r{j} / {batch_size}')
+                sys.stdout.write(f'\r{j+1} / {batchsize}')
                 sys.stdout.flush()
                 epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
                 for idx in np.unqiue(mask):
