@@ -57,9 +57,9 @@ def show_tracked_images():
     print('\nPREPARING TRACKED IMAGES\n')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
-                               for frame in f['Images']['Phase'].keys()], dtype='uint8')
+                               for frame in f['Images']['Phase'].keys()][:10], dtype='uint8')
         segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
-                                      for frame in list(f['Segmentations']['Phase'].keys())], dtype='int16')
+                                      for frame in list(f['Segmentations']['Phase'].keys())][:10], dtype='int16')
     max_cell_index=np.max(segmentation_data)
     colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8')).to(device) for
                    cell_index in np.arange(1, max_cell_index + 1)}
@@ -82,7 +82,7 @@ def show_tracked_images():
 
 def main():
     #show_separate_channels()
-    show_merged_channels()
-    #show_tracked_images()
+    #show_merged_channels()
+    show_tracked_images()
 if __name__ == '__main__':
     main()
