@@ -108,10 +108,10 @@ def show_phagocytic_events(dataset, save_directory):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    del_events(hdf5file)
-    track_phagocytosis_events(hdf5file)
+    # del_events(hdf5file)
+    # track_phagocytosis_events(hdf5file)
     if SETTINGS.SHOW_EATING:
-        show_phagocytic_events(hdf5file, str(SETTINGS.DATASET.parent / str(SETTINGS.DATSET.stem + 'show_eating')))
+        show_phagocytic_events(hdf5file, str(SETTINGS.DATASET.parent / str(SETTINGS.DATASET.stem + 'show_eating')))
 
 if __name__ == '__main__':
     main()
