@@ -18,6 +18,8 @@ def cellpose_train(directory):
     with open(str(directory / 'losses.txt'), 'w') as f:
         json.dump(losses_dict, f)
 
+    plt.scatter(train_losses)
+    plt.savefig(directory/'loss_plot.png')
 
 def main():
     model_directory = SETTINGS.CELLPOSE_MODEL
