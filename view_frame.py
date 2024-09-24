@@ -9,6 +9,7 @@ import torch
 import gc
 import cv2
 import torch.nn.functional as F
+import h5py
 
 import mask_funcs
 import SETTINGS
