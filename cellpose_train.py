@@ -21,7 +21,7 @@ def cellpose_train(directory):
     epochs = np.arange(0, len(train_losses))
     plt.scatter(epochs, train_losses)
     validation_epochs, validation_losses = np.array([[epoch, validation] for epoch, validation in zip(epochs, test_losses) if validation !=0]).transpose()
-    plt.scatter(validation_epochs, valdation_losses)
+    plt.scatter(validation_epochs, validation_losses)
     plt.legend(['Train Losses', 'Validation Losses'])
     plt.savefig(directory/'loss_plot.png')
 
