@@ -15,7 +15,7 @@ def cellpose_train(directory):
                                                             weight_decay=1e-4, SGD=True, learning_rate=0.1,
                                                             n_epochs=100, save_path=str(directory), model_name='model')
     losses_dict = {'Train Losses': train_losses, 'Validation Losses': test_losses}
-    with open(str(directory / 'losses.txt')) as f:
+    with open(str(directory / 'losses.txt'), 'w') as f:
         json.dump(losses_dict, f)
 
 
