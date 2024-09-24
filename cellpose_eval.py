@@ -18,5 +18,5 @@ def cellpose_eval(directory):
 def main():
     cellpose_eval(SETTINGS.MASK_RCNN_MODEL / 'validate')
 
-if __name__ == '__main__'
+if __name__ == '__main__':
     main()
