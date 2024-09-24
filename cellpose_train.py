@@ -14,7 +14,7 @@ def cellpose_train(directory):
                                                             channels=[0, 0], normalize=True,
                                                             test_data=test_images, test_labels=test_labels,
                                                             weight_decay=1e-4, SGD=True, learning_rate=0.1,
-                                                            n_epochs=100, save_path=str(directory), model_name='model')
+                                                            n_epochs=300, save_path=str(directory), model_name='model')
     losses_dict = {'Train Losses': train_losses.tolist(), 'Validation Losses': test_losses.tolist()}
     with open(str(directory / 'losses.txt'), 'w') as f:
         json.dump(losses_dict, f)
@@ -23,6 +23,9 @@ def cellpose_train(directory):
     validation_epochs, validation_losses = np.array([[epoch, validation] for epoch, validation in zip(epochs, test_losses) if validation !=0]).transpose()
     plt.scatter(validation_epochs, validation_losses, color='red')
     plt.legend(['Train Losses', 'Validation Losses'])
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.grid()
     plt.savefig(directory/'loss_plot.png')
 
 def main():
