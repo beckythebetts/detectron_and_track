@@ -15,7 +15,7 @@ def cellpose_train(train_directory, test_directory):
                                                             n_epochs=100, model_name="01")
 
 def main():
-    train('/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters/train', '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters/validate')
+    cellpose_train('/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters/train', '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters/validate')
 
 if __name__ == '__main__':
     main()
