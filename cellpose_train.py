@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import json
 import numpy as np
 
+import SETTINGS
+
+
 def cellpose_train(directory):
     use_GPU = core.use_gpu()
     io.logger_setup()
