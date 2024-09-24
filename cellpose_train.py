@@ -13,7 +13,7 @@ def train(train_directory, test_directory):
                                                             channels=[0, 0], normalize=True,
                                                             test_data=test_images, test_labels=test_labels,
                                                             weight_decay=1e-4, SGD=True, learning_rate=0.1,
-                                                            n_epochs=100, model_name="01", gpu=use_GPU)
+                                                            n_epochs=100, model_name="01")
 
 def main():
     train('/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters/train', '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters/validate')
