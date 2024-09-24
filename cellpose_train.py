@@ -19,6 +19,7 @@ def cellpose_train(directory):
     with open(str(directory / 'losses.txt'), 'w') as f:
         json.dump(losses_dict, f)
     epochs = np.arange(0, len(train_losses))
+    plt.rcParams["font.family"] = 'serif'
     plt.scatter(epochs, train_losses, color='navy')
     validation_epochs, validation_losses = np.array([[epoch, validation] for epoch, validation in zip(epochs, test_losses) if validation !=0]).transpose()
     plt.scatter(validation_epochs, validation_losses, color='red')
