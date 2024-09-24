@@ -2,6 +2,7 @@ import SETTINGS
 from cellpose import io, models, core, train
 import matplotlib.pyplot as plt
 import json
+import numpy as np
 
 def cellpose_train(directory):
     use_GPU = core.use_gpu()
