@@ -17,8 +17,11 @@ def cellpose_train(directory):
     losses_dict = {'Train Losses': train_losses.tolist(), 'Validation Losses': test_losses.tolist()}
     with open(str(directory / 'losses.txt'), 'w') as f:
         json.dump(losses_dict, f)
-
-    plt.scatter(train_losses)
+    epochs = np.arange(0, len(train_losses))
+    plt.scatter(epochs, train_losses)
+    validation_epochs, validation_losses = [[epoch, validation] for epoch, validation in zip(epochs, test_losses) if validation !=0].transpose()
+    plt.scatter(validation_epochs, valdation_losses)
+    plt.legend(['Train Losses', 'Validation Losses'])
     plt.savefig(directory/'loss_plot.png')
 
 def main():
