@@ -1,7 +1,8 @@
-from cellpose import io, models, train
+from cellpose import io, models, train, core
 
 
 def train(train_directory, test_directory):
+    use_GPU = core.use_gpu()
     io.logger_setup()
     images, labels, image_names, test_images, test_labels, image_names_test = io.load_train_test_data(train_directory, test_directory, image_filter='im', mask_filter='mask')
     model = models.CellposeModel(model_type='cyto3')
