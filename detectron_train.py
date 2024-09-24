@@ -202,6 +202,7 @@ def train(directory = SETTINGS.MASK_RCNN_MODEL):
         return lines
 
     experiment_metrics = load_json_arr(config_directory / 'metrics.json')
+    plt.rcParams["font.family"] = 'serif'
     plt.scatter([x['iteration'] for x in experiment_metrics if 'total_loss' in x], [x['total_loss'] for x in experiment_metrics if 'total_loss' in x])
     plt.scatter(
         [x['iteration'] for x in experiment_metrics if 'validation_loss' in x],
