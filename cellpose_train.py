@@ -1,4 +1,5 @@
 from cellpose import io, models, core
+from cellpose.train import train_seg
 
 
 
@@ -7,7 +8,7 @@ def train(train_directory, test_directory):
     io.logger_setup()
     images, labels, image_names, test_images, test_labels, image_names_test = io.load_train_test_data(train_directory, test_directory, image_filter='im', mask_filter='mask')
     model = models.CellposeModel(gpu=use_GPU, model_type='cyto3')
-    model_path, train_losses, test_losses = train.train_seg(model.net,
+    model_path, train_losses, test_losses = train_seg(model.net,
                                                             train_data=images, train_labels=labels,
                                                             channels=[0, 0], normalize=True,
                                                             test_data=test_images, test_labels=test_labels,
