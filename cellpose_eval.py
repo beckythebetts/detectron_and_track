@@ -5,6 +5,7 @@ import SETTINGS
 
 
 def cellpose_eval(directory):
+    use_GPU = core.use_gpu()
     io.logger_setup()
     model = models.CellposeModel(gpu=use_GPU, pretrained_model=SETTINGS.CELLPOSE_MODEL / 'models' / 'model')
     im_names = [im.stem[:2] for im in directory.iterdir() if 'im' in im.stem]
