@@ -37,17 +37,17 @@ def segment(hdf5_file):
                 sys.stdout.write(f'\r{j+1} / {batchsize}')
                 sys.stdout.flush()
 
-                #NUMPY
-                epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
-                for idx in np.unique(mask):
-                    if idx != 0:
-                        maski = np.where(mask==idx, 1, 0)
-                        if np.sum(np.logical_and(maski, epi_mask)) > np.sum(maski):
-                            mask = np.where(mask==idx, 0, mask)
-
-                #TORCH
-                epi_mask = torch.tensor(f['Images']['Epi'][f'{int(frame):04}'][:]).to(device)
-                mask = torch.tensor(mask).to(device)
+                # #NUMPY
+                # epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
+                # for idx in np.unique(mask):
+                #     if idx != 0:
+                #         maski = np.where(mask==idx, 1, 0)
+                #         if np.sum(np.logical_and(maski, epi_mask)) > np.sum(maski):
+                #             mask = np.where(mask==idx, 0, mask)
+                #
+                # #TORCH
+                # epi_mask = torch.tensor(f['Images']['Epi'][f'{int(frame):04}'][:]).to(device)
+                # mask = torch.tensor(mask).to(device)
 
 
                 f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)

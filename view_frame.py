@@ -41,7 +41,10 @@ def show_frame(image, mask, save_as):
     utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), save_as)
 
 def main():
-    show_frame(Path('ims_for_report/0.88/00.jpg'), Path('ims_for_report/0.88/00_mask.tif'), Path('ims_for_report/0.88/view0.png'))
+    #show_frame(Path('ims_for_report/0.88/00.jpg'), Path('ims_for_report/0.88/00_mask.tif'), Path('ims_for_report/0.88/view0.png'))
+    with h5py.File(SETTINGS.DATASET) as f:
+        im = f['Images']['Phase']['0000'][:]
+        utils.save_tiff(im, 'Datasets/snap02.png')
 
 if __name__ == '__main__':
     main()
