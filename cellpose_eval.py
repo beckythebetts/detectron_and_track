@@ -13,7 +13,7 @@ def cellpose_eval(directory):
     channels = [0, 0]
     masks, flow, styles = model.eval(validation_ims)
     for mask, im_name in zip(masks, im_names):
-        plt.imsave(str(directory/f'{im_name}pred.png'), mask)
+        plt.imsave(str(directory/f'{im_name}pred.png'), mask, cmap='gray')
 
 
 def main():
