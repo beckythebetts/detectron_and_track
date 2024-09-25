@@ -94,7 +94,7 @@ def eval_with_cellpose(directory):
             class_mask_np = class_mask.cpu().numpy()
             predicted_masks = np.append(predicted_masks, class_mask_np)
     true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
-    print(len(true_masks, len(predicted_masks)))
+    print(len(true_masks), len(predicted_masks))
     thresholds = [0.5, 0.75, 0.9]
     APs, TPs, FPs, FNs = metrics.average_precision(true_masks, predicted_masks, threshold=thresholds)
     precisions = TPs / (TPs + FPs)
