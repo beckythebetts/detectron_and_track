@@ -11,12 +11,14 @@ from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
 from detectron2.utils.visualizer import ColorMode
 from cellpose import io, metrics
+from PIL import Image
 
 import numpy as np
 import os, json, cv2, random, shutil
 from pathlib import Path
 import matplotlib.pyplot as plt
 import yaml
+
 
 import SETTINGS
 
@@ -93,7 +95,8 @@ def eval_with_cellpose(directory):
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy().astype(np.uint16)
             predicted_masks = class_mask_np
-    plt.imsave(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '01pred.png'), predicted_masks, cmap='gray')
+    Image.fromarray(predicted_masks).save(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '01pred.png'))
+    # plt.imsave(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '01pred.png'), predicted_masks, cmap='gray')
     # true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
     # print(len(true_masks), len(predicted_masks))
     # thresholds = [0.5, 0.75, 0.9]
