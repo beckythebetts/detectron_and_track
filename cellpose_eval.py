@@ -34,6 +34,16 @@ def cellpose_eval(directory):
         #view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
         plt.imsave(str(directory /f'{im_name}_view.png'), utils.show_segmentation(np.array(validation_ims[i]), np.array(preds[i]).astype(np.int16), np.array(true_masks[i]).astype(np.int16)))
 
+# class Results:
+#     def __init__(self, model, threshold, files):
+#         self.model = models
+#         self.threshold = threshold
+#         for file in files:
+#             results = pd.read_csv(file).loc[threshold]
+#         self.precisions = [pd.read_csv(file)]
+#
+# def plot_results(cellpose_results, rcnn_results):
+#     cell
 def main():
     cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
 

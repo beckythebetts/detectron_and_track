@@ -10,6 +10,7 @@ from detectron2.engine import DefaultTrainer, launch
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
 from detectron2.utils.visualizer import ColorMode
+from cellpose import io
 
 import numpy as np
 import os, json, cv2, random, shutil
@@ -64,10 +65,50 @@ def eval_withcellpose(directory):
     predictor = DefaultPredictor(cfg)
 
     validation_ims = [plt.imread(str(im)) for im in (directory/'Training_Data'/'validate'/'Images').iterdir()]
-    pred_masks = [predictor(np.stack([im]*3, axis=-1)) for im in validation_ims]
+    pred_masks = np.array([])
+    for im in validation_ims:
+        detectron_outputs = predictor(np.stack([np.array(im)] * 3, axis=-1))
+        class_masks = {class_name: torch.zeros_like(detectron_outputs["instances"].pred_masks[0], dtype=torch.int16,
+                                                    device=device)
+                       for class_name in train_metadata['thing_classes']}
+
+        for i, pred_class in enumerate(detectron_outputs["instances"].pred_classes):
+            class_name = train_metadata['thing_classes'][pred_class]
+            instance_mask = detectron_outputs["instances"].pred_masks[i].to(device=device)
+            # ******* ADJUST FOR NON SQUARE IMAGES*********
+            if SETTINGS.REMOVE_EDGE_CELLS:
+                if torch.any(torch.nonzero(instance_mask) == 1) or torch.any(
+                        torch.nonzero(instance_mask) == SETTINGS.IMAGE_SIZE[0] - 1):
+                    continue
+            class_masks[class_name] = torch.where(instance_mask,
+                                                  torch.tensor(i + 1, dtype=torch.float32),
+                                                  class_masks[class_name].to(dtype=torch.float32))
+            class_masks[class_name] = class_masks[class_name].to(dtype=torch.int16)
+
+        for class_name, class_mask in class_masks.items():
+            class_mask_np = class_mask.cpu().numpy()
+            pred_masks = np.append(pred_masks, class_mask_np)
+    true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
+
+    thresholds = [0.5, 0.75, 0.9]
+    APs, TPs, FPs, FNs = metrics.average_precision(true_masks, pred_masks, threshold=thresholds)
+    precisions = TPs / (TPs + FPs)
+    recalls = TPs / (TPs + FNs)
+    F1s = TPs / (TPs + 0.5 * (FPs + FNs))
+    for i, im_name in enumerate(im_names):
+        df = pd.DataFrame({'Precision': precisions[i],
+                           'Recall': recalls[i],
+                           'F1': F1s[i]},
+                          index=thresholds)
+        df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
+        # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
+        plt.imsave(str(directory / f'{im_name}_view.png'),
+                   utils.show_segmentation(np.array(validation_ims[i]), np.array(preds[i]).astype(np.int16),
+                                           np.array(true_masks[i]).astype(np.int16)))
 
 def main():
-    evaluator()
+    #evaluator()
+    eval_with_cellpose(SETTINGS.MASK_RCNN_MODEL)
 
 if __name__ == '__main__':
     main()
