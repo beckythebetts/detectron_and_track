@@ -9,6 +9,13 @@ import imageio
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+def show_segmentation(image_array, mask_array):
+    image_array, mask_array = torch.tensor(np.stack(image_array, image_array, image_array)), torch.tensor(mask_array)
+    outline = mask_funcs.mask_outline(torch.where(mask_array>0, 1, 0, thickness=1))
+    image_array[outline][0] = torch.max(image_array)
+    return image_array
+
+
 def remake_dir(path):
     if path.is_dir():
         check = input(f'Delete directory {str(path)}? [y,n] ')
