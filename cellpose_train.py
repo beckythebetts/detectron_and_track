@@ -16,7 +16,7 @@ def cellpose_train(directory):
                                                             train_data=images, train_labels=labels,
                                                             channels=[0, 0], normalize=True,
                                                             test_data=test_images, test_labels=test_labels,
-                                                            weight_decay=1e-4, SGD=True, learning_rate=0.1,
+                                                            weight_decay=1e-4, SGD=True, learning_rate=0.05,
                                                             n_epochs=300, save_path=str(directory), model_name='model_lr0.05')
     losses_dict = {'Train Losses': train_losses.tolist(), 'Validation Losses': test_losses.tolist()}
     with open(str(directory / 'losses_lr0.05.txt'), 'w') as f:
