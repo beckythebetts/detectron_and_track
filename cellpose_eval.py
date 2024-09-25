@@ -29,7 +29,7 @@ def cellpose_eval(directory):
                          'F1': F1s[i]},
                         index=thresholds)
         df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
-        view_frame.show_frame(f'{im_name}im.png', f'{im_name}pred.png', f'{im_name}_view.png')
+        view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
 
 
 def main():
