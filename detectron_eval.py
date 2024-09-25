@@ -50,7 +50,7 @@ def evaluator(directory=SETTINGS.MASK_RCNN_MODEL):
     with open(str(config_directory / 'eval.txt'), 'w') as f:
         f.write(str(output))
 
-def eval_withcellpose(directory):
+def eval_with_cellpose(directory):
     config_directory = directory / 'Model'
     # config_directory = Path('ims_for_report/phase/cfg_Ph_R50_DC5_1/kaggle/working/config_dir')
 
