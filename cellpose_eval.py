@@ -31,7 +31,7 @@ def cellpose_eval(directory):
                         index=thresholds)
         df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
         #view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
-        plt.imsave(str(directory /f'{im_name}_view.png'), utils.show_segmentation(validation_ims[i], preds[i]))
+        plt.imsave(str(directory /f'{im_name}_view.png'), utils.show_segmentation(np.array(validation_ims[i]), np.array(preds[i])))
 
 def main():
     cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
