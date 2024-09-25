@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 import SETTINGS
+import view_frame
 
 
 def cellpose_eval(directory):
@@ -28,7 +29,7 @@ def cellpose_eval(directory):
                          'F1': F1s[i]},
                         index=thresholds)
         df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
-        io.imsave(str(directory / f'{im_name}_view.png'), plot.outline_view(validation_ims[i], preds[i]))
+        view_frame.show_frame(f'{im_name}im.png', f'{im_name}pred.png', f'{im_name}_view.png')
 
 
 def main():
