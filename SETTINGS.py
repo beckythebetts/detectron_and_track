@@ -7,7 +7,7 @@ DATASET = Path("Datasets") / 'filter_test' / 'no_filter00.h5'
 # DATASET = Path("Datasets") / '04_short_testing.h5'
 # DATASET = Path('Datasets') / 'danhighres' / 'dan10.h5'
 MASK_RCNN_MODEL = Path("Models") / 'filter_test'
-CELLPOSE_MODEL = Path("cellpose_Models") / 'filters01'
+CELLPOSE_MODEL = Path("cellpose_Models") / 'filters12'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 REMOVE_EDGE_CELLS = True
 with h5py.File(DATASET, 'r') as f:
@@ -35,7 +35,7 @@ NUM_FRAMES_EATEN_THRESHOLD = 20
 MINIMUM_PIXELS_PER_PATHOGEN = 10
 
 
-# ******* MODEL TRAINING DIRECTORY STRUCTURE *******
+# ******* MASK R-CNN MODEL TRAINING DIRECTORY STRUCTURE *******
 # - 'Models'
 #   - model name
 #       - 'Training_Data'
@@ -46,6 +46,14 @@ MINIMUM_PIXELS_PER_PATHOGEN = 10
 #               - 'Images' .jpegs
 #               - 'labels.json'
 
-
+# ******* CELLPOSE MODEL TRAINING DIRECTORY STRUCTURE *******
+# - 'cellpose_Models'
+#   - model name
+#           - 'train'
+#               - *im.png
+#               - *mask.png
+#           - 'validate'
+#               - *im.png
+#               - *mask.png
 
 
