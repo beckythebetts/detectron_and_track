@@ -92,7 +92,7 @@ def eval_with_cellpose(directory):
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
-            predicted_masks = np.append(predicted_masks, class_mask_np)
+            predicted_masks = np.append(predicted_masks, [class_mask_np])
     true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
     print(len(true_masks), len(predicted_masks))
     thresholds = [0.5, 0.75, 0.9]
