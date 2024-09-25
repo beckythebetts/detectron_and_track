@@ -48,9 +48,9 @@ def cellpose_eval_from_ims(directory):
                        'Recall': recalls[0],
                        'F1': F1s[0]},
                       index=thresholds)
-    df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
+    df.to_csv(str(directory / f'01_results.txt'), sep='\t')
     # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
-    plt.imsave(str(directory / f'{im_name}_view.png'),
+    plt.imsave(str(directory / f'01_view.png'),
                utils.show_segmentation(np.array(image), np.array(pred).astype(np.int16),
                                        np.array(mask).astype(np.int16)))
 # class Results:
