@@ -15,8 +15,12 @@ def cellpose_eval(directory):
     for pred, im_name in zip(preds, im_names):
         plt.imsave(str(directory/f'{im_name}pred.png'), pred, cmap='gray')
     true_masks = [io.imread(im) for im in directory.iterdir() if 'mask' in im.name]
-    APs, TPs, FPs, FNs = metrics.average_precision(true_masks, preds)
-    print(APs, TPs, FPs, FNs)
+    # NOTE, this is not AP as defined elsewhere
+    APs, TPs, FPs, FNs = metrics.average_precision(true_masks, preds, theshold=[0.5, 0.75, 0.9])
+    precisions = TPs / (TPs+FPs)
+    recalls = TPs / (TPs+FNs)
+    F1s = TPs / (TPs + 0.5*(FPs+FNs))
+    print(precisions, recalls, F1s)
 
 def main():
     cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
