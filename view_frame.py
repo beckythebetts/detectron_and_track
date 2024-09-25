@@ -29,8 +29,8 @@ def show_frame(image, mask, save_as):
     for j in range(torch.max(mask)):
         if j + 1 in mask:
             if j + 1 not in colour_dict.keys():
-                # colour_dict[j + 1] = torch.tensor(np.random.uniform(0, 2 ** (8) - 1, size=3)).cpu()
-                colour_dict[j + 1] = torch.tensor((0, 150, 190)).cpu()
+                colour_dict[j + 1] = torch.tensor(np.random.uniform(0, 2 ** (8) - 1, size=3)).cpu()
+                #colour_dict[j + 1] = torch.tensor((0, 150, 190)).cpu()
             single_mask = torch.where(mask == j + 1, 1, 0)
             outline = mask_funcs.mask_outline(single_mask, 1)
             for c in range(3):
