@@ -12,7 +12,7 @@ CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 REMOVE_EDGE_CELLS = True
 with h5py.File(DATASET, 'r') as f:
     NUM_FRAMES = f['Images'].attrs['Number of frames']
-    IMAGE_SIZE = tuple(f['Images'].attrs['Image size / pixels'])
+    IMAGE_SIZE = [tuple(f['Images'].attrs['Image size / pixels'])]
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 250
