@@ -67,7 +67,7 @@ def eval_with_cellpose(directory):
     validation_ims = [plt.imread(str(im)) for im in (directory/'Training_Data'/'validate'/'Images').iterdir()]
     predicted_masks = np.array([])
     for im in validation_ims:
-        im_RGB = np.stack([np.array(im)] * 3, axis=-1)
+        im_RGB = np.stack([np.array(im*256)] * 3, axis=-1)
         print('CHECK IMAGE', np.min(im_RGB), np.max(im_RGB))
         detectron_outputs = predictor(im_RGB)
         #print(detectron_outputs)
