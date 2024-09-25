@@ -65,7 +65,7 @@ def eval_with_cellpose(directory):
     predictor = DefaultPredictor(cfg)
 
     validation_ims = [plt.imread(str(im)) for im in (directory/'Training_Data'/'validate'/'Images').iterdir()]
-    pred_masks = np.array([])
+    predicted_masks = np.array([])
     for im in validation_ims:
         detectron_outputs = predictor(np.stack([np.array(im)] * 3, axis=-1))
         class_masks = {class_name: torch.zeros_like(detectron_outputs["instances"].pred_masks[0], dtype=torch.int16,
@@ -87,11 +87,11 @@ def eval_with_cellpose(directory):
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
-            pred_masks = np.append(pred_masks, class_mask_np)
+            predicted_masks = np.append(predicted_masks, class_mask_np)
     true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
 
     thresholds = [0.5, 0.75, 0.9]
-    APs, TPs, FPs, FNs = metrics.average_precision(true_masks, pred_masks, threshold=thresholds)
+    APs, TPs, FPs, FNs = metrics.average_precision(true_masks, predicted_masks, threshold=thresholds)
     precisions = TPs / (TPs + FPs)
     recalls = TPs / (TPs + FNs)
     F1s = TPs / (TPs + 0.5 * (FPs + FNs))
@@ -103,7 +103,7 @@ def eval_with_cellpose(directory):
         df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
         # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
         plt.imsave(str(directory / f'{im_name}_view.png'),
-                   utils.show_segmentation(np.array(validation_ims[i]), np.array(preds[i]).astype(np.int16),
+                   utils.show_segmentation(np.array(validation_ims[i]), np.array(predicted_masks[i]).astype(np.int16),
                                            np.array(true_masks[i]).astype(np.int16)))
 
 def main():
