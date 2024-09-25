@@ -21,7 +21,7 @@ def show_frame(image, mask, save_as):
     #image = utils.torch_min_max_scale(torch.tensor(utils.read_tiff(image)).cpu())
     image = torch.tensor(utils.read_tiff(image).astype(np.int16)).cpu()
     #print(image.shape)
-    # im_rgb = torch.stack((image, image, image), axis=0)
+    im_rgb = torch.stack((image, image, image), axis=0)
     im_rgb = image.permute(2, 0, 1)
 
     # print(mask.shape)
