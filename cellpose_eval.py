@@ -1,6 +1,7 @@
 from cellpose import models, metrics, core, io, plot
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 import SETTINGS
 import view_frame
