@@ -180,7 +180,7 @@ def train(directory = SETTINGS.MASK_RCNN_MODEL):
     # Adjust the TEST section parameters if necessary
     cfg.TEST.AUG = cfg.TEST.AUG if "AUG" in cfg.TEST else {}
     cfg.TEST.AUG["MAX_SIZE"] = im_size # Ensure consistency with max size
-    cfg.TEST.AUG["MIN_SIZES"] = [im_size]  # Ensure consistency with min size
+    cfg.TEST.AUG["MIN_SIZES"] = (im_size,)  # Ensure consistency with min size
 
     cfg.TEST.EVAL_PERIOD = 100
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
