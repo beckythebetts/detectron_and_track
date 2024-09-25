@@ -92,24 +92,25 @@ def eval_with_cellpose(directory):
 
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy()
-            predicted_masks = [class_mask_np]
-    true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
-    print(len(true_masks), len(predicted_masks))
-    thresholds = [0.5, 0.75, 0.9]
-    APs, TPs, FPs, FNs = metrics.average_precision(true_masks, predicted_masks, threshold=thresholds)
-    precisions = TPs / (TPs + FPs)
-    recalls = TPs / (TPs + FNs)
-    F1s = TPs / (TPs + 0.5 * (FPs + FNs))
-    for i, im_name in enumerate(im_names):
-        df = pd.DataFrame({'Precision': precisions[i],
-                           'Recall': recalls[i],
-                           'F1': F1s[i]},
-                          index=thresholds)
-        df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
-        # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
-        plt.imsave(str(directory / f'{im_name}_view.png'),
-                   utils.show_segmentation(np.array(validation_ims[i]), np.array(predicted_masks[i]).astype(np.int16),
-                                           np.array(true_masks[i]).astype(np.int16)))
+            predicted_masks = class_mask_np
+    plt.imsave(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '01pred.png'), predicted_masks)
+    # true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
+    # print(len(true_masks), len(predicted_masks))
+    # thresholds = [0.5, 0.75, 0.9]
+    # APs, TPs, FPs, FNs = metrics.average_precision(true_masks, predicted_masks, threshold=thresholds)
+    # precisions = TPs / (TPs + FPs)
+    # recalls = TPs / (TPs + FNs)
+    # F1s = TPs / (TPs + 0.5 * (FPs + FNs))
+    # for i, im_name in enumerate(im_names):
+    #     df = pd.DataFrame({'Precision': precisions[i],
+    #                        'Recall': recalls[i],
+    #                        'F1': F1s[i]},
+    #                       index=thresholds)
+    #     df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
+    #     # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
+    #     plt.imsave(str(directory / f'{im_name}_view.png'),
+    #                utils.show_segmentation(np.array(validation_ims[i]), np.array(predicted_masks[i]).astype(np.int16),
+    #                                        np.array(true_masks[i]).astype(np.int16)))
 
 def main():
     #evaluator()
