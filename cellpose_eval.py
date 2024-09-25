@@ -44,9 +44,9 @@ def cellpose_eval_from_ims(directory):
     recalls = TPs / (TPs + FNs)
     F1s = TPs / (TPs + 0.5 * (FPs + FNs))
 
-    df = pd.DataFrame({'Precision': precisions,
-                       'Recall': recalls,
-                       'F1': F1s},
+    df = pd.DataFrame({'Precision': precisions[0],
+                       'Recall': recalls[0],
+                       'F1': F1s[0]},
                       index=thresholds)
     df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
     # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
