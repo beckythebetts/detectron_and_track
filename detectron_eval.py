@@ -10,7 +10,7 @@ from detectron2.engine import DefaultTrainer, launch
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
 from detectron2.utils.visualizer import ColorMode
-from cellpose import io
+from cellpose import io, metrics
 
 import numpy as np
 import os, json, cv2, random, shutil
