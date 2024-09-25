@@ -10,11 +10,15 @@ import mask_funcs
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def show_segmentation(image_array, mask_array):
+def show_segmentation(image_array, mask_array, true_mask_array=None):
     image_array, mask_array = torch.tensor(np.stack((image_array, image_array, image_array), axis=-1)), torch.tensor(mask_array)
     outline = mask_funcs.mask_outline(torch.where(mask_array>0, 1, 0), thickness=2)
     image_array[:,:,0][outline] = torch.max(image_array)
-    #print(image_array.shape, image_array.type)
+    if true_mask_array:
+        true_mask_array = torch.tensor(true_mask_array)
+        true_outline = mask_funcs.mask_outline(torch.where(true_mask_array>0, 1, 0), thickness=2)
+        image_array[:, :, 1][true_outline] = torch.max(image_array)
+        #print(image_array.shape, image_array.type)
     return image_array.cpu().numpy()
 
 
