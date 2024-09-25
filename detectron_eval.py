@@ -49,6 +49,23 @@ def evaluator(directory=SETTINGS.MASK_RCNN_MODEL):
     with open(str(config_directory / 'eval.txt'), 'w') as f:
         f.write(str(output))
 
+def eval_withcellpose(directory):
+    config_directory = directory / 'Model'
+    # config_directory = Path('ims_for_report/phase/cfg_Ph_R50_DC5_1/kaggle/working/config_dir')
+
+    with open(str(config_directory / 'train_metadata.json')) as json_file:
+        train_metadata = json.load(json_file)
+    cfg = get_cfg()
+    cfg.merge_from_file(str(config_directory / 'config.yaml'))
+    cfg.MODEL.WEIGHTS = str(config_directory / 'model_final.pth')  # path to the model we just trained
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+    cfg.MODEL.DEVICE = "cuda"
+    # cfg.MODEL.DEVICE = 'cpu'
+    predictor = DefaultPredictor(cfg)
+
+    validation_ims = [plt.imread(str(im)) for im in (directory/'Training_Data'/'validate'/'Images').iterdir()]
+    pred_masks = [predictor(np.stack([im]*3, axis=-1)) for im in validation_ims]
+
 def main():
     evaluator()
 
