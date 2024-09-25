@@ -68,6 +68,7 @@ def eval_with_cellpose(directory):
     predicted_masks = np.array([])
     for im in validation_ims:
         detectron_outputs = predictor(np.stack([np.array(im)] * 3, axis=-1))
+        print(detectron_outputs)
         class_masks = {class_name: torch.zeros_like(detectron_outputs["instances"].pred_masks[0], dtype=torch.int16,
                                                     device=device)
                        for class_name in train_metadata['thing_classes']}
