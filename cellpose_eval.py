@@ -4,6 +4,7 @@ import pandas as pd
 
 import SETTINGS
 import view_frame
+import utils
 
 
 def cellpose_eval(directory):
