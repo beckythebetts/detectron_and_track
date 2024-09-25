@@ -169,7 +169,7 @@ def train(directory = SETTINGS.MASK_RCNN_MODEL):
     cfg.TEST.DETECTIONS_PER_IMAGE = 1000
     # cfg.MODEL.ANCHOR_GENERATOR.SIZES = [[15, 20, 30, 50, 100]]
     # cfg.MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[0.6, 1.0, 1.5]]
-    im_size = SETTINGS.IMAGE_SIZE[0]
+    im_size = int(SETTINGS.IMAGE_SIZE[0])
     print(im_size.type)
     cfg.INPUT.MIN_SIZE_TRAIN = (im_size,)
     cfg.INPUT.MAX_SIZE_TRAIN = im_size
