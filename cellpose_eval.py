@@ -36,10 +36,9 @@ def cellpose_eval(directory):
 
 def cellpose_eval_from_ims(directory):
     image = [io.imread(str(directory/'Images'/'snap01.png'))]
-    mask = [io.imread(str(directory/'Masks'/'01mask.png'))]
-    pred = [io.imread(str(directory/'Masks'/'01pred.png'))]
-    print(np.unique(pred))
-    print(np.unique(mask))
+    mask = [io.imread(str(directory/'Masks'/'01mask.png')).astype('int16')]
+    pred = [io.imread(str(directory/'Masks'/'01pred.png')).astype('int16')[:,:,0]]
+
 
     thresholds = [0.5, 0.75, 0.9]
     APs, TPs, FPs, FNs = metrics.average_precision(mask, pred, threshold=thresholds)
@@ -54,8 +53,8 @@ def cellpose_eval_from_ims(directory):
     df.to_csv(str(directory / f'01_results.txt'), sep='\t')
     # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
     plt.imsave(str(directory / f'01_view.png'),
-               utils.show_segmentation(np.array(image), np.array(pred).astype(np.int16),
-                                       np.array(mask).astype(np.int16)))
+               utils.show_segmentation(np.array(image[0]), np.array(pred[0]).astype(np.int16),
+                                       np.array(mask[0]).astype(np.int16)))
 # class Results:
 #     def __init__(self, model, threshold, files):
 #         self.model = models
