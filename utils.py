@@ -15,7 +15,7 @@ def show_segmentation(image_array, mask_array):
     outline = mask_funcs.mask_outline(torch.where(mask_array>0, 1, 0), thickness=1)
     image_array[outline][0] = torch.max(image_array)
     #print(image_array.shape, image_array.type)
-    return image_array
+    return image_array.cpu().numpy()
 
 
 def remake_dir(path):
