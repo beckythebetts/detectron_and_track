@@ -6,6 +6,7 @@ import torch
 from PIL import Image
 import numpy as np
 import imageio
+import mask_funcs
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
