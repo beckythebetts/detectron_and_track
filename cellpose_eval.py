@@ -1,4 +1,4 @@
-from cellpose import models, metrics, core, io
+from cellpose import models, metrics, core, io, plot
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -24,11 +24,12 @@ def cellpose_eval(directory):
     F1s = TPs / (TPs + 0.5*(FPs+FNs))
     for i, im_name in enumerate(im_names):
         df = pd.DataFrame({'Precision': precisions[i],
-                         'Recalls': recalls[i],
+                         'Recall': recalls[i],
                          'F1': F1s[i]},
                         index=thresholds)
         df.to_csv(str(directory / f'{im_name}_results.txt'), sep='\t')
-    #print(precisions, recalls, F1s)
+        io.imsave(str(directory / f'{im_name}_view.png', plot.outline(validation_ims[i], preds[i])))
+
 
 def main():
     cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
