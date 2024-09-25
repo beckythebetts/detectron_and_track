@@ -38,6 +38,9 @@ def cellpose_eval_from_ims(directory):
     image = [io.imread(str(directory/'Images'/'snap01.png'))]
     mask = [io.imread(str(directory/'Masks'/'01mask.png'))]
     pred = [io.imread(str(directory/'Masks'/'01pred.png'))]
+    print(np.unique(pred))
+    print(np.unique(mask))
+
     thresholds = [0.5, 0.75, 0.9]
     APs, TPs, FPs, FNs = metrics.average_precision(mask, pred, threshold=thresholds)
     precisions = TPs / (TPs + FPs)
