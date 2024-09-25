@@ -91,7 +91,7 @@ def eval_with_cellpose(directory):
             class_masks[class_name] = class_masks[class_name].to(dtype=torch.int16)
 
         for class_name, class_mask in class_masks.items():
-            class_mask_np = class_mask.cpu().numpy().astype(np.int16)
+            class_mask_np = class_mask.cpu().numpy().astype(np.uint16)
             predicted_masks = class_mask_np
     plt.imsave(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '01pred.png'), predicted_masks, cmap='gray')
     # true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
