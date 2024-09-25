@@ -20,6 +20,8 @@ import yaml
 
 import SETTINGS
 
+os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def evaluator(directory=SETTINGS.MASK_RCNN_MODEL):
     setup_logger()
