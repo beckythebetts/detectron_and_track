@@ -80,11 +80,11 @@ def plot_results(cellpose_results, rcnn_results):
         ax.plot(thresholds, cellpose_means[metric], color='red', label='Cellpose')
         ax.fill_between(thresholds, cellpose_means[metric]-cellpose_stds[metric], cellpose_means[metric]+cellpose_stds[metric], color='salmon')
         ax.plot(thresholds, rcnn_means[metric], color='navy', label='Mask R-CNN')
-        ax.fill_between(thresholds, rcnn_means[metric]-rcnn_stds[metric], rcnn_means[metric]+rcnn_stds[metric], color='salmon')
+        ax.fill_between(thresholds, rcnn_means[metric]-rcnn_stds[metric], rcnn_means[metric]+rcnn_stds[metric], color='lightsteelblue')
         ax.set_xlabel('IOU Threshold')
         ax.set_ylabel(metric)
         ax.grid(True)
-
+    plt.legend()
     plt.savefig('comparison_results.png')
 
 def main():
