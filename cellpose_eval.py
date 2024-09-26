@@ -106,7 +106,7 @@ def main():
     # for name in ['cyto_1', 'cyto_2', 'cyto_3', 'cyto_4']:
     #     cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate', name)
 
-    plot_train_dat_results('/home/ubuntu/Documents/detectron_and_track/cellpose_Models/test_training_data/validate')
+    plot_train_dat_results(Path('/home/ubuntu/Documents/detectron_and_track/cellpose_Models/test_training_data/validate'))
     #cellpose_eval_from_ims(SETTINGS.MASK_RCNN_MODEL / 'Training_Data' / 'validate')
     # cellpose_results = ['/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters01/validate/02_results.txt',
     #                     '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters02/validate/01_results.txt',
