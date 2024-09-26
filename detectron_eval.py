@@ -95,7 +95,7 @@ def eval_with_cellpose(directory):
         for class_name, class_mask in class_masks.items():
             class_mask_np = class_mask.cpu().numpy().astype(np.uint16)
             predicted_masks = class_mask_np
-    Image.fromarray(predicted_masks).save(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '01pred.png'))
+    Image.fromarray(predicted_masks).save(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '00pred.png'))
     # plt.imsave(str(directory / 'Training_Data'/ 'validate' / 'Masks' / '01pred.png'), predicted_masks, cmap='gray')
     # true_masks = [plt.imread(im) for im in (directory/'Training_Data'/'validate'/'Masks').iterdir()]
     # print(len(true_masks), len(predicted_masks))

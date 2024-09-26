@@ -2,6 +2,7 @@ from cellpose import models, metrics, core, io, plot
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+from PIL import Image
 
 import SETTINGS
 import view_frame
@@ -17,10 +18,12 @@ def cellpose_eval(directory):
     channels = [0, 0]
     preds, flow, styles = model.eval(validation_ims)
     for pred, im_name in zip(preds, im_names):
-        plt.imsave(str(directory/f'{im_name}pred.png'), pred, cmap='gray')
+        Image.fromarray(pred.astype(np.uint16)).save(str(directory/f'{im_name}pred.png'))
+
+        #plt.imsave(str(directory/f'{im_name}pred.png'), pred, cmap='gray')
     true_masks = [io.imread(im) for im in directory.iterdir() if 'mask' in im.name]
     # NOTE, this is not AP as defined elsewhere
-    thresholds = [0.5, 0.75, 0.9]
+    thresholds = np.arange(0.5, 1.0, 0.05)
     APs, TPs, FPs, FNs = metrics.average_precision(true_masks, preds, threshold=thresholds)
     precisions = TPs / (TPs+FPs)
     recalls = TPs / (TPs+FNs)
@@ -40,7 +43,7 @@ def cellpose_eval_from_ims(directory):
     pred = [io.imread(str(directory/'Masks'/'02pred.png')).astype('int16')]
 
 
-    thresholds = [0.5, 0.75, 0.9]
+    thresholds = np.arange(0.5, 1.0, 0.05)
     APs, TPs, FPs, FNs = metrics.average_precision(mask, pred, threshold=thresholds)
     precisions = TPs / (TPs + FPs)
     recalls = TPs / (TPs + FNs)
@@ -63,8 +66,13 @@ def cellpose_eval_from_ims(directory):
 #             results = pd.read_csv(file).loc[threshold]
 #         self.precisions = [pd.read_csv(file)]
 #
-# def plot_results(cellpose_results, rcnn_results):
-#     cell
+def plot_results(cellpose_results, rcnn_results):
+    cellpose_results = pd.concat([pd.read_csv(file) for file in cellpose_results], axis=0)
+    rcnn_results =  pd.concat([pd.read_csv(file) for file in rcnn_results], axis=0)
+    cellpose_means, cellpose_stds = cellpose_results.groupby(level=0).mean(), cellpose_results.groupby(level=0).mean()
+    rcnn_means, rcnn_stds = rcnn_results.groupby(level=0).mean(), rcnn_results.groupby(level=0).mean()
+
+
 def main():
     #cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
     cellpose_eval_from_ims(SETTINGS.MASK_RCNN_MODEL / 'Training_Data' / 'validate')
