@@ -71,10 +71,24 @@ def plot_results(cellpose_results, rcnn_results):
     rcnn_results =  pd.concat([pd.read_csv(file) for file in rcnn_results], axis=0)
     cellpose_means, cellpose_stds = cellpose_results.groupby(level=0).mean(), cellpose_results.groupby(level=0).mean()
     rcnn_means, rcnn_stds = rcnn_results.groupby(level=0).mean(), rcnn_results.groupby(level=0).mean()
-
+    metrics = cellpose_means.columns.values
+    thresholds = cellpose_means.index.values
+    fig, axs = plt.subplots(1, 3)
+    for ax, metric in zip(axs, metrics):
+        ax.plot(thresholds, cellpose_means[metric])
+        ax.plot(thresholds, rcnn_means[metric])
+    plt.figsave('comparison_results.png')
 
 def main():
     #cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
-    cellpose_eval_from_ims(SETTINGS.MASK_RCNN_MODEL / 'Training_Data' / 'validate')
+    #cellpose_eval_from_ims(SETTINGS.MASK_RCNN_MODEL / 'Training_Data' / 'validate')
+    cellpose_results = ['/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters01/validate/02_results.txt',
+                        '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters02/validate/01_results.txt',
+                        '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters12/validate/00_results.txt']
+
+    rcnn_results = ['/home/ubuntu/Documents/detectron_and_track/Models/filter01/Training_Data/validate/02_results.txt',
+                    '/home/ubuntu/Documents/detectron_and_track/Models/filter02/Training_Data/validate/01_results.txt',
+                    '/home/ubuntu/Documents/detectron_and_track/Models/filter12/Training_Data/validate/00_results.txt']
+    plot_results(cellpose_results, rcnn_results)
 if __name__ == '__main__':
     main()
