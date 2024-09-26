@@ -88,9 +88,25 @@ def plot_results(cellpose_results, rcnn_results):
     plt.legend()
     plt.savefig('comparison_results.png')
 
+def plot_train_dat_results(directory):
+    results = [pd.read_csv(file, sep='\t', index_col=0) for file in directory.iterdir() if file.suffix=='.txt']
+    metrics = results[0].columns.values
+    thresholds = results[0].index.values
+    num_training_data = range(1, len(results)+1)
+    plt.rcParams["font.family"] = 'serif'
+    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+    for ax, metric in zip(axs, metrics):
+        for result, num_data in zip(results, num_training_data):
+            ax.plot(thresholds, result[metric], label=num_data)
+    plt.legend()
+    plt.savefig('/home/ubuntu/Documents/detectron_and_track/cellpose_Models/test_training_data/results.png')
+
+
 def main():
-    for name in ['cyto_1', 'cyto_2', 'cyto_3', 'cyto_4']:
-        cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate', name)
+    # for name in ['cyto_1', 'cyto_2', 'cyto_3', 'cyto_4']:
+    #     cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate', name)
+
+    plot_train_dat_results('/home/ubuntu/Documents/detectron_and_track/cellpose_Models/test_training_data/validate')
     #cellpose_eval_from_ims(SETTINGS.MASK_RCNN_MODEL / 'Training_Data' / 'validate')
     # cellpose_results = ['/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters01/validate/02_results.txt',
     #                     '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters02/validate/01_results.txt',
