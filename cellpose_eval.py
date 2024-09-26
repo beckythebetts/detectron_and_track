@@ -74,8 +74,9 @@ def plot_results(cellpose_results, rcnn_results):
     metrics = cellpose_means.columns.values
     thresholds = cellpose_means.index.values
     print(thresholds)
-    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
     plt.rcParams["font.family"] = 'serif'
+    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+
     for ax, metric in zip(axs, metrics):
         ax.plot(thresholds, cellpose_means[metric], color='red', label='Cellpose')
         ax.fill_between(thresholds, cellpose_means[metric]-cellpose_stds[metric], cellpose_means[metric]+cellpose_stds[metric], color='red', alpha=0.5, edgecolor='none')
