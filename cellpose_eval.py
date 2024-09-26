@@ -10,7 +10,6 @@ import utils
 
 
 def cellpose_eval(directory, model_name='model'):
-
     use_GPU = core.use_gpu()
     io.logger_setup()
     model = models.CellposeModel(gpu=use_GPU, pretrained_model=str(SETTINGS.CELLPOSE_MODEL / 'models' / model_name))
@@ -90,7 +89,7 @@ def plot_results(cellpose_results, rcnn_results):
     plt.savefig('comparison_results.png')
 
 def main():
-    for name in ['cyto_1,', 'cyto_2', 'cyto_3', 'cyto_4']:
+    for name in ['cyto_1', 'cyto_2', 'cyto_3', 'cyto_4']:
         cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate', name)
     #cellpose_eval_from_ims(SETTINGS.MASK_RCNN_MODEL / 'Training_Data' / 'validate')
     # cellpose_results = ['/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters01/validate/02_results.txt',
