@@ -45,7 +45,7 @@ def main():
     #show_frame(Path('ims_for_report/0.88/00.jpg'), Path('ims_for_report/0.88/00_mask.tif'), Path('ims_for_report/0.88/view0.png'))
     with h5py.File(SETTINGS.DATASET) as f:
         im = f['Images']['Phase']['0000'][:]
-        utils.save_tiff(im, 'Datasets/snap04.png')
+        utils.save_tiff(im, 'Datasets/snap05.png')
 
 if __name__ == '__main__':
     main()
