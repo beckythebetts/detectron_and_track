@@ -67,8 +67,8 @@ def cellpose_eval_from_ims(directory):
 #         self.precisions = [pd.read_csv(file)]
 #
 def plot_results(cellpose_results, rcnn_results):
-    cellpose_results = pd.concat([pd.read_csv(file) for file in cellpose_results], axis=0)
-    rcnn_results =  pd.concat([pd.read_csv(file) for file in rcnn_results], axis=0)
+    cellpose_results = pd.concat([pd.read_csv(file, sep='\t') for file in cellpose_results], axis=0)
+    rcnn_results =  pd.concat([pd.read_csv(file, sep='\t') for file in rcnn_results], axis=0)
     cellpose_means, cellpose_stds = cellpose_results.groupby(level=0).mean(), cellpose_results.groupby(level=0).mean()
     rcnn_means, rcnn_stds = rcnn_results.groupby(level=0).mean(), rcnn_results.groupby(level=0).mean()
     metrics = cellpose_means.columns.values
