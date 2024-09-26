@@ -73,6 +73,7 @@ def plot_results(cellpose_results, rcnn_results):
     rcnn_means, rcnn_stds = rcnn_results.groupby(level=0).mean(), rcnn_results.groupby(level=0).mean()
     metrics = cellpose_means.columns.values
     thresholds = cellpose_means.index.values
+    print(thresholds)
     fig, axs = plt.subplots(1, 3)
     for ax, metric in zip(axs, metrics):
         ax.plot(thresholds, cellpose_means[metric])
