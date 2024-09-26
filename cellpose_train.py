@@ -16,10 +16,10 @@ def cellpose_train(directory):
                                                             train_data=images, train_labels=labels,
                                                             channels=[0, 0], normalize=True,
                                                             test_data=test_images, test_labels=test_labels,
-                                                            weight_decay=1e-4, SGD=True, learning_rate=0.1,
-                                                            n_epochs=300, save_path=str(directory), model_name='model_lr0.05')
+                                                            weight_decay=1e-4, SGD=True, learning_rate=0.05,
+                                                            n_epochs=300, save_path=str(directory), model_name='model')
     losses_dict = {'Train Losses': train_losses.tolist(), 'Validation Losses': test_losses.tolist()}
-    with open(str(directory / 'losses_lr0.05.txt'), 'w') as f:
+    with open(str(directory / 'losses.txt'), 'w') as f:
         json.dump(losses_dict, f)
     epochs = np.arange(0, len(train_losses))
     plt.rcParams["font.family"] = 'serif'
@@ -30,7 +30,7 @@ def cellpose_train(directory):
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.grid()
-    plt.savefig(directory/'loss_plot_lr0.0.png')
+    plt.savefig(directory/'loss_plot.png')
 
 def main():
     model_directory = SETTINGS.CELLPOSE_MODEL
