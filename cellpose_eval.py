@@ -78,9 +78,9 @@ def plot_results(cellpose_results, rcnn_results):
     plt.rcParams["font.family"] = 'serif'
     for ax, metric in zip(axs, metrics):
         ax.plot(thresholds, cellpose_means[metric], color='red', label='Cellpose')
-        ax.fill_between(thresholds, cellpose_means[metric]-cellpose_stds[metric], cellpose_means[metric]+cellpose_stds[metric], color='red', alpha=0.5)
+        ax.fill_between(thresholds, cellpose_means[metric]-cellpose_stds[metric], cellpose_means[metric]+cellpose_stds[metric], color='red', alpha=0.5, edgecolor='none')
         ax.plot(thresholds, rcnn_means[metric], color='navy', label='Mask R-CNN')
-        ax.fill_between(thresholds, rcnn_means[metric]-rcnn_stds[metric], rcnn_means[metric]+rcnn_stds[metric], color='navy', alpha=0.5)
+        ax.fill_between(thresholds, rcnn_means[metric]-rcnn_stds[metric], rcnn_means[metric]+rcnn_stds[metric], color='navy', alpha=0.5, edgecolor='none')
         ax.set_xlabel('IOU Threshold')
         ax.set_ylabel(metric)
         ax.grid(True)
