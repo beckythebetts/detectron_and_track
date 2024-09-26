@@ -16,7 +16,7 @@ def cellpose_eval(directory):
     im_names = [im.stem[:2] for im in directory.iterdir() if 'im' in im.stem]
     validation_ims = [io.imread(im) for im in directory.iterdir() if 'im' in im.name]
     channels = [0, 0]
-    preds, flow, styles = model.eval(validation_ims, flow_threshold=0.3)
+    preds, flow, styles = model.eval(validation_ims, flow_threshold=0.2)
     for pred, im_name in zip(preds, im_names):
         Image.fromarray(pred.astype(np.uint16)).save(str(directory/f'{im_name}pred.png'))
 
