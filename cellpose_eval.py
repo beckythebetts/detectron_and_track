@@ -89,15 +89,15 @@ def plot_results(cellpose_results, rcnn_results):
     plt.savefig('comparison_results.png')
 
 def main():
-    cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
+    #cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
     #cellpose_eval_from_ims(SETTINGS.MASK_RCNN_MODEL / 'Training_Data' / 'validate')
-    # cellpose_results = ['/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters01/validate/02_results.txt',
-    #                     '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters02/validate/01_results.txt',
-    #                     '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters12/validate/00_results.txt']
-    #
-    # rcnn_results = ['/home/ubuntu/Documents/detectron_and_track/Models/filter01/Training_Data/validate/02_results.txt',
-    #                 '/home/ubuntu/Documents/detectron_and_track/Models/filter02/Training_Data/validate/01_results.txt',
-    #                 '/home/ubuntu/Documents/detectron_and_track/Models/filter12/Training_Data/validate/00_results.txt']
-    # plot_results(cellpose_results, rcnn_results)
+    cellpose_results = ['/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters01/validate/02_results.txt',
+                        '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters02/validate/01_results.txt',
+                        '/home/ubuntu/Documents/detectron_and_track/cellpose_Models/filters12/validate/00_results.txt']
+
+    rcnn_results = ['/home/ubuntu/Documents/detectron_and_track/Models/filter01/Training_Data/validate/02_results.txt',
+                    '/home/ubuntu/Documents/detectron_and_track/Models/filter02/Training_Data/validate/01_results.txt',
+                    '/home/ubuntu/Documents/detectron_and_track/Models/filter12/Training_Data/validate/00_results.txt']
+    plot_results(cellpose_results, rcnn_results)
 if __name__ == '__main__':
     main()
