@@ -2,7 +2,7 @@ from pathlib import Path
 import h5py
 
 # ******* GENERAL *******
-DATASET = Path("Datasets") / 'filter_test' / 'filter00.h5'
+DATASET = Path("Datasets") / 'filter_test' / 'filter01.h5'
 # DATASET = Path("Datasets") / 'interval_test' / '15sec.hdf5'
 # DATASET = Path("Datasets") / '04_short_testing.h5'
 # DATASET = Path('Datasets') / 'danhighres' / 'dan10.h5'
