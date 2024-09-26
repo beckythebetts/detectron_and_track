@@ -37,7 +37,7 @@ def cellpose_eval(directory):
 def cellpose_eval_from_ims(directory):
     image = [io.imread(str(directory/'Images'/'snap01.png'))]
     mask = [io.imread(str(directory/'Masks'/'01mask.png')).astype('int16')]
-    pred = [io.imread(str(directory/'Masks'/'01pred.png')).astype('int16')[:,:,0]]
+    pred = [io.imread(str(directory/'Masks'/'01pred.png')).astype('int16')]
 
 
     thresholds = [0.5, 0.75, 0.9]
