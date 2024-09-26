@@ -38,9 +38,9 @@ def cellpose_eval(directory):
         plt.imsave(str(directory /f'{im_name}_view.png'), utils.show_segmentation(np.array(validation_ims[i]), np.array(preds[i]).astype(np.int16), np.array(true_masks[i]).astype(np.int16)))
 
 def cellpose_eval_from_ims(directory):
-    image = [io.imread(str(directory/'Images'/'snap02.png'))]
-    mask = [io.imread(str(directory/'Masks'/'02mask.png')).astype('int16')]
-    pred = [io.imread(str(directory/'Masks'/'02pred.png')).astype('int16')]
+    image = [io.imread(str(directory/'Images'/'snap00.png'))]
+    mask = [io.imread(str(directory/'Masks'/'00mask.png')).astype('int16')]
+    pred = [io.imread(str(directory/'Masks'/'00pred.png')).astype('int16')]
 
 
     thresholds = np.arange(0.5, 1.0, 0.05)
@@ -53,9 +53,9 @@ def cellpose_eval_from_ims(directory):
                        'Recall': recalls[0],
                        'F1': F1s[0]},
                       index=thresholds)
-    df.to_csv(str(directory / f'02_results.txt'), sep='\t')
-    # view_frame.show_frame(str(directory / f'{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
-    plt.imsave(str(directory / f'02_view.png'),
+    df.to_csv(str(directory / f'00_results.txt'), sep='\t')
+    # view_frame.show_frame(str(directory / '{im_name}im.png'), str(directory /f'{im_name}pred.png'), str(directory /f'{im_name}_view.png'))
+    plt.imsave(str(directory / f'00_view.png'),
                utils.show_segmentation(np.array(image[0]), np.array(pred[0]).astype(np.int16),
                                        np.array(mask[0]).astype(np.int16)))
 # class Results:
