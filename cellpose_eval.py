@@ -77,7 +77,7 @@ def plot_results(cellpose_results, rcnn_results):
     for ax, metric in zip(axs, metrics):
         ax.plot(thresholds, cellpose_means[metric])
         ax.plot(thresholds, rcnn_means[metric])
-    plt.figsave('comparison_results.png')
+    plt.savefig('comparison_results.png')
 
 def main():
     #cellpose_eval(SETTINGS.CELLPOSE_MODEL / 'validate')
