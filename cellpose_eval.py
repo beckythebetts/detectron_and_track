@@ -74,10 +74,17 @@ def plot_results(cellpose_results, rcnn_results):
     metrics = cellpose_means.columns.values
     thresholds = cellpose_means.index.values
     print(thresholds)
-    fig, axs = plt.subplots(1, 3)
+    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+    plt.rcParams["font.family"] = 'serif'
     for ax, metric in zip(axs, metrics):
-        ax.plot(thresholds, cellpose_means[metric])
-        ax.plot(thresholds, rcnn_means[metric])
+        ax.plot(thresholds, cellpose_means[metric], color='red', label='Cellpose')
+        ax.fill_between(thresholds, cellpose_means[metric]-cellpose_stds[metric], cellpose_means[metric]+cellpose_stds[metric], color='salmon')
+        ax.plot(thresholds, rcnn_means[metric], color='navy', label='Mask R-CNN')
+        ax.fill_between(thresholds, rcnn_means[metric]-rcnn_stds[metric], rcnn_means[metric]+rcnn_stds[metric], color='salmon')
+        ax.set_xlabel('IOU Threshold')
+        ax.set_ylabel(metric)
+        ax.grid(True)
+
     plt.savefig('comparison_results.png')
 
 def main():
