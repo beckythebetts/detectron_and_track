@@ -7,7 +7,7 @@ DATASET = Path("Datasets") / 'filter_test' / 'no_filter01.h5'
 # DATASET = Path("Datasets") / '04_short_testing.h5'
 # DATASET = Path('Datasets') / 'danhighres' / 'dan10.h5'
 MASK_RCNN_MODEL = Path("Models") / 'filter02'
-CELLPOSE_MODEL = Path("cellpose_Models") / 'test_trainigng_data'
+CELLPOSE_MODEL = Path("cellpose_Models") / 'test_training_data'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 REMOVE_EDGE_CELLS = True
 # with h5py.File(DATASET, 'r') as f:
