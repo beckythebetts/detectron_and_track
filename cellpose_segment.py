@@ -30,7 +30,7 @@ def segment(hdf5_file):
             print(f'\nSegmenting Batch {i+1} / {num_batches}')
             ims = [f['Images']['Phase'][f'{int(frame):04}'][:] for frame in batch]
 
-            masks, flows, styles, diams = model.eval(ims, diameter=30, flow_threshold=None, channels=channels)
+            masks, flows, styles, diams = model.eval(ims, diameter=0, flow_threshold=0.2, channels=channels)
 
             print(f'\nSaving Batch {i+1} / {num_batches}')
             for j, (mask, frame) in enumerate(zip(masks, batch)):

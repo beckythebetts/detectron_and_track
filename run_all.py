@@ -4,7 +4,7 @@ import threshold_epi
 import batch_extract_features
 
 def main():
-    detectron_infer.main()
+    cellpose_segment.main()
     track.main()
     threshold_epi.main()
     batch_extract_features.main()

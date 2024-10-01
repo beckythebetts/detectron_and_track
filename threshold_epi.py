@@ -21,8 +21,7 @@ def test_threshold(test_threshold_value):
 def apply_threshold(threshold=SETTINGS.THRESHOLD):
     print('\n--------------------\nTHRESHOLDING - ', SETTINGS.CLASSES['epi'], '\n--------------------')
     with h5py.File(SETTINGS.DATASET, 'r+') as f:
-        # if 'Epi' in f['Segmentations']:
-        #     del (f['Segmentations']['Epi'])
+        # c
         num_frames = f['Images'].attrs['Number of frames']
         for i, frame in enumerate(f['Images']['Epi']):
             sys.stdout.write(
@@ -34,8 +33,8 @@ def apply_threshold(threshold=SETTINGS.THRESHOLD):
             f.create_dataset(f'Segmentations/Epi/{frame}', dtype='i2', data=image)
 
 def main():
-    #test_threshold(250)
-    apply_threshold()
+    test_threshold(250)
+    #apply_threshold()
 
 
 if __name__ == '__main__':

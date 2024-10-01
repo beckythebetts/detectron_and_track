@@ -10,11 +10,11 @@ MASK_RCNN_MODEL = Path("Models") / 'filter02'
 CELLPOSE_MODEL = Path("cellpose_Models") / 'test_training_data2'
 CLASSES = {'phase': 'Amoeba', 'epi': 'Yeast'}
 REMOVE_EDGE_CELLS = True
-# with h5py.File(DATASET, 'r') as f:
-#     NUM_FRAMES = f['Images'].attrs['Number of frames']
-#     IMAGE_SIZE = f['Images'].attrs['Image size / pixels']
+with h5py.File(DATASET, 'r') as f:
+    NUM_FRAMES = f['Images'].attrs['Number of frames']
+    IMAGE_SIZE = f['Images'].attrs['Image size / pixels']
 #     print(IMAGE_SIZE[0])
-IMAGE_SIZE = [2048, 2048]
+# IMAGE_SIZE = [2048, 2048]
 
 # ******* EPI THRESHOLDING *******
 THRESHOLD = 250
