@@ -15,7 +15,7 @@ import torch
 import SETTINGS
 
 class CellposeModel_withsave(models.CellposeModel):
-    def eval(self, hdf5_file, batch_size=8, resample=True, channels=None, channel_axis=None,
+    def eval(self, x, hdf5_file, batch_size=8, resample=True, channels=None, channel_axis=None,
              z_axis=None, normalize=True, invert=False, rescale=None, diameter=None,
              flow_threshold=0.4, cellprob_threshold=0.0, do_3D=False, anisotropy=None,
              stitch_threshold=0.0, min_size=15, max_size_fraction=0.4, niter=None,
@@ -77,10 +77,10 @@ class CellposeModel_withsave(models.CellposeModel):
                 - styles (list, np.ndarray): style vector summarizing each image of size 256.
 
         """
-        with h5py.File(hdf5_file, 'r') as f:
-            x = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
+
         models_logger = logging.getLogger(__name__)
         if isinstance(x, list) or x.squeeze().ndim == 5:
+
             self.timing = []
             masks, styles, flows = [], [], []
             tqdm_out = utils.TqdmToLogger(models_logger, level=logging.INFO)
@@ -152,9 +152,11 @@ def segment(hdf5_file):
     with h5py.File(hdf5_file, 'r+') as f:
         if 'Segmentations' in f:
             del f['Segmentations']
+        ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
+
         # ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
         # print('***TESTING***', ims[0])
-    masks, flows, styles = model.eval(hdf5_file, diameter=28, flow_threshold=0.2, channels=channels)
+    masks, flows, styles = model.eval(ims, hdf5_file, diameter=28, flow_threshold=0.2, channels=channels)
         #threshold_epi.main()
         # batchsize = 50 # batchsize for saving
         #
