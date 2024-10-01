@@ -61,7 +61,7 @@ class Tracker:
             #self.old_frame += self.missing_cells[missing_index].mask*missing_index
 
     def update_new_frame(self):
-        updated_new_frame = torch.zeros(SETTINGS.IMAGE_SIZE).cuda()
+        updated_new_frame = torch.zeros(tuple(SETTINGS.IMAGE_SIZE)).cuda()
         self.add_missing_masks()
         #print('new ', len(mask_funcs.split_mask(self.new_frame, use_torch=True)))
         for new_mask, mask_index in mask_funcs.SplitMask(self.new_frame):
@@ -149,7 +149,7 @@ class Tracker:
             frame = self.read_frame(i)
             # frame = torch.tensor(utils.read_tiff(frame_path).astype(np.int16)).cuda()
             # cleaned_frame = frame.clone()
-            cleaned_frame = torch.zeros(SETTINGS.IMAGE_SIZE)
+            cleaned_frame = torch.zeros(tuple(SETTINGS.IMAGE_SIZE))
             for old_i, new_i in index_mapping.items():
                 cleaned_frame[frame==old_i] = new_i
                 #cleaned_frame = torch.where(frame==old_i, new_i, cleaned_frame)
