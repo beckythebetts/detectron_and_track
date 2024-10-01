@@ -8,7 +8,7 @@ import SETTINGS
 
 
 def cellpose_train(directory):
-    print([im.name for im in (directory / 'train').iterdir()])
+    print([im.suffix for im in (directory / 'train').iterdir()])
     use_GPU = core.use_gpu()
     io.logger_setup()
     images, labels, image_names, test_images, test_labels, image_names_test = io.load_train_test_data(str(directory / 'train'), str(directory / 'validate'), image_filter='im', mask_filter='mask')
