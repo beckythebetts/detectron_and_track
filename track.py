@@ -113,7 +113,7 @@ class Tracker:
             self.write_frame(i, self.old_frame.cpu())
             gc.collect()
             #utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
-        self.file.close()
+
 
     def clean_up(self, threshold=SETTINGS.MINIMUM_TRACK_LENGTH):
         print('\n----------\nCLEANING TRACKS\n----------\n')
@@ -189,11 +189,12 @@ class Tracker:
                         im_rgb[c] = torch.where(outline, colour_dict[j+1][c], im_rgb[c])
             im_rgb = im_rgb.permute(1, 2, 0)
             utils.save_tiff((im_rgb).cpu().numpy().astype(np.uint8), view_track_dir / ("{0:04}".format(i) + '.jpg'))
+        self.file.close()
 
 
 def main():
     my_tracker = Tracker('Phase')
-    my_tracker.track()
+    #my_tracker.track()
     if SETTINGS.CLEAN_TRACKS:
         my_tracker.clean_up()
     if SETTINGS.VIEW_TRACKS:
