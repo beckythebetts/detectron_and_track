@@ -1,6 +1,6 @@
 import sys
 
-from cellpose import models, core, plot, io
+from cellpose import models, core, plot, io, utils
 from cellpose.io import logger_setup
 import h5py
 import numpy as np
