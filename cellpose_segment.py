@@ -6,7 +6,6 @@ import h5py
 import numpy as np
 
 import SETTINGS
-import threshold_epi
 
 class CellposeModel_withsave(models.CellposeModel):
     def eval(self, x, batch_size=8, resample=True, channels=None, channel_axis=None,
