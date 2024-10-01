@@ -8,49 +8,149 @@ import numpy as np
 import SETTINGS
 import threshold_epi
 
+class CellposeModel_withsave(models.CellposeModel)
+    def eval(self, x, batch_size=8, resample=True, channels=None, channel_axis=None,
+             z_axis=None, normalize=True, invert=False, rescale=None, diameter=None,
+             flow_threshold=0.4, cellprob_threshold=0.0, do_3D=False, anisotropy=None,
+             stitch_threshold=0.0, min_size=15, max_size_fraction=0.4, niter=None,
+             augment=False, tile=True, tile_overlap=0.1, bsize=224,
+             interp=True, compute_masks=True, progress=None):
+        """ segment list of images x, or 4D array - Z x nchan x Y x X
+
+        Args:
+            x (list, np.ndarry): can be list of 2D/3D/4D images, or array of 2D/3D/4D images
+            batch_size (int, optional): number of 224x224 patches to run simultaneously on the GPU
+                (can make smaller or bigger depending on GPU memory usage). Defaults to 8.
+            resample (bool, optional): run dynamics at original image size (will be slower but create more accurate boundaries). Defaults to True.
+            channels (list, optional): list of channels, either of length 2 or of length number of images by 2.
+                First element of list is the channel to segment (0=grayscale, 1=red, 2=green, 3=blue).
+                Second element of list is the optional nuclear channel (0=none, 1=red, 2=green, 3=blue).
+                For instance, to segment grayscale images, input [0,0]. To segment images with cells
+                in green and nuclei in blue, input [2,3]. To segment one grayscale image and one
+                image with cells in green and nuclei in blue, input [[0,0], [2,3]].
+                Defaults to None.
+            channel_axis (int, optional): channel axis in element of list x, or of np.ndarray x.
+                if None, channels dimension is attempted to be automatically determined. Defaults to None.
+            z_axis  (int, optional): z axis in element of list x, or of np.ndarray x.
+                if None, z dimension is attempted to be automatically determined. Defaults to None.
+            normalize (bool, optional): if True, normalize data so 0.0=1st percentile and 1.0=99th percentile of image intensities in each channel;
+                can also pass dictionary of parameters (all keys are optional, default values shown):
+                    - "lowhigh"=None : pass in normalization values for 0.0 and 1.0 as list [low, high] (if not None, all following parameters ignored)
+                    - "sharpen"=0 ; sharpen image with high pass filter, recommended to be 1/4-1/8 diameter of cells in pixels
+                    - "normalize"=True ; run normalization (if False, all following parameters ignored)
+                    - "percentile"=None : pass in percentiles to use as list [perc_low, perc_high]
+                    - "tile_norm"=0 ; compute normalization in tiles across image to brighten dark areas, to turn on set to window size in pixels (e.g. 100)
+                    - "norm3D"=False ; compute normalization across entire z-stack rather than plane-by-plane in stitching mode.
+                Defaults to True.
+            invert (bool, optional): invert image pixel intensity before running network. Defaults to False.
+            rescale (float, optional): resize factor for each image, if None, set to 1.0;
+                (only used if diameter is None). Defaults to None.
+            diameter (float, optional):  diameter for each image,
+                if diameter is None, set to diam_mean or diam_train if available. Defaults to None.
+            flow_threshold (float, optional): flow error threshold (all cells with errors below threshold are kept) (not used for 3D). Defaults to 0.4.
+            cellprob_threshold (float, optional): all pixels with value above threshold kept for masks, decrease to find more and larger masks. Defaults to 0.0.
+            do_3D (bool, optional): set to True to run 3D segmentation on 3D/4D image input. Defaults to False.
+            anisotropy (float, optional): for 3D segmentation, optional rescaling factor (e.g. set to 2.0 if Z is sampled half as dense as X or Y). Defaults to None.
+            stitch_threshold (float, optional): if stitch_threshold>0.0 and not do_3D, masks are stitched in 3D to return volume segmentation. Defaults to 0.0.
+            min_size (int, optional): all ROIs below this size, in pixels, will be discarded. Defaults to 15.
+            max_size_fraction (float, optional): max_size_fraction (float, optional): Masks larger than max_size_fraction of
+                total image size are removed. Default is 0.4.
+            niter (int, optional): number of iterations for dynamics computation. if None, it is set proportional to the diameter. Defaults to None.
+            augment (bool, optional): tiles image with overlapping tiles and flips overlapped regions to augment. Defaults to False.
+            tile (bool, optional): tiles image to ensure GPU/CPU memory usage limited (recommended). Defaults to True.
+            tile_overlap (float, optional): fraction of overlap of tiles when computing flows. Defaults to 0.1.
+            bsize (int, optional): block size for tiles, recommended to keep at 224, like in training. Defaults to 224.
+            interp (bool, optional): interpolate during 2D dynamics (not available in 3D) . Defaults to True.
+            compute_masks (bool, optional): Whether or not to compute dynamics and return masks. This is set to False when retrieving the styles for the size model. Defaults to True.
+            progress (QProgressBar, optional): pyqt progress bar. Defaults to None.
+
+        Returns:
+            A tuple containing:
+                - masks (list, np.ndarray): labelled image(s), where 0=no masks; 1,2,...=mask labels
+                - flows (list): list of lists: flows[k][0] = XY flow in HSV 0-255; flows[k][1] = XY(Z) flows at each pixel; flows[k][2] = cell probability (if > cellprob_threshold, pixel used for dynamics); flows[k][3] = final pixel locations after Euler integration
+                - styles (list, np.ndarray): style vector summarizing each image of size 256.
+
+        """
+        if isinstance(x, list) or x.squeeze().ndim == 5:
+            self.timing = []
+            masks, styles, flows = [], [], []
+            tqdm_out = utils.TqdmToLogger(models_logger, level=logging.INFO)
+            nimg = len(x)
+            iterator = trange(nimg, file=tqdm_out,
+                              mininterval=30) if nimg > 1 else range(nimg)
+            for i in iterator:
+                tic = time.time()
+                maski, flowi, stylei = self.eval(
+                    x[i], batch_size=batch_size,
+                    channels=channels[i] if channels is not None and
+                                            ((len(channels) == len(x) and
+                                              (isinstance(channels[i], list) or
+                                               isinstance(channels[i], np.ndarray)) and len(channels[i]) == 2))
+                    else channels, channel_axis=channel_axis, z_axis=z_axis,
+                    normalize=normalize, invert=invert,
+                    rescale=rescale[i] if isinstance(rescale, list) or
+                                          isinstance(rescale, np.ndarray) else rescale,
+                    diameter=diameter[i] if isinstance(diameter, list) or
+                                            isinstance(diameter, np.ndarray) else diameter, do_3D=do_3D,
+                    anisotropy=anisotropy, augment=augment, tile=tile,
+                    tile_overlap=tile_overlap, bsize=bsize, resample=resample,
+                    interp=interp, flow_threshold=flow_threshold,
+                    cellprob_threshold=cellprob_threshold, compute_masks=compute_masks,
+                    min_size=min_size, max_size_fraction=max_size_fraction,
+                    stitch_threshold=stitch_threshold,
+                    progress=progress, niter=niter)
+                with h5py.File(hdf5_file, 'r+') as f:
+                    f.create_dataset(f'Segmentations/Phase/{int(i):04}', dtype='i2', data=maski)
+                # masks.append(maski)
+                # flows.append(flowi)
+                # styles.append(stylei)
+                self.timing.append(time.time() - tic)
+            return masks, flows, styles
+
 def segment(hdf5_file):
     use_GPU = core.use_gpu()
     print('>>> GPU activated? %d' % use_GPU)
     logger_setup()
 
-    model = models.Cellpose(gpu=use_GPU, model_type='cyto3')
+    model = models.CellposeModel(gpu=use_GPU, pretrained_model=str(SETTINGS.CELLPOSE_MODEL))
     channels = [0, 0]
     with h5py.File(hdf5_file, 'r+') as f:
         if 'Segmentations' in f:
             del f['Segmentations']
-
+        ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
+        masks, flows, styles = model.eval(ims, diameter=28, flow_threshold=0.2, channels=channels)
         #threshold_epi.main()
-        batchsize = 50 # batchsize for saving
-
-        num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
-        batches = [np.arange(i * batchsize, min(((i + 1) * batchsize), SETTINGS.NUM_FRAMES)) for i in
-                   range(0, num_batches + 1)]
-
-        for i, batch in enumerate(batches):
-            print(f'\nSEGMENTING BATCH {i+1} / {num_batches}')
-            ims = [f['Images']['Phase'][f'{int(frame):04}'][:] for frame in batch]
-
-            masks, flows, styles, diams = model.eval(ims, diameter=28, flow_threshold=0.2, channels=channels)
-
-            print(f'\nSAVING BATCH {i+1} / {num_batches}')
-            for j, (mask, frame) in enumerate(zip(masks, batch)):
-                sys.stdout.write(f'\r{j+1} / {batchsize}')
-                sys.stdout.flush()
-
-                # #NUMPY
-                # epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
-                # for idx in np.unique(mask):
-                #     if idx != 0:
-                #         maski = np.where(mask==idx, 1, 0)
-                #         if np.sum(np.logical_and(maski, epi_mask)) > np.sum(maski):
-                #             mask = np.where(mask==idx, 0, mask)
-                #
-                # #TORCH
-                # epi_mask = torch.tensor(f['Images']['Epi'][f'{int(frame):04}'][:]).to(device)
-                # mask = torch.tensor(mask).to(device)
-
-
-                f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)
+        # batchsize = 50 # batchsize for saving
+        #
+        # num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
+        # batches = [np.arange(i * batchsize, min(((i + 1) * batchsize), SETTINGS.NUM_FRAMES)) for i in
+        #            range(0, num_batches + 1)]
+        #
+        # for i, batch in enumerate(batches):
+        #     print(f'\nSEGMENTING BATCH {i+1} / {num_batches}')
+        #     ims = [f['Images']['Phase'][f'{int(frame):04}'][:] for frame in batch]
+        #
+        #     masks, flows, styles = model.eval(ims, diameter=28, flow_threshold=0.2, channels=channels)
+        #
+        #     print(f'\nSAVING BATCH {i+1} / {num_batches}')
+        #     for j, (mask, frame) in enumerate(zip(masks, batch)):
+        #         sys.stdout.write(f'\r{j+1} / {batchsize}')
+        #         sys.stdout.flush()
+        #
+        #         # #NUMPY
+        #         # epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
+        #         # for idx in np.unique(mask):
+        #         #     if idx != 0:
+        #         #         maski = np.where(mask==idx, 1, 0)
+        #         #         if np.sum(np.logical_and(maski, epi_mask)) > np.sum(maski):
+        #         #             mask = np.where(mask==idx, 0, mask)
+        #         #
+        #         # #TORCH
+        #         # epi_mask = torch.tensor(f['Images']['Epi'][f'{int(frame):04}'][:]).to(device)
+        #         # mask = torch.tensor(mask).to(device)
+        #
+        #
+        #         f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)
         f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
 
 def main():
