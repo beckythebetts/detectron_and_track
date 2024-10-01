@@ -11,7 +11,7 @@ import threshold_epi
 def segment(hdf5_file):
     use_GPU = core.use_gpu()
     print('>>> GPU activated? %d' % use_GPU)
-    #logger_setup()
+    logger_setup()
 
     model = models.Cellpose(gpu=use_GPU, model_type='cyto3')
     channels = [0, 0]
@@ -19,20 +19,20 @@ def segment(hdf5_file):
         if 'Segmentations' in f:
             del f['Segmentations']
 
-        threshold_epi.main()
-        batchsize = 2 # batchsize for saving
+        #threshold_epi.main()
+        batchsize = 50 # batchsize for saving
 
         num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
         batches = [np.arange(i * batchsize, min(((i + 1) * batchsize), SETTINGS.NUM_FRAMES)) for i in
                    range(0, num_batches + 1)]
 
         for i, batch in enumerate(batches):
-            print(f'\nSegmenting Batch {i+1} / {num_batches}')
+            print(f'\nSEGMENTING BATCH {i+1} / {num_batches}')
             ims = [f['Images']['Phase'][f'{int(frame):04}'][:] for frame in batch]
 
             masks, flows, styles, diams = model.eval(ims, diameter=0, flow_threshold=0.2, channels=channels)
 
-            print(f'\nSaving Batch {i+1} / {num_batches}')
+            print(f'\nSAVING BATCH {i+1} / {num_batches}')
             for j, (mask, frame) in enumerate(zip(masks, batch)):
                 sys.stdout.write(f'\r{j+1} / {batchsize}')
                 sys.stdout.flush()
@@ -51,7 +51,7 @@ def segment(hdf5_file):
 
 
                 f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)
-                f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
+        f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
 
 def main():
     segment(SETTINGS.DATASET)
