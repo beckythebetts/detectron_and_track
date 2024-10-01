@@ -125,7 +125,7 @@ def segment(hdf5_file):
         if 'Segmentations' in f:
             del f['Segmentations']
         ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
-        print('***TESTING***', len(ims))
+        print('***TESTING***', ims[0])
         masks, flows, styles = model.eval(ims, diameter=28, flow_threshold=0.2, channels=channels)
         #threshold_epi.main()
         # batchsize = 50 # batchsize for saving
