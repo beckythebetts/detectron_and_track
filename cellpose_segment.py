@@ -142,6 +142,7 @@ class CellposeModel_withsave(models.CellposeModel):
             return masks, flows, styles
 
 def segment(hdf5_file):
+    print(hdf5_file)
     use_GPU = core.use_gpu()
     print('>>> GPU activated? %d' % use_GPU)
     logger_setup()
