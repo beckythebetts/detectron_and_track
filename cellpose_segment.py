@@ -108,9 +108,9 @@ class CellposeModel_withsave(models.CellposeModel):
                     progress=progress, niter=niter)
                 with h5py.File(hdf5_file, 'r+') as f:
                     f.create_dataset(f'Segmentations/Phase/{int(i):04}', dtype='i2', data=maski)
-                # masks.append(maski)
-                # flows.append(flowi)
-                # styles.append(stylei)
+                masks.append(maski)
+                flows.append(flowi)
+                styles.append(stylei)
                 self.timing.append(time.time() - tic)
             return masks, flows, styles
 
