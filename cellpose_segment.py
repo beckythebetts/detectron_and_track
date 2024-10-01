@@ -70,6 +70,7 @@ class CellposeModel_withsave(models.CellposeModel):
                 - styles (list, np.ndarray): style vector summarizing each image of size 256.
 
         """
+        models_logger = logging.getLogger(__name__)
         if isinstance(x, list) or x.squeeze().ndim == 5:
             self.timing = []
             masks, styles, flows = [], [], []
