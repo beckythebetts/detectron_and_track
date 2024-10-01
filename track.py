@@ -90,6 +90,7 @@ class Tracker:
             if missing_index not in self.missing_cells.keys():
                 self.missing_cells[missing_index] = MissingCell(missing_mask)
         self.new_frame = updated_new_frame
+        print(torch.cuda.get_device_properties(0).total_memory)
 
     def track(self):
         print('\n--------------------\nTRACKING - ', self.name, '\n--------------------')
