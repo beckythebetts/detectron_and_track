@@ -37,6 +37,8 @@ class PhagocyticEvent:
 
 def track_phagocytosis_events(hdf5file):
     with h5py.File(hdf5file, 'r+') as f:
+        f['Features'].attrs['Threshold number of frames for phagocytosis'] = SETTINGS.NUM_FRAMES_EATEN_THRESHOLD
+        f['Features'].attrs['Threshold number of pixels for phagocytosis'] = SETTINGS.MINIMUM_PIXELS_PER_PATHOGEN
         for cell in f['Features']:
             sys.stdout.write(f'\r{cell}')
             sys.stdout.flush()

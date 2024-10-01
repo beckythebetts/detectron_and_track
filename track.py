@@ -41,6 +41,10 @@ class Tracker:
         # self.new_frame = torch.tensor(utils.read_tiff(self.mask_ims[1]).astype(np.int16)).cuda()
         # self.max_index = torch.max(self.old_frame)
         self.missing_cells = {} # key is cell index, value is MissingCell class
+        self.file['Segmentations']['Phase'].attrs['Overlap threshold'] = SETTINGS.OVERLAP_THRESHOLD
+        self.file['Segmentaions']['Phase'].attrs['Frame memory'] = SETTINGS.FRAME_MEMORY
+        self.file['Segmentaions']['Phase'].attrs['Minimum track length'] = SETTINGS.MINIMUM_TRACK_LENGTH
+
     def read_frame(self, frame_index):
         return torch.tensor(self.file['Segmentations']['Phase'][self.frames_list[frame_index]][()].astype(np.int16)).to(device)
 
@@ -106,6 +110,7 @@ class Tracker:
             self.write_frame(i, self.old_frame.cpu())
             gc.collect()
             #utils.save_tiff(self.old_frame.to(dtype=torch.int16).cpu().numpy().astype(np.uint16), SETTINGS.DIRECTORY / 'tracked' / self.name / ("{0:04}".format(i) + '.tif'))
+        self.file.close()
 
     def clean_up(self, threshold=SETTINGS.MINIMUM_TRACK_LENGTH):
         print('\n----------\nCLEANING TRACKS\n----------\n')

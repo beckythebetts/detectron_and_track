@@ -19,6 +19,7 @@ def segment(hdf5_file):
     with h5py.File(hdf5_file, 'r+') as f:
         if 'Segmentations' in f:
             del f['Segmentations']
+        f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
         threshold_epi.main()
         batchsize = 2 # batchsize for saving
 
