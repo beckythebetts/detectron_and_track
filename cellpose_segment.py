@@ -8,7 +8,7 @@ import numpy as np
 import SETTINGS
 import threshold_epi
 
-class CellposeModel_withsave(models.CellposeModel)
+class CellposeModel_withsave(models.CellposeModel):
     def eval(self, x, batch_size=8, resample=True, channels=None, channel_axis=None,
              z_axis=None, normalize=True, invert=False, rescale=None, diameter=None,
              flow_threshold=0.4, cellprob_threshold=0.0, do_3D=False, anisotropy=None,
