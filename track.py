@@ -92,7 +92,7 @@ class Tracker:
                 self.missing_cells[missing_index] = MissingCell(missing_mask)
         self.new_frame = updated_new_frame
         #print('memory', torch.cuda.memory_allocated(0), len(self.missing_cells))
-        self.memory_file.write(str(torch.cuda.memory_allocated(0), len(self.missing_cells), '\n'))
+        self.memory_file.write(f'{torch.cuda.memory_allocated(0)} {len(self.missing_cells)} \n')
 
     def track(self):
         print('\n--------------------\nTRACKING - ', self.name, '\n--------------------')
