@@ -112,7 +112,7 @@ def segment(hdf5_file):
     print('>>> GPU activated? %d' % use_GPU)
     logger_setup()
 
-    model = CellposeModel_withsave(gpu=use_GPU, pretrained_model=str(SETTINGS.CELLPOSE_MODEL))
+    model = CellposeModel_withsave(gpu=use_GPU, pretrained_model=str(SETTINGS.CELLPOSE_MODEL / 'models' / 'model'))
     channels = [0, 0]
     with h5py.File(hdf5_file, 'r+') as f:
         if 'Segmentations' in f:
