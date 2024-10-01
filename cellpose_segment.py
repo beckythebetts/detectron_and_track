@@ -108,10 +108,35 @@ class CellposeModel_withsave(models.CellposeModel):
                     progress=progress, niter=niter)
                 with h5py.File(hdf5_file, 'r+') as f:
                     f.create_dataset(f'Segmentations/Phase/{int(i):04}', dtype='i2', data=maski)
-                masks.append(maski)
-                flows.append(flowi)
-                styles.append(stylei)
+                # masks.append(maski)
+                # flows.append(flowi)
+                # styles.append(stylei)
                 self.timing.append(time.time() - tic)
+            return masks, flows, styles
+        else:
+            # reshape image
+            x = transforms.convert_image(x, channels, channel_axis=channel_axis,
+                                         z_axis=z_axis, do_3D=(do_3D or
+                                                               stitch_threshold > 0),
+                                         nchan=self.nchan)
+            if x.ndim < 4:
+                x = x[np.newaxis, ...]
+
+            if diameter is not None and diameter > 0:
+                rescale = self.diam_mean / diameter
+            elif rescale is None:
+                diameter = self.diam_labels
+                rescale = self.diam_mean / diameter
+
+            masks, styles, dP, cellprob, p = self._run_cp(
+                x, compute_masks=compute_masks, normalize=normalize, invert=invert,
+                rescale=rescale, resample=resample, augment=augment, tile=tile,
+                batch_size=batch_size, tile_overlap=tile_overlap, bsize=bsize, flow_threshold=flow_threshold,
+                cellprob_threshold=cellprob_threshold, interp=interp, min_size=min_size,
+                max_size_fraction=max_size_fraction, do_3D=do_3D, anisotropy=anisotropy, niter=niter,
+                stitch_threshold=stitch_threshold)
+
+            flows = [plot.dx_to_circ(dP), dP, cellprob, p]
             return masks, flows, styles
 
 def segment(hdf5_file):
