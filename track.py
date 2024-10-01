@@ -44,6 +44,7 @@ class Tracker:
         self.file['Segmentations']['Phase'].attrs['Overlap threshold'] = SETTINGS.OVERLAP_THRESHOLD
         self.file['Segmentations']['Phase'].attrs['Frame memory'] = SETTINGS.FRAME_MEMORY
         self.file['Segmentations']['Phase'].attrs['Minimum track length'] = SETTINGS.MINIMUM_TRACK_LENGTH
+        self.memory_file = open('memory.txt', 'a')
 
     def read_frame(self, frame_index):
         return torch.tensor(self.file['Segmentations']['Phase'][self.frames_list[frame_index]][()].astype(np.int16)).to(device)
@@ -90,7 +91,8 @@ class Tracker:
             if missing_index not in self.missing_cells.keys():
                 self.missing_cells[missing_index] = MissingCell(missing_mask)
         self.new_frame = updated_new_frame
-        print('memory', torch.cuda.get_device_properties(0).total_memory, len(self.missing_cells))
+        #print('memory', torch.cuda.memory_allocated(0), len(self.missing_cells))
+        self.memory_file.write(torch.cuda.memory_allocated(0), len(self.missing_cells))
 
     def track(self):
         print('\n--------------------\nTRACKING - ', self.name, '\n--------------------')
