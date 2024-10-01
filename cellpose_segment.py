@@ -186,6 +186,7 @@ def segment(hdf5_file):
         #
         #
         #         f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)
+    with h5py.File(hdf5_file, 'r+') as f:
         f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
 
 def main():
