@@ -90,7 +90,7 @@ class CellposeModel_withsave(models.CellposeModel):
             for i in iterator:
                 tic = time.time()
                 maski, flowi, stylei = self.eval(
-                    x[i], batch_size=batch_size,
+                    x[i], hdf5_file, batch_size=batch_size,
                     channels=channels[i] if channels is not None and
                                             ((len(channels) == len(x) and
                                               (isinstance(channels[i], list) or
