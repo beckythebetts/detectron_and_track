@@ -78,7 +78,7 @@ class CellposeModel_withsave(models.CellposeModel):
 
         """
         with h5py.File(hdf5_file, 'r') as f:
-            ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
+            x = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
         models_logger = logging.getLogger(__name__)
         if isinstance(x, list) or x.squeeze().ndim == 5:
             self.timing = []
