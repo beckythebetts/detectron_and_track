@@ -42,6 +42,7 @@ class CellposeKfold:
                     if file.suffix == '.txt':
                         results.append(pd.read_csv(file, sep='\t', index_col=0))
         results = pd.concat(results, axis=0)
+        print(results)
         self.means, self.stds = results.groupby(level=0).mean(), results.groupby(level=0).std()
         self.means.to_csv(str(self.directory / 'results_means.txt'), sep='\t')
         self.stds.to_csv(str(self.directory / 'results_stds.txt'), sep='\t')
@@ -96,8 +97,8 @@ class CellposeKfold:
 
 def main():
     kfold = CellposeKfold(Path('cellpose_Models') / 'filter_kfold')
-    kfold.split_datasets()
-    kfold.train_eval_datasets()
+    # kfold.split_datasets()
+    # kfold.train_eval_datasets()
     kfold.get_results()
     kfold.plot_results()
     kfold.plot_losses()
