@@ -40,6 +40,7 @@ class CellposeKfold:
             if dataset_dir.name != 'all':
                 for file in dataset_dir.iterdir():
                     if file.suffix == '.txt':
+                        print(file)
                         resultsi = pd.read_csv(file, sep='\t', index_col=0)
                         print(resultsi)
                         results.append(resultsi)
@@ -70,7 +71,7 @@ class CellposeKfold:
         file_names = [file / 'losses.txt' for file in self.directory.iterdir() if file.name != 'all']
         for dataset_dir in self.directory.iterdir():
             if dataset_dir.name != 'all':
-                with open(datset_dir / 'loses.txt') as f:
+                with open(dataset_dir / 'loses.txt') as f:
                     losses = json.load(f)
                     train_losses.append(f['Train Losses'])
                     test_losses.append(f['Validation Losses'])
