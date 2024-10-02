@@ -6,6 +6,16 @@ import shutil
 class CellposeKfold:
     def __init__(self, directory):
         self.directory = directory
+        self.names = np.unique([name.stem[2:] for im in (directory / 'all').iterdir() if 'im' in im])
+        self.pairs = [[directory / 'all' / ('im', name, '.png'), directory / 'all' / ('mask', name, '.png')] for name in self.names]
+
+    def split_datasets(self):
+        for im in self.names:
+            train_dir = directory / f'test_with_{im_name}' / 'train'
+            val_dir = directory / f'test_with_{im_name}' / 'validate'
+            train_dir.mkdir(parents=True)
+            val_dir.mkdir()
+
 def move_im()
 def split_datasets(directory):
     im_names = np.unique([name.stem[2:] for im in (directory / 'all').iterdir() if 'im' in im])
