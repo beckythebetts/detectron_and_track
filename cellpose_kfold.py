@@ -40,9 +40,10 @@ class CellposeKfold:
             if dataset_dir.name != 'all':
                 for file in dataset_dir.iterdir():
                     if file.suffix == '.txt':
-                        results.append(pd.read_csv(file, sep='\t', index_col=0))
+                        resultsi = pd.read_csv(file, sep='\t', index_col=0)
+                        print(resultsi)
+                        results.append(resultsi)
         results = pd.concat(results, axis=0)
-        print(results)
         self.means, self.stds = results.groupby(level=0).mean(), results.groupby(level=0).std()
         self.means.to_csv(str(self.directory / 'results_means.txt'), sep='\t')
         self.stds.to_csv(str(self.directory / 'results_stds.txt'), sep='\t')
