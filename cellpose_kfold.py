@@ -71,7 +71,7 @@ class CellposeKfold:
             if dataset_dir.name != 'all' and dataset_dir.is_dir():
                 with open(dataset_dir / 'losses.txt') as f:
                     losses = json.load(f)
-                    print(type(losses))
+                    print(losses['Train Losses'])
                     train_losses.append(f['Train Losses'])
                     test_losses.append(f['Validation Losses'])
         train_losses = np.vstack(train_losses)
