@@ -32,7 +32,7 @@ class CellposeKfold:
         for dataset_dir in self.directory.iterdir():
             if dataset_dir.name != 'all':
                 cellpose_train.cellpose_train(dataset_dir)
-                cellpose_eval.cellpose_eval(dataset_dir, model=dataset_dir / 'models' / 'model')
+                cellpose_eval.cellpose_eval(dataset_dir / 'validate', model=dataset_dir / 'models' / 'model')
 
     def get_results(self):
         results = []
@@ -65,7 +65,7 @@ class CellposeKfold:
     def plot_losses(self):
         train_losses = []
         test_losses = []
-        file_names = [dataset_dir / 'losses.txt' for file in self.directory.iterdir() if file.name != 'all']
+        file_names = [file / 'losses.txt' for file in self.directory.iterdir() if file.name != 'all']
         for dataset_dir in self.directory.iterdir():
             if dataset_dir.name != 'all':
                 with open(datset_dir / 'loses.txt') as f:
