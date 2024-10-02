@@ -84,10 +84,10 @@ class CellposeKfold:
         plt.rcParams["font.family"] = 'serif'
 
         plt.plot(test_iterations, test_means, color='red', label='Validation loss')
-        plf.fill_between(test_iterations, test_means-test_stds, test_means+test_stds, color='red', alpha=0.5, edgecolor='none')
+        plt.fill_between(test_iterations, test_means-test_stds, test_means+test_stds, color='red', alpha=0.5, edgecolor='none')
 
-        plt.plot(iterations, train_means, color='red', label='Train loss')
-        plf.fill_between(iterations, train_means - train_stds, train_means + train_stds, color='navy', alpha=0.5,
+        plt.plot(iterations, train_means, color='navy', label='Train loss')
+        plt.fill_between(iterations, train_means - train_stds, train_means + train_stds, color='navy', alpha=0.5,
                          edgecolor='none')
 
         plt.grid()
