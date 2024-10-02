@@ -31,16 +31,16 @@ class CellposeKfold:
     def train_eval_datasets(self):
         for dataset_dir in self.directory.iterdir():
             if dataset_dir.name != 'all':
-                cellpose_train.cellpose_train(datset_dir)
-                cellpose_eval.cellpose_eval(datset_dir, model=dataset_dir / 'models' / 'model')
+                cellpose_train.cellpose_train(dataset_dir)
+                cellpose_eval.cellpose_eval(dataset_dir, model=dataset_dir / 'models' / 'model')
 
     def get_results(self):
         results = []
         for dataset_dir in self.directory.iterdir():
             if dataset_dir.name != 'all':
-                for file in dataset_dir.dir.iterdir():
+                for file in dataset_dir.iterdir():
                     if file.suffix == '.txt':
-                        resuts.append(pd.read_csv(file, sep='\t', index_col=0))
+                        results.append(pd.read_csv(file, sep='\t', index_col=0))
         results = pd.concat(results, axis=0)
         self.means, self.stds = results.groupby(level=0).mean(), results.groupby(level=0).std()
         self.means.to_csv(str(self.directory / 'results_means.txt'), sep='\t')
