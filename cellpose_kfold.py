@@ -71,9 +71,8 @@ class CellposeKfold:
             if dataset_dir.name != 'all' and dataset_dir.is_dir():
                 with open(dataset_dir / 'losses.txt') as f:
                     losses = json.load(f)
-                    print(losses['Train Losses'])
-                    train_losses.append(f['Train Losses'])
-                    test_losses.append(f['Validation Losses'])
+                    train_losses.append(losses['Train Losses'])
+                    test_losses.append(losses['Validation Losses'])
         train_losses = np.vstack(train_losses)
         test_losses = np.vstack(test_losses)
         train_means = np.mean(train_losses, axis=1)
