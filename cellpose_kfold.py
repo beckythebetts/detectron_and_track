@@ -68,7 +68,7 @@ class CellposeKfold:
         test_losses = []
         file_names = [file / 'losses.txt' for file in self.directory.iterdir() if file.name != 'all']
         for dataset_dir in self.directory.iterdir():
-            if dataset_dir.name != 'all':
+            if dataset_dir.name != 'all' and datset_dir.isdir():
                 with open(dataset_dir / 'losses.txt') as f:
                     losses = json.load(f)
                     train_losses.append(f['Train Losses'])
@@ -99,8 +99,8 @@ def main():
     kfold = CellposeKfold(Path('cellpose_Models') / 'filter_kfold')
     # kfold.split_datasets()
     # kfold.train_eval_datasets()
-    kfold.get_results()
-    kfold.plot_results()
+    # kfold.get_results()
+    # kfold.plot_results()
     kfold.plot_losses()
 
 if __name__ == '__main__':
