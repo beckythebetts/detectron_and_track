@@ -38,9 +38,9 @@ class CellposeKfold:
         results = []
         for dataset_dir in self.directory.iterdir():
             if dataset_dir.name != 'all':
-                for file in dataset_dir.iterdir():
+                for file in (dataset_dir / 'validate').iterdir():
                     if file.suffix == '.txt':
-                        resultsi = pd.read_csv(str(file / 'validate'), sep='\t', index_col=0)
+                        resultsi = pd.read_csv(file, sep='\t', index_col=0)
                         results.append(resultsi)
         results = pd.concat(results, axis=0)
         self.means, self.stds = results.groupby(level=0).mean(), results.groupby(level=0).std()
