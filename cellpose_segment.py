@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 import torch
 
 import SETTINGS
+import threshold_epi
 
 class CellposeModel_withsave(models.CellposeModel):
     def eval(self, x, hdf5_file, batch_size=8, resample=True, channels=None, channel_axis=None,
@@ -109,6 +110,12 @@ class CellposeModel_withsave(models.CellposeModel):
                     stitch_threshold=stitch_threshold,
                     progress=progress, niter=niter)
                 with h5py.File(hdf5_file, 'r+') as f:
+                    # If any detected instances are > 75% epi, remove them from the mask:
+                    epi_im = f['Segmentations']['Epi'][f'{int(i):04}'][:]
+                    overlap_idxs = np.unique(maski[np.logical_and(maski>0, epi_im>0)], return_counts=True)
+                    for idx, count in overlap_idxs:
+                        if count / (maski.count(idx)) > 0.75:
+                            maski[maski==idx] = 0
                     f.create_dataset(f'Segmentations/Phase/{int(i):04}', dtype='i2', data=maski)
                 # masks.append(maski)
                 # flows.append(flowi)
@@ -153,42 +160,8 @@ def segment(hdf5_file):
         if 'Segmentations' in f:
             del f['Segmentations']
         ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
-
-        # ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
-        # print('***TESTING***', ims[0])
+    threshold_epi.main()
     masks, flows, styles = model.eval(ims, hdf5_file, diameter=28, flow_threshold=0.2, channels=channels)
-        #threshold_epi.main()
-        # batchsize = 50 # batchsize for saving
-        #
-        # num_batches, remainder = divmod(SETTINGS.NUM_FRAMES, batchsize)
-        # batches = [np.arange(i * batchsize, min(((i + 1) * batchsize), SETTINGS.NUM_FRAMES)) for i in
-        #            range(0, num_batches + 1)]
-        #
-        # for i, batch in enumerate(batches):
-        #     print(f'\nSEGMENTING BATCH {i+1} / {num_batches}')
-        #     ims = [f['Images']['Phase'][f'{int(frame):04}'][:] for frame in batch]
-        #
-        #     masks, flows, styles = model.eval(ims, diameter=28, flow_threshold=0.2, channels=channels)
-        #
-        #     print(f'\nSAVING BATCH {i+1} / {num_batches}')
-        #     for j, (mask, frame) in enumerate(zip(masks, batch)):
-        #         sys.stdout.write(f'\r{j+1} / {batchsize}')
-        #         sys.stdout.flush()
-        #
-        #         # #NUMPY
-        #         # epi_mask = f['Images']['Epi'][f'{int(frame):04}'][:]
-        #         # for idx in np.unique(mask):
-        #         #     if idx != 0:
-        #         #         maski = np.where(mask==idx, 1, 0)
-        #         #         if np.sum(np.logical_and(maski, epi_mask)) > np.sum(maski):
-        #         #             mask = np.where(mask==idx, 0, mask)
-        #         #
-        #         # #TORCH
-        #         # epi_mask = torch.tensor(f['Images']['Epi'][f'{int(frame):04}'][:]).to(device)
-        #         # mask = torch.tensor(mask).to(device)
-        #
-        #
-        #         f.create_dataset(f'Segmentations/Phase/{int(frame):04}', dtype='i2', data=mask)
     with h5py.File(hdf5_file, 'r+') as f:
         f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
 
