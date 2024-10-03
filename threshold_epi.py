@@ -44,7 +44,7 @@ def apply_threshold(threshold=SETTINGS.THRESHOLD):
             f['Segmentations']['Epi'].attrs['Threshold'] = threshold
 
 def main():
-    test_filter_and_threshold(250, 20, -1, 100, 100)
+    test_filter_and_threshold(250, 20, -1, 50, 50)
     #apply_threshold()
 
 
