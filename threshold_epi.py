@@ -8,9 +8,16 @@ import sys
 import numpy as np
 import h5py
 
-def test_threshold(test_threshold_value):
+import bilateral_filter
+
+def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, sigmaSpace):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
+        plt.imshow(test_image)
+        plt.show()
+        test_image = bilateral_filter(test_image, iteratiions, d, sigmaColour, sigmaSpace)
+        plt.imshow(test_image)
+        plt.show()
         mask = np.where(test_image > test_threshold_value, 1, 0)
         test_image = np.stack((test_image, test_image, test_image), axis=-1)
         print(test_image.shape)
