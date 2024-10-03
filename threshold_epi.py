@@ -22,7 +22,7 @@ def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, 
 
         fig = plt.figure()
         grid = ImageGrid(fig, (0,0,1,1), nrows_ncols=(1, 3))
-        for ax, im in zip(grip, (test_image, filtered_image, thresholded_image)):
+        for ax, im in zip(grid, (test_image, filtered_image, thresholded_image)):
             ax.imshow(im)
             ax.axis('off')
         # plt.imshow(test_image)
