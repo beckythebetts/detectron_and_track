@@ -14,7 +14,7 @@ import bilateral_filter
 def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, sigmaSpace):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
-        filtered_image = bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
+        filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
         mask = np.where(filtered_image > test_threshold_value, 1, 0)
         thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
         print(test_image.shape)
