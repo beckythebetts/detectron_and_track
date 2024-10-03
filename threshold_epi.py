@@ -18,7 +18,7 @@ def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, 
         mask = np.where(filtered_image > test_threshold_value, 1, 0)
         thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
         print(test_image.shape)
-        thresholded_image[:,:,1] = np.where(mask, 1, filtered_image[:,:,1])
+        thresholded_image[:,:,1] = np.where(mask, 1, thresholded_image[:,:,1])
 
         fig = plt.figure()
         grid = ImageGrid(fig, (0,0,1,1), nrows_ncols=(1, 3))
