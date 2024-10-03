@@ -1,6 +1,7 @@
 import SETTINGS
 import utils
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import ImageGrid
 import torch
 import cv2
 from scipy.ndimage import label
@@ -13,16 +14,18 @@ import bilateral_filter
 def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, sigmaSpace):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
-        plt.imshow(test_image)
-        plt.show()
-        test_image = bilateral_filter(test_image, iteratiions, d, sigmaColour, sigmaSpace)
-        plt.imshow(test_image)
-        plt.show()
-        mask = np.where(test_image > test_threshold_value, 1, 0)
-        test_image = np.stack((test_image, test_image, test_image), axis=-1)
+        filtered_image = bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
+        mask = np.where(filtered_image > test_threshold_value, 1, 0)
+        thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
         print(test_image.shape)
-        test_image[:,:,1] = np.where(mask, 1, test_image[:,:,1])
-        plt.imshow(test_image)
+        thresholded_image[:,:,1] = np.where(mask, 1, filtered_image[:,:,1])
+
+        fig = plt.figure()
+        grid = ImageGrid(fig, (0,0,1,1), nrows_ncols=(1, 3))
+        for ax, im in zip(grip, (test_image, filtered_image, thresholded_image)):
+            ax.imshow(im)
+            ax.axis('off')
+        # plt.imshow(test_image)
         plt.show()
 
 def apply_threshold(threshold=SETTINGS.THRESHOLD):
