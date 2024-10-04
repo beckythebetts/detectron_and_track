@@ -40,7 +40,8 @@ def test_filter_and_threshold(test_threshold_value, psfsigma=2):
         psf = np.zeros((5, 5))
         psf[2, 2] = 1
         psf = skimage.filters.gaussian(psf, sigma=psfsigma)
-        filtered_image, _ = skimage.restoration.unsupervised_wiener(test_image, psf)
+        psf = psf/np.sum(psf)
+        filtered_image = skimage.restoration.unsupervised_wiener(test_image, psf)
         mask = np.where(filtered_image > test_threshold_value, 1, 0)
         thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
         print(test_image.shape)
