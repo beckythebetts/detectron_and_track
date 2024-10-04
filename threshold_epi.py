@@ -97,11 +97,11 @@ def apply_threshold(threshold=SETTINGS.THRESHOLD):
             f['Segmentations']['Epi'].attrs['Threshold'] = threshold
 
 def main():
-    test_watershed()
+    #test_watershed()
     #test_chan_vese()
     #test_filter_and_threshold(250, 20, -1, 20, 20)
     #test_filter_and_threshold(50)
-    #apply_threshold()
+    apply_threshold()
 
 
 if __name__ == '__main__':
