@@ -38,7 +38,7 @@ def test_filter_and_threshold(test_threshold_value, psf=np.array([[1, 1, 1],
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
         #filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
-        filtered_image = skimage.restoration.unsupervised_wiener(test_image, psf)
+        filtered_image = skimage.restoration.unsupervised_wiener(test_image, psf)[0]
         mask = np.where(filtered_image > test_threshold_value, 1, 0)
         thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
         print(test_image.shape)
