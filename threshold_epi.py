@@ -36,6 +36,7 @@ import bilateral_filter
 def test_filter_and_threshold(test_threshold_value, psfsigma=1):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
+        print(np.unique(test_image))
         #filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
         psf = np.zeros((3, 3))
         psf[2, 2] = 1
