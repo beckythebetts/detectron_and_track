@@ -112,8 +112,8 @@ class CellposeModel_withsave(models.CellposeModel):
                 with h5py.File(hdf5_file, 'r+') as f:
                     # If any detected instances are > 75% epi, remove them from the mask:
                     epi_im = f['Segmentations']['Epi'][f'{int(i):04}'][:]
-                    overlap_idxs = np.unique(maski[np.logical_and(maski>0, epi_im>0)], return_counts=True)
-                    for idx, count in overlap_idxs:
+                    overlap_idxs, counts = np.unique(maski[np.logical_and(maski>0, epi_im>0)], return_counts=True)
+                    for idx, count in zip(overlap_idxs, counts):
                         if count / (maski.count(idx)) > 0.75 and idx !=0:
                             maski[maski==idx] = 0
                     f.create_dataset(f'Segmentations/Phase/{int(i):04}', dtype='i2', data=maski)
@@ -157,10 +157,10 @@ def segment(hdf5_file):
     model = CellposeModel_withsave(gpu=use_GPU, pretrained_model=str(SETTINGS.CELLPOSE_MODEL / 'models' / 'model'))
     channels = [0, 0]
     with h5py.File(hdf5_file, 'r+') as f:
-        if 'Segmentations' in f:
-            del f['Segmentations']
+        # if 'Segmentations' in f:
+        #     del f['Segmentations']
         ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
-    threshold_epi.main()
+    #threshold_epi.main()
     masks, flows, styles = model.eval(ims, hdf5_file, diameter=28, flow_threshold=0.2, channels=channels)
     with h5py.File(hdf5_file, 'r+') as f:
         f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
