@@ -114,7 +114,9 @@ class CellposeModel_withsave(models.CellposeModel):
                     epi_im = f['Segmentations']['Epi'][f'{int(i):04}'][:]
                     overlap_idxs, counts = np.unique(maski[np.logical_and(maski>0, epi_im>0)], return_counts=True)
                     for idx, count in zip(overlap_idxs, counts):
-                        if count / (maski.count(idx)) > 0.75 and idx !=0:
+                        # if count / (maski.count(idx)) > 0.75 and idx !=0:
+                        #     maski[maski==idx] = 0
+                        if count / np.count_nonzero(maski[maski==idx]) > 0.75 and idx !=0:
                             maski[maski==idx] = 0
                     f.create_dataset(f'Segmentations/Phase/{int(i):04}', dtype='i2', data=maski)
                 # masks.append(maski)
