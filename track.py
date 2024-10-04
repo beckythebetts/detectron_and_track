@@ -194,7 +194,7 @@ class Tracker:
 
 def main():
     my_tracker = Tracker('Phase')
-    #my_tracker.track()
+    my_tracker.track()
     if SETTINGS.CLEAN_TRACKS:
         my_tracker.clean_up()
     if SETTINGS.VIEW_TRACKS:

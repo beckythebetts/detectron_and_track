@@ -6,13 +6,35 @@ from mpl_toolkits.axes_grid1 import ImageGrid
 import torch
 import cv2
 from scipy.ndimage import label
-from skimage import restoration, exposure, filters, morphology
+from skimage import restoration, exposure, filters, morphology, segmentation
 import sys
 import numpy as np
 import h5py
 
 import bilateral_filter
+def test_chan_vese():
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
+        mask = segmentation.chan_vese(test_image, mu=0.1, lambda1=1.0, lambda2=5.0)
+        fig = plt.figure()
+        grid = ImageGrid(fig, (0, 0, 1, 1), nrows_ncols=(1, 2))
+        for ax, im in zip(grid, (test_image, mask)):
+            ax.matshow(im)
+            ax.axis('off')
+        # plt.imshow(test_image)
+        plt.show()
 
+def test_watershed():
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
+        mask = segmentation.watershed(test_image)
+        fig = plt.figure()
+        grid = ImageGrid(fig, (0, 0, 1, 1), nrows_ncols=(1, 2))
+        for ax, im in zip(grid, (test_image, mask)):
+            ax.matshow(im)
+            ax.axis('off')
+        # plt.imshow(test_image)
+        plt.show()
 # def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, sigmaSpace):
 #     with h5py.File(SETTINGS.DATASET, 'r') as f:
 #         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
@@ -75,9 +97,11 @@ def apply_threshold(threshold=SETTINGS.THRESHOLD):
             f['Segmentations']['Epi'].attrs['Threshold'] = threshold
 
 def main():
+    test_watershed()
+    #test_chan_vese()
     #test_filter_and_threshold(250, 20, -1, 20, 20)
     #test_filter_and_threshold(50)
-    apply_threshold()
+    #apply_threshold()
 
 
 if __name__ == '__main__':

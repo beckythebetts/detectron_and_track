@@ -159,10 +159,10 @@ def segment(hdf5_file):
     model = CellposeModel_withsave(gpu=use_GPU, pretrained_model=str(SETTINGS.CELLPOSE_MODEL / 'models' / 'model'))
     channels = [0, 0]
     with h5py.File(hdf5_file, 'r+') as f:
-        # if 'Segmentations' in f:
-        #     del f['Segmentations']
+        if 'Segmentations' in f:
+            del f['Segmentations']
         ims = [f['Images']['Phase'][frame][:] for frame in f['Images']['Phase'].keys()]
-    #threshold_epi.main()
+    threshold_epi.main()
     masks, flows, styles = model.eval(ims, hdf5_file, diameter=28, flow_threshold=0.2, channels=channels)
     with h5py.File(hdf5_file, 'r+') as f:
         f['Segmentations']['Phase'].attrs['Model'] = str(SETTINGS.CELLPOSE_MODEL)
