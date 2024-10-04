@@ -7,6 +7,7 @@ import torch
 import cv2
 from scipy.ndimage import label
 from skimage import restoration
+from skimage import filters
 import sys
 import numpy as np
 import h5py
@@ -32,13 +33,14 @@ import bilateral_filter
 
 
 #test with unsupervised wiener deonvolution
-def test_filter_and_threshold(test_threshold_value, psf=np.array([[1, 1, 1],
-                                                         [1, 2, 1],
-                                                         [1, 1, 1]])):
+def test_filter_and_threshold(test_threshold_value, psfsigma=2):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
         #filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
-        filtered_image = skimage.restoration.unsupervised_wiener(test_image, psf)[0]
+        psf = np.zeros((5, 5))
+        psf[2, 2] = 1
+        psf = skimage.filters.gaussian(psf, sigma=psfsigma)
+        filtered_image, _ = skimage.restoration.unsupervised_wiener(test_image, psf)
         mask = np.where(filtered_image > test_threshold_value, 1, 0)
         thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
         print(test_image.shape)
