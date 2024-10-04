@@ -6,8 +6,7 @@ from mpl_toolkits.axes_grid1 import ImageGrid
 import torch
 import cv2
 from scipy.ndimage import label
-from skimage import restoration
-from skimage import filters
+from skimage import restoration, exposure, filters, morphology
 import sys
 import numpy as np
 import h5py
@@ -33,28 +32,32 @@ import bilateral_filter
 
 
 #test with unsupervised wiener deonvolution
-def test_filter_and_threshold(test_threshold_value, psfsigma=1):
+def test_filter_and_threshold(test_threshold_value, psfsigma=1.5):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
-        print(np.unique(test_image))
+        #smoothed_image = filters.gaussian(test_image, sigma=3)
         #filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
-        psf = np.zeros((3, 3))
-        psf[2, 2] = 1
+        psf = np.zeros((21, 21))
+        psf[10, 10] = 1
         psf = skimage.filters.gaussian(psf, sigma=psfsigma)
-        psf = psf/np.sum(psf)
-        filtered_image, _ = skimage.restoration.unsupervised_wiener(test_image, psf)
+        psf = (psf/np.sum(psf))*255
+        filtered_image, _ = restoration.unsupervised_wiener(test_image, psf)
+        filtered_image = skimage.exposure.rescale_intensity(filtered_image, in_range=(0, 1), out_range=(0, 255))
+        filtered_image = filters.gaussian(test_image, sigma=2)
         mask = np.where(filtered_image > test_threshold_value, 1, 0)
-        thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
-        print(test_image.shape)
-        thresholded_image[:,:,1] = np.where(mask, 1, thresholded_image[:,:,1])
+        print(mask)
+        thresholded_image = np.stack((test_image, test_image, test_image), axis=-1)
+        thresholded_image[:,:,1] = np.where(mask==1, 255, thresholded_image[:,:,1])
 
         fig = plt.figure()
-        grid = ImageGrid(fig, (0,0,1,1), nrows_ncols=(1, 3))
-        for ax, im in zip(grid, (test_image, filtered_image, thresholded_image)):
-            ax.imshow(im)
+        grid = ImageGrid(fig, (0,0,1,1), nrows_ncols=(2, 2))
+        for ax, im in zip(grid, (test_image, np.where(test_image>test_threshold_value, 1, 0), filtered_image, mask)):
+            ax.matshow(im)
             ax.axis('off')
         # plt.imshow(test_image)
         plt.show()
+        # plt.matshow(mask)
+        # plt.show()
 
 def apply_threshold(threshold=SETTINGS.THRESHOLD):
     print('\n--------------------\nTHRESHOLDING - ', SETTINGS.CLASSES['epi'], '\n--------------------')
@@ -73,8 +76,8 @@ def apply_threshold(threshold=SETTINGS.THRESHOLD):
 
 def main():
     #test_filter_and_threshold(250, 20, -1, 20, 20)
-    test_filter_and_threshold(250)
-    #apply_threshold()
+    #test_filter_and_threshold(50)
+    apply_threshold()
 
 
 if __name__ == '__main__':
