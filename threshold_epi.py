@@ -32,9 +32,9 @@ import bilateral_filter
 
 
 #test with unsupervised wiener deonvolution
-def test_filter_and_threshold(test_threshold_value, psf=[[1, 1, 1],
+def test_filter_and_threshold(test_threshold_value, psf=np.array([[1, 1, 1],
                                                          [1, 2, 1],
-                                                         [1, 1, 1]]):
+                                                         [1, 1, 1]])):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
         #filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
