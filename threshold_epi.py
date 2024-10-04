@@ -1,20 +1,44 @@
 import SETTINGS
+import skimage.restoration
 import utils
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import ImageGrid
 import torch
 import cv2
 from scipy.ndimage import label
+from skimage import restoration
 import sys
 import numpy as np
 import h5py
 
 import bilateral_filter
 
-def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, sigmaSpace):
+# def test_filter_and_threshold(test_threshold_value, iterations, d, sigmaColour, sigmaSpace):
+#     with h5py.File(SETTINGS.DATASET, 'r') as f:
+#         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
+#         filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
+#         mask = np.where(filtered_image > test_threshold_value, 1, 0)
+#         thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
+#         print(test_image.shape)
+#         thresholded_image[:,:,1] = np.where(mask, 1, thresholded_image[:,:,1])
+#
+#         fig = plt.figure()
+#         grid = ImageGrid(fig, (0,0,1,1), nrows_ncols=(1, 3))
+#         for ax, im in zip(grid, (test_image, filtered_image, thresholded_image)):
+#             ax.imshow(im)
+#             ax.axis('off')
+#         # plt.imshow(test_image)
+#         plt.show()
+
+
+#test with unsupervised wiener deonvolution
+def test_filter_and_threshold(test_threshold_value, psf=[[1, 1, 1],
+                                                         [1, 2, 1],
+                                                         [1, 1, 1]]):
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         test_image = f['Images']['Epi'][list(f['Images']['Epi'].keys())[0]][...]
-        filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
+        #filtered_image = bilateral_filter.apply_bilateral_filter(test_image, iterations, d, sigmaColour, sigmaSpace)
+        filtered_image = skimage.restoration.unsupervised_wiener(test_image, psf)
         mask = np.where(filtered_image > test_threshold_value, 1, 0)
         thresholded_image = np.stack((filtered_image, filtered_image, filtered_image), axis=-1)
         print(test_image.shape)
