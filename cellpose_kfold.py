@@ -96,11 +96,11 @@ class CellposeKfold:
 
 
 def main():
-    kfold = CellposeKfold(Path('cellpose_Models') / 'filter_kfold')
+    kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation')
     # kfold.split_datasets()
-    # kfold.train_eval_datasets()
-    # kfold.get_results()
-    # kfold.plot_results()
+    kfold.train_eval_datasets()
+    kfold.get_results()
+    kfold.plot_results()
     kfold.plot_losses()
 
 if __name__ == '__main__':
