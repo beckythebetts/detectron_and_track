@@ -12,8 +12,8 @@ import cellpose_eval
 class CellposeKfold:
     def __init__(self, directory):
         self.directory = directory
-        self.names = np.unique([im.stem[:2] for im in (directory / 'all').iterdir() if 'im' in im.stem])
-        self.pairs = [[directory / 'all' / (name+'im'+'.png'), directory / 'all' / (name+'mask'+'.png')] for name in self.names]
+        # self.names = np.unique([im.stem[:2] for im in (directory / 'all').iterdir() if 'im' in im.stem])
+        # self.pairs = [[directory / 'all' / (name+'im'+'.png'), directory / 'all' / (name+'mask'+'.png')] for name in self.names]
 
     def split_datasets(self):
         for test_pair in self.pairs:
