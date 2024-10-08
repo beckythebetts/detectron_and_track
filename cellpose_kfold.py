@@ -62,6 +62,7 @@ class CellposeKfold:
             ax.set_ylabel(metric)
             ax.grid(True)
         plt.savefig(str(self.directory / 'results.png'))
+        plt.clf()
 
     def plot_losses(self):
         train_losses = []
@@ -95,6 +96,7 @@ class CellposeKfold:
         plt.xlabel('Epochs')
         plt.ylabel('Loss')
         plt.savefig(str(self.directory / 'av_loss_plot.png'))
+        plt.clf()
 
 
 def main():

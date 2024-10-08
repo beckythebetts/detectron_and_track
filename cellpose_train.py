@@ -31,6 +31,7 @@ def cellpose_train(directory):
     plt.ylabel('Loss')
     plt.grid()
     plt.savefig(directory/'loss_plot.png')
+    plt.clf()
 
 def main():
     model_directory = SETTINGS.CELLPOSE_MODEL
