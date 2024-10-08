@@ -93,6 +93,8 @@ class CellposeKfold:
 
         plt.grid()
         plt.legend()
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
         plt.savefig(str(self.directory / 'av_loss_plot.png'))
 
 
