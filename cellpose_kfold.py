@@ -80,7 +80,6 @@ class CellposeKfold:
         train_stds = np.std(train_losses, axis=0)
         test_stds = np.std(test_losses, axis=0)
         iterations = np.arange(0, len(train_means))
-        print(train_means)
         test_iterations, test_means, test_stds = np.array([[it, mean, std] for it, mean, std in zip(iterations, test_means, test_stds) if mean !=0]).transpose()
         plt.rcParams["font.family"] = 'serif'
 
