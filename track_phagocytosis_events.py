@@ -113,7 +113,7 @@ def show_phagocytic_events(dataset, save_directory, frame_size=150):
 
                         im_rgb = im_rgb.transpose(1, 2, 0)
 
-                        imageio.imwrite(Path(save_directory) / cell / phago_event / '{0:04}.jpg'.format(frame), im_rgb.astype(np.uint8))
+                        imageio.imwrite(Path(save_directory) / cell / phago_event / '{0:04}.png'.format(frame), im_rgb.astype(np.uint8))
 
 def main():
     hdf5file = SETTINGS.DATASET
