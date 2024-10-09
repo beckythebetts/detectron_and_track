@@ -4,6 +4,8 @@ import numpy as np
 import torch
 import sys
 import time
+from joblib import Parallel, delayed
+from skimage.segmentation import find_boundaries
 
 
 import mask_funcs
@@ -97,10 +99,14 @@ def show_tracked_images_fast():
             f'\rFrame {i + 1}')
         sys.stdout.flush()
         print('\nseg size', sys.getsizeof(segmentation)/(1024**3))
-        expanded_segmentation = np.packbits((np.expand_dims(segmentation, axis=2) == np.expand_dims(np.unique(segmentation), axis=(0, 1))))
+        #expanded_segmentation = (np.expand_dims(segmentation, axis=2) == np.expand_dims(np.unique(segmentation), axis=(0, 1)))
+
+        def find_mask_boundary(mask):
+            return find_boundaries(mask, mode='outer')
+        outlines = Parallel(n_jobs=1)(delayed(find_mask_boundary)(segmentation[segmentaion==idx] for idx in np.unique(segmentation)))
+        print(outlines.shape)
         #expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
-        print(expanded_segmentation.shape)
-        print('expanded size', sys.getsizeof(expanded_segmentation)/(1024**3))
+
         #outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
             # print(expanded_segmentation.dtype)
         #print(outlines.shape)
