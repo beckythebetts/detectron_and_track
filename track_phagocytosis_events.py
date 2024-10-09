@@ -73,7 +73,7 @@ def del_events(dataset):
                 if phago_event != 'MorphologicalFeatures' and phago_event != 'PhagocyticFrames':
                     del(f['Features'][cell][phago_event])
 
-def show_phagocytic_events(dataset, save_directory, frame_size=(150, 150)):
+def show_phagocytic_events(dataset, save_directory, frame_size=150):
     utils.remake_dir(Path(save_directory))
     with h5py.File(dataset, 'r') as f:
         for cell in f['Features'].keys():
@@ -86,15 +86,21 @@ def show_phagocytic_events(dataset, save_directory, frame_size=(150, 150)):
                     (Path(save_directory) / cell / phago_event).mkdir(parents=True)
                     frames = f['Features'][cell][phago_event]['frame'][:]
                     for frame in np.arange(np.max((min(frames)-10, 0)), np.min((max(frames)+11, SETTINGS.NUM_FRAMES))):
-                        centre =
-                        phase_image = np.array(f['Images']['Phase'][f'{int(frame):04}'])
-                        phase_mask = np.array(f['Segmentations']['Phase'][f'{int(frame):04}'])
+                        # find centre of cell, if nan, find previous centre ...
+                        xcentre = np.nan
+                        framei = frame
+                        while np.isnan(xcentre):
+                            xcentre, ycentre = f['Features'][cell]['MorphologicalFeatures'][framei]['xcentre'], f['Features'][cell]['MorphologicalFeatures'][framei]['ycentre']
+                            framei -= 1
+                        xmin, xmax, ymin, ymax = int(xcentre-(frame_size/2)), int(xcentre+(frame_size/2)), int(ycentre-(frame_size/2)), int(ycentre+(frame_size/2)),
+                        phase_image = np.array(f['Images']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax])
+                        phase_mask = np.array(f['Segmentations']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax])
                         outline = mask_funcs.mask_outline(torch.where(torch.tensor(phase_mask) == int(cell[-4:]), 1, 0), thickness=2).cpu().numpy()
-                        epi_image = np.array(f['Images']['Epi'][f'{int(frame):04}'])
+                        epi_image = np.array(f['Images']['Epi'][f'{int(frame):04}'][xmin:xmax, ymin:ymax])
                         if frame in frames:
                             pathogen_index = f['Features'][cell][phago_event]['pathogen_index'][np.argwhere(frames==frame)]
                             # print(pathogen_index)
-                            epi_mask = np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][:]==pathogen_index, 1, 0)
+                            epi_mask = np.where(f['Segmentations']['Epi'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]==pathogen_index, 1, 0)
                         else:
                             epi_mask = np.zeros(phase_image.shape)
                         im_rgb = np.stack((phase_image, phase_image, phase_image), axis=0)
