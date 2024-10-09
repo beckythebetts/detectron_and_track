@@ -94,7 +94,7 @@ def show_tracked_images_fast():
     rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
     tracked = np.zeros(rgb_phase.shape)
     for i, (phase_image, segmentation) in enumerate(
-            zip(torch.tensor(rgb_phase).to(device), torch.tensor(segmentation_data).to(device))):
+            zip(torch.tensor(rgb_phase), torch.tensor(segmentation_data).to(device))):
         sys.stdout.write(
             f'\rFrame {i + 1}')
         sys.stdout.flush()

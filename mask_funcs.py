@@ -92,9 +92,14 @@ def cal_iou(mask1, mask2):
     result = np.sum(intersection) / np.sum(union)
     return result
 
+# def mask_outline(mask, thickness=3):
+#     expanded_mask = F.max_pool2d(mask.float().unsqueeze(0), kernel_size=2*thickness+1, stride=1, padding=thickness) > 0
+#     outline = (expanded_mask.byte().squeeze() - mask).bool()
+#     return outline
+
 def mask_outline(mask, thickness=3):
     expanded_mask = F.max_pool2d(mask.float().unsqueeze(0), kernel_size=2*thickness+1, stride=1, padding=thickness) > 0
-    outline = (expanded_mask.byte().squeeze() - mask).bool()
+    outline = (expanded_mask.squeeze() - mask).bool()
     return outline
 
 # def find_centre(mask):
