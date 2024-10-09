@@ -71,8 +71,8 @@ def make_short_test_copy(orig_file, copy_file, frames=50):
                                                     list(orig['Images']['Phase'].values())[:frames],
                                                     list(orig['Images']['Epi'].values())[:frames]):
                 print(name, phase_image)
-                phase.create_dataset(name, phase_image[:])
-                epi.create_dataset(name, epi_image[:])
+                phase.create_dataset(name, data=phase_image[:])
+                epi.create_dataset(name, data=epi_image[:])
 
 
 
