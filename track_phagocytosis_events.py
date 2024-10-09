@@ -90,7 +90,7 @@ def show_phagocytic_events(dataset, save_directory, frame_size=150):
                         xcentre = np.nan
                         framei = frame
                         while np.isnan(xcentre):
-                            xcentre, ycentre = f['Features'][cell]['MorphologicalFeatures'][framei]['xcentre'], f['Features'][cell]['MorphologicalFeatures'][framei]['ycentre']
+                            xcentre, ycentre = f['Features'][cell]['MorphologicalFeatures'][int(framei)]['xcentre'], f['Features'][cell]['MorphologicalFeatures'][int(framei)]['ycentre']
                             framei -= 1
                         xmin, xmax, ymin, ymax = int(xcentre-(frame_size/2)), int(xcentre+(frame_size/2)), int(ycentre-(frame_size/2)), int(ycentre+(frame_size/2)),
                         phase_image = np.array(f['Images']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax])
@@ -117,8 +117,8 @@ def show_phagocytic_events(dataset, save_directory, frame_size=150):
 
 def main():
     hdf5file = SETTINGS.DATASET
-    del_events(hdf5file)
-    track_phagocytosis_events(hdf5file)
+    # del_events(hdf5file)
+    # track_phagocytosis_events(hdf5file)
     if SETTINGS.SHOW_EATING:
         show_phagocytic_events(hdf5file, str(SETTINGS.DATASET.parent / str(SETTINGS.DATASET.stem + 'show_eating')))
 
