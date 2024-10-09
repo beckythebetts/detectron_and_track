@@ -73,7 +73,7 @@ def del_events(dataset):
                 if phago_event != 'MorphologicalFeatures' and phago_event != 'PhagocyticFrames':
                     del(f['Features'][cell][phago_event])
 
-def show_phagocytic_events(dataset, save_directory):
+def show_phagocytic_events(dataset, save_directory, frame_size=(150, 150)):
     utils.remake_dir(Path(save_directory))
     with h5py.File(dataset, 'r') as f:
         for cell in f['Features'].keys():
@@ -86,6 +86,7 @@ def show_phagocytic_events(dataset, save_directory):
                     (Path(save_directory) / cell / phago_event).mkdir(parents=True)
                     frames = f['Features'][cell][phago_event]['frame'][:]
                     for frame in np.arange(np.max((min(frames)-10, 0)), np.min((max(frames)+11, SETTINGS.NUM_FRAMES))):
+                        centre =
                         phase_image = np.array(f['Images']['Phase'][f'{int(frame):04}'])
                         phase_mask = np.array(f['Segmentations']['Phase'][f'{int(frame):04}'])
                         outline = mask_funcs.mask_outline(torch.where(torch.tensor(phase_mask) == int(cell[-4:]), 1, 0), thickness=2).cpu().numpy()
