@@ -94,10 +94,11 @@ def show_tracked_images_fast():
     rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
     tracked = np.zeros(rgb_phase.shape)
     for i, (phase_image, segmentation) in enumerate(
-            zip(torch.tensor(rgb_phase), torch.tensor(segmentation_data).to(device))):
+            zip(torch.tensor(rgb_phase), segmentation_data)):
         sys.stdout.write(
             f'\rFrame {i + 1}')
         sys.stdout.flush()
+        segmentation = torch.tensor(segmentation).to(device)
         #expanded_segmentation = [segmentation[segmentation==idx] for idx in torch.unique(segmentation)]
         expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
         outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
