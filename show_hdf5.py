@@ -98,7 +98,7 @@ def show_tracked_images_fast():
         sys.stdout.flush()
         print('\nseg size', sys.getsizeof(segmentation)/(1024**3))
         #expanded_segmentation = [segmentation[segmentation==idx] for idx in np.unique(segmentation)]
-        expanded_segmentation = (segmentation == np.unique(segmentation))
+        expanded_segmentation = (np.expand_dims(segmentation, axis=2) == np.expand_dims(np.unique(segmentation), axis=(0, 1)))
         #expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
         print(expanded_segmentation.shape)
         print('expanded size', sys.getsizeof(expanded_segmentation)/(1024**3))
