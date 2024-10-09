@@ -100,10 +100,10 @@ def show_tracked_images_fast():
                 f'\rFrame {i + 1}')
             sys.stdout.flush()
             segmentation = torch.tensor(segmentation).to(device)
-            print('seg size', sys.getsizeof(segmentation))
+            print('seg size', get_gpu_memory_use(segmentation))
             #expanded_segmentation = [segmentation[segmentation==idx] for idx in torch.unique(segmentation)]
             expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
-            print('expanded size', sys.getsizeof(expanded_segmentation))
+            print('expanded size', get_gpu_memory_use(expanded_segmentation))
             outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
             print(expanded_segmentation.dtype)
         #print(outlines.shape)
@@ -116,6 +116,8 @@ def show_tracked_images_fast():
     # ij.ui().show(tracked_image)
     # ij.py.run_macro(macro='run("Make Composite")')
     # time.sleep(99999)
+def get_gpu_memory_use(object):
+    return object.element_size() * object.numel()
 
 def main():
     #show_separate_channels()
