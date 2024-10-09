@@ -70,8 +70,8 @@ def make_short_test_copy(orig_file, copy_file, frames=50):
             for name, phase_image, epi_image in zip(list(orig['Images']['Phase'].keys())[:frames],
                                                     list(orig['Images']['Phase'].values())[:frames],
                                                     list(orig['Images']['Epi'].values())[:frames]):
-                phase.create_dataset(name, phase_image)
-                epi.create_dataset(name, epi_image)
+                phase.create_dataset(name, phase_image[:])
+                epi.create_dataset(name, epi_image[:])
 
 
 
