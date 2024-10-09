@@ -100,7 +100,7 @@ def show_tracked_images_fast():
         sys.stdout.flush()
         #expanded_segmentation = [segmentation[segmentation==idx] for idx in torch.unique(segmentation)]
         expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).unsqueeze(1).unsqueeze(2))
-        #outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
+        outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
         print(expanded_segmentation.dtype)
         #print(outlines.shape)
     #     for cell_index in torch.unique(segmentation)[1:]:
