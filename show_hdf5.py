@@ -104,7 +104,7 @@ def show_tracked_images_fast():
         def find_mask_boundary(mask):
             return find_boundaries(mask, mode='outer')
         outlines = Parallel(n_jobs=-1)(delayed(find_mask_boundary)(segmentation==idx) for idx in np.unique(segmentation))
-        print(outlines.shape)
+        print(outlines)
         #expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
 
         #outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
