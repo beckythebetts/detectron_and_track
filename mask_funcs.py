@@ -100,9 +100,7 @@ def cal_iou(mask1, mask2):
 
 def mask_outline(mask, thickness=3):
     expanded_mask = (F.max_pool2d(mask.float(), kernel_size=2*thickness+1, stride=1, padding=thickness) > 0).to_sparse()
-    print('Expanded mask size ', sys.getsizeof(expanded_mask))
     outline = (expanded_mask.byte().squeeze() - mask).bool().to_sparse()
-    print('outline size', sys.getsizeof(outline))
     return outline
 
 # def find_centre(mask):

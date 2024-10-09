@@ -98,10 +98,10 @@ def show_tracked_images_fast():
         sys.stdout.write(
             f'\rFrame {i + 1}')
         sys.stdout.flush()
-        segmentation = torch.tensor(segmentation).to(device)
+        segmentation = torch.tensor(segmentation)
         print('\nseg size', get_gpu_memory_use(segmentation)/(1024**3))
         #expanded_segmentation = [segmentation[segmentation==idx] for idx in torch.unique(segmentation)]
-        expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1)).to_sparse()
+        expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
         print('expanded size', get_gpu_memory_use(expanded_segmentation)/(1024**3))
         outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
             # print(expanded_segmentation.dtype)
