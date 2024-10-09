@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import torch
 import torch.nn.functional as F
+import sys
 
 def get_centre(mask):
     x_mesh_grid, y_mesh_grid = np.meshgrid(np.arange(mask.shape[0]), np.arange(mask.shape[1]))
@@ -98,9 +99,10 @@ def cal_iou(mask1, mask2):
 #     return outline
 
 def mask_outline(mask, thickness=3):
-    with torch.no_grad():
-        expanded_mask = F.max_pool2d(mask.float(), kernel_size=2*thickness+1, stride=1, padding=thickness) > 0
-        outline = (expanded_mask.squeeze() - mask).bool()
+    expanded_mask = F.max_pool2d(mask.float(), kernel_size=2*thickness+1, stride=1, padding=thickness) > 0
+    print('Expanded mask size ', sys.getsizeof(expanded_mask))
+    outline = (expanded_mask.squeeze() - mask).bool()
+    print('outline size', sys.getsizeof(outline))
     return outline
 
 # def find_centre(mask):
