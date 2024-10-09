@@ -7,11 +7,13 @@ def rename_datasets(file):
         for frame in f['Images']['Epi'].keys():
             if len(frame) > 4:
                 del f['Images']['Epi'][frame]
+
 def copy_features(orig_dataset, new_dataset):
     with h5py.File(str(orig_dataset), 'r') as orig:
         data = orig['Features']
         with h5py.File(str(new_dataset), 'w') as new:
             orig.copy(data, new, 'Features')
+
 def del_stuff(dataset):
     with h5py.File(str(dataset), 'r+') as f:
         del f['Segmentations']
@@ -55,8 +57,25 @@ def set_image_attributes(file):
 
         Images.attrs['Resolution / um'] = Images.attrs['Pixel Size / um'] / Images.attrs['Objective magnification']
         Images.attrs['FOV / um'] = Images.attrs['Image size / pixels'] * Images.attrs['Resolution / um']
+
+def make_short_test_copy(orig_file, copy_file, frames=50):
+    with h5py.File(orig_file, 'r') as orig:
+        with h5py.File(copy_file, 'r+') as copy:
+            Images = copy.create_group('Images')
+            for attr_nme, attr_value in orig['Images'].attrs.items():
+                Images.attrs[attr_name] = attr_value
+            Images.attrs['Number of frames'] = frames
+            phase = Images.create_group('Phase')
+            epi = Images.create_group('Epi')
+            for name, phase_image, epi_image in zip(list(orig['Images']['Phase'].keys())[:frames], list(orig['Images']['Phase'].values())[:frames], list(orig['Images']['Epi'].values())[:frames])
+                phase.create_dataset(name, phase_image)
+                epi.create_dataset(name, epi_image)
+
+
+
 def main():
     #rename_datasets('Datasets/danhighres/dan3.h5')
-    set_image_attributes('Datasets/filter_test/no_filter01.h5')
+    #set_image_attributes('Datasets/filter_test/no_filter01.h5')
+    make_short_test_copy('Datasets/filter_test/no_filter01.h5', 'Datasets/filter_test/no_filter01_short.h5')
 if __name__ == '__main__':
     main()
