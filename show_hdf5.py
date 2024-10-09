@@ -99,10 +99,10 @@ def show_tracked_images_fast():
             f'\rFrame {i + 1}')
         sys.stdout.flush()
         #expanded_segmentation = [segmentation[segmentation==idx] for idx in torch.unique(segmentation)]
-        expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).unsqueeze(1).unsqueeze(2)).type
+        expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).unsqueeze(1).unsqueeze(2))
         #outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
         print(expanded_segmentation.dtype)
-        print(outlines.shape)
+        #print(outlines.shape)
     #     for cell_index in torch.unique(segmentation)[1:]:
     #         outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
     #         phase_image[outline] = colour_dict[cell_index.item()]
