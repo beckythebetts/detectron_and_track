@@ -80,9 +80,39 @@ def show_tracked_images():
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
 
+def show_tracked_images_fast():
+    print('\nPREPARING TRACKED IMAGES\n')
+    with h5py.File(hdf5_file, 'r') as f:
+        phase_data = np.array([f['Images']['Phase'][frame][:]
+                               for frame in f['Images']['Phase'].keys()][:3], dtype='uint8')
+        segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
+                                      for frame in list(f['Segmentations']['Phase'].keys())][:3], dtype='int16')
+    max_cell_index = np.max(segmentation_data)
+    colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8')).to(device)
+                   for
+                   cell_index in np.arange(1, max_cell_index + 1)}
+    rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
+    tracked = np.zeros(rgb_phase.shape)
+    for i, (phase_image, segmentation) in enumerate(
+            zip(torch.tensor(rgb_phase).to(device), torch.tensor(segmentation_data).to(device))):
+        sys.stdout.write(
+            f'\rFrame {i + 1}')
+        sys.stdout.flush()
+        expanded_segmentation = [segmentation[segmentation==indx] for idx in torch.unique(segmentation)]
+        print(expanded_segmentation.shape)
+    #     for cell_index in torch.unique(segmentation)[1:]:
+    #         outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
+    #         phase_image[outline] = colour_dict[cell_index.item()]
+    #
+    #     tracked[i] = phase_image.cpu().numpy()
+    # tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
+    # ij.ui().show(tracked_image)
+    # ij.py.run_macro(macro='run("Make Composite")')
+    # time.sleep(99999)
+
 def main():
     #show_separate_channels()
     #show_merged_channels()
-    show_tracked_images()
+    show_tracked_images_fast()
 if __name__ == '__main__':
     main()
