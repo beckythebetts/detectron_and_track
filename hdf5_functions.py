@@ -60,7 +60,7 @@ def set_image_attributes(file):
 
 def make_short_test_copy(orig_file, copy_file, frames=50):
     with h5py.File(orig_file, 'r') as orig:
-        with h5py.File(copy_file, 'r+') as copy:
+        with h5py.File(copy_file, 'x') as copy:
             Images = copy.create_group('Images')
             for attr_nme, attr_value in orig['Images'].attrs.items():
                 Images.attrs[attr_name] = attr_value
