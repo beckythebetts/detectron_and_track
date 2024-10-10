@@ -140,7 +140,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
 
     cell_mask = (mask_data == cell_idx)
     print(np.unique(cell_mask))
-    if cell_mask.all() == 0:
+    if not cell_mask.any():
         raise Exception(f'Cell of index {cell_idx} not found')
     cell_outline = mask_funcs.mask_outlines(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
     merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
