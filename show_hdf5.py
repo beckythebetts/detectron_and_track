@@ -138,7 +138,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
             xcentre = np.nan
             framei = frame
             while np.isnan(xcentre):
-                xcentre, ycentre = f['Features'][cell]['MorphologicalFeatures'][int(framei)]['xcentre'], f['Features'][cell]['MorphologicalFeatures'][int(framei)]['ycentre']
+                xcentre, ycentre = f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(frame)]['xcentre'], f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(frame)]['ycentre']
                 framei -= 1
             xmin, xmax, ymin, ymax = int(xcentre - (frame_size / 2)), int(xcentre + (frame_size / 2)), int(
                 ycentre - (frame_size / 2)), int(ycentre + (frame_size / 2))
