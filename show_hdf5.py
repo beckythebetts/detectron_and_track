@@ -71,7 +71,7 @@ def show_merged_channels_redo(first_frame=0, last_frame=50):
     # only merge red channel (0)
     merged_im = make_rgb(phase_data)
     print(merged_im.shape)
-    merged_im[:, 0] = ((phase_data.astype(np.float32)+epi_data.astype(np.float32))/2).astype(np.uint8)
+    merged_im[:, 0, 0] = ((phase_data.astype(np.float32)+epi_data.astype(np.float32))/2).astype(np.uint8)
     merged_image = ij.py.to_dataset(merged_im, dim_order=['time', 'z', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
