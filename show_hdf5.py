@@ -92,7 +92,8 @@ def show_tracked_images_fast():
         segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
                                       for frame in list(f['Segmentations']['Phase'].keys())][:3], dtype='int16')
     max_cell_index = np.max(segmentation_data)
-    colour_dict = {cell_index: np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8') for cell_index in np.arange(1, max_cell_index + 1)}
+    #colour_dict = {cell_index: np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8') for cell_index in np.arange(1, max_cell_index + 1)}
+    LUT = torch.randint(low=10, high=255, size=(max_cell_index, 3))
     rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
     tracked = np.zeros(rgb_phase.shape)
     for i, (phase_image, segmentation) in enumerate(
@@ -104,6 +105,7 @@ def show_tracked_images_fast():
         print('\nseg size', sys.getsizeof(segmentation)/(1024**3))
         #expanded_segmentation = (np.expand_dims(segmentation, axis=2) == np.expand_dims(np.unique(segmentation), axis=(0, 1)))
         outlines = mask_funcs.mask_outlines(segmentation)
+        outlines = LUT[outlines]
         plt.matshow(outlines.cpu().numpy())
         plt.show()
         # def find_mask_boundary(mask):
