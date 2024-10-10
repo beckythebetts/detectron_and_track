@@ -141,6 +141,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
     cell_outline = mask_funcs.mask_outlines(torch.tensor(cell_mask))
     merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
     merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
+    merged_im[:, 1][cell_outline] = 255
     merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
