@@ -138,6 +138,8 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
         mask_data = np.array([f['Segmentations']['Phase'][frame][:]
                                for frame in list(f['Segmentations']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
     cell_mask = (mask_data == cell_idx)
+    if cell_mask.all() == 0:
+        raise Exception(f'Cell of index {cell_idx} not found')
     cell_outline = mask_funcs.mask_outlines(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
     merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
     merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
@@ -149,7 +151,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
 def main():
     #show_separate_channels()
     #show_merged_channels()
-    show_tracked_images()
-    #show_cell(3)
+    #show_tracked_images()
+    show_cell(3)
 if __name__ == '__main__':
     main()
