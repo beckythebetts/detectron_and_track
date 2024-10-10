@@ -38,27 +38,27 @@ def make_rgb(greyscale_im, axis=1):
 #         ij.ui().show('images', ij_image)
 #     time.sleep(99999)
 
+# def show_merged_channels_old(first_frame=0, last_frame=50):
+#     print('\nSHOWING MERGED IMAGES')
+#     with h5py.File(hdf5_file, 'r') as f:
+#         phase_data = np.array([f['Images']['Phase'][frame][:]
+#                                for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
+#         epi_data = np.array([f['Segmentations']['Epi'][frame][:]
+#                                for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
+#
+#     epi_data[epi_data > 0] = 255
+#     epi_channel = make_rgb(epi_data)
+#     epi_channel[:,:,1:3] = 0
+#     merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
+#     # only merge red channel (0)
+#     # merged_im = make_rgb(phase_data)
+#     # merged_im[:, :, 0] = (phase_data).astype(np.float32)+epi_channel[:, :, 0]
+#     merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
+#     ij.ui().show(merged_image)
+#     ij.py.run_macro(macro='run("Make Composite")')
+#     time.sleep(99999)
+
 def show_merged_channels(first_frame=0, last_frame=50):
-    print('\nSHOWING MERGED IMAGES')
-    with h5py.File(hdf5_file, 'r') as f:
-        phase_data = np.array([f['Images']['Phase'][frame][:]
-                               for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
-        epi_data = np.array([f['Segmentations']['Epi'][frame][:]
-                               for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
-
-    epi_data[epi_data > 0] = 255
-    epi_channel = make_rgb(epi_data)
-    epi_channel[:,:,1:3] = 0
-    merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
-    # only merge red channel (0)
-    # merged_im = make_rgb(phase_data)
-    # merged_im[:, :, 0] = (phase_data).astype(np.float32)+epi_channel[:, :, 0]
-    merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
-    ij.ui().show(merged_image)
-    ij.py.run_macro(macro='run("Make Composite")')
-    time.sleep(99999)
-
-def show_merged_channels_redo(first_frame=0, last_frame=50):
     print('\nSHOWING MERGED IMAGES')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
@@ -69,11 +69,12 @@ def show_merged_channels_redo(first_frame=0, last_frame=50):
 
     #merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
     # only merge red channel (0)
-    merged_im = make_rgb(phase_data)
+    #merged_im = make_rgb(phase_data)
+    merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
     print(merged_im.shape)
     #merged_im[:, 0, 0] = ((phase_data.astype(np.float32)+epi_data.astype(np.float32))/2).astype(np.uint8)
-    merged_im[:, 0, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
-    merged_image = ij.py.to_dataset(merged_im, dim_order=['time', 'z', 'ch', 'row', 'col'])
+    merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
+    merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
@@ -127,7 +128,6 @@ def show_tracked_images(first_frame=0, last_frame=50):
         outlines = LUT[outlines]
         phase_image =  (torch.where(outlines>0, outlines, phase_image))
         phase_image = phase_image.cpu().numpy().astype(np.uint8)
-        print(phase_image.shape, phase_image.dtype)
         tracked[i] = phase_image
     tracked_image = ij.py.to_dataset(tracked, dim_order=['t', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
@@ -137,7 +137,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
 
 def main():
     #show_separate_channels()
-    #show_merged_channels_redo()
-    show_tracked_images()
+    show_merged_channels_channels()
+    #show_tracked_images()
 if __name__ == '__main__':
     main()
