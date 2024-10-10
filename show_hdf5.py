@@ -63,16 +63,16 @@ def show_merged_channels_redo(first_frame=0, last_frame=50):
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
                                for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
-        epi_data = np.array([f['Segmentations']['Epi'][frame][:]
+        epi_data = np.array([f['Images']['Epi'][frame][:]
                                for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
 
-    epi_data[epi_data > 0] = 255
+
     #merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
     # only merge red channel (0)
     merged_im = make_rgb(phase_data)
     print(merged_im.shape)
     #merged_im[:, 0, 0] = ((phase_data.astype(np.float32)+epi_data.astype(np.float32))/2).astype(np.uint8)
-    merged_im[:, 0, 0] = epi_data
+    merged_im[:, 0, 0][epi_data > SETTINGS.threshold] = epi_data[epi_data > SETTINGS.threshold]
     merged_image = ij.py.to_dataset(merged_im, dim_order=['time', 'z', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
