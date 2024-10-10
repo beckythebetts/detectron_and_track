@@ -108,7 +108,7 @@ def show_tracked_images_fast():
         outlines = mask_funcs.mask_outlines(segmentation).long()
         outlines = LUT[outlines]
         print(outlines.shape)
-        phase_image[outlines>0] = outlines[outline>0]
+        phase_image[outlines>0] = outlines[outlines>0]
         tracked[i] = phase_image
         # def find_mask_boundary(mask):
         #     return find_boundaries(mask, mode='outer')
