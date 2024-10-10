@@ -105,7 +105,7 @@ def show_tracked_images_fast():
         print('\nseg size', sys.getsizeof(segmentation)/(1024**3))
         #expanded_segmentation = (np.expand_dims(segmentation, axis=2) == np.expand_dims(np.unique(segmentation), axis=(0, 1)))
         outlines = mask_funcs.mask_outlines(segmentation)
-        outlines = LUT[outlines]
+        outlines = LUT[outlines.long()]
         plt.matshow(outlines.cpu().numpy())
         plt.show()
         # def find_mask_boundary(mask):
