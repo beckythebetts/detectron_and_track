@@ -142,7 +142,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
                 framei -= 1
             xmin, xmax, ymin, ymax = int(xcentre - (frame_size / 2)), int(xcentre + (frame_size / 2)), int(
                 ycentre - (frame_size / 2)), int(ycentre + (frame_size / 2))
-            phase_data[frame] = f['Images']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
+            phase_data[frame] = np.array(f['Images']['Phase'][f'{int(frame):04}'])[xmin:xmax, ymin:ymax]
             epi_data[frame] = f['Images']['Epi'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
             mask_data[frame] = f['Segmentations']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
 
