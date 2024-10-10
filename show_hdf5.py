@@ -128,7 +128,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
         phase_image =  (torch.where(outlines>0, outlines, phase_image))
         phase_image = phase_image.cpu().numpy()
         tracked[i] = phase_image
-    tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
+    tracked_image = ij.py.to_dataset(tracked, dim_order=['t', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
