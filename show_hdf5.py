@@ -49,7 +49,7 @@ def show_merged_channels(first_frame=0, last_frame=50):
     epi_data[epi_data > 0] = 255
     epi_channel = make_rgb(epi_data)
     epi_channel[:,:,1:3] = 0
-    merged_data = ((make_rgb(phase_data).astype(np.float32) + epi_channel.astype(np.float32)) / (2)).astype(np.uint8)
+    merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
     merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
@@ -113,7 +113,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
 
 def main():
     #show_separate_channels()
-    #show_merged_channels()
-    show_tracked_images()
+    show_merged_channels()
+    #show_tracked_images()
 if __name__ == '__main__':
     main()
