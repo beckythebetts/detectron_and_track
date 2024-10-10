@@ -126,7 +126,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
         outlines = mask_funcs.mask_outlines(segmentation).int()
         outlines = LUT[outlines]
         phase_image =  (torch.where(outlines>0, outlines, phase_image))
-        phase_image = phase_image.cpu().numpy()
+        phase_image = phase_image.cpu().numpy().astype(np.uint8)
         tracked[i] = phase_image
     tracked_image = ij.py.to_dataset(tracked, dim_order=['t', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
