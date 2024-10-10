@@ -104,7 +104,7 @@ def show_tracked_images_old():
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
 
-def show_tracked_images(first_frame=0, last_frame=50):
+def show_tracked_images(first_frame=0, last_frame=10):
     print('\nPREPARING TRACKED IMAGES\n')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
