@@ -105,8 +105,9 @@ def show_tracked_images_fast():
         sys.stdout.flush()
         print('\nseg size', sys.getsizeof(segmentation)/(1024**3))
         #expanded_segmentation = (np.expand_dims(segmentation, axis=2) == np.expand_dims(np.unique(segmentation), axis=(0, 1)))
-        outlines = mask_funcs.mask_outlines(segmentation)
-        outlines = LUT[outlines.long()]
+        outlines = mask_funcs.mask_outlines(segmentation).long()
+        outlines = LUT[outlines]
+        print(outlines.shape)
         phase_image[outlines>0] = outlines
         tracked[i] = phase_image
         # def find_mask_boundary(mask):
