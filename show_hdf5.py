@@ -99,6 +99,7 @@ def show_tracked_images_fast():
     for i, (phase_image, segmentation) in enumerate(
             zip(rgb_phase, segmentation_data)):
         segmentation = torch.tensor(segmentation).to(device)
+        phase_image = torch.tensor(phase_image).to(device)
         sys.stdout.write(
             f'\rFrame {i + 1}')
         sys.stdout.flush()
@@ -106,8 +107,8 @@ def show_tracked_images_fast():
         #expanded_segmentation = (np.expand_dims(segmentation, axis=2) == np.expand_dims(np.unique(segmentation), axis=(0, 1)))
         outlines = mask_funcs.mask_outlines(segmentation)
         outlines = LUT[outlines.long()]
-        plt.matshow(outlines.cpu().numpy())
-        plt.show()
+        phase_image[outlines>0] = outlines
+        tracked[i] = phase_image
         # def find_mask_boundary(mask):
         #     return find_boundaries(mask, mode='outer')
         # # skimage
@@ -129,10 +130,10 @@ def show_tracked_images_fast():
     #         phase_image[outline] = colour_dict[cell_index.item()]
     #
     #     tracked[i] = phase_image.cpu().numpy()
-    # tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
-    # ij.ui().show(tracked_image)
-    # ij.py.run_macro(macro='run("Make Composite")')
-    # time.sleep(99999)
+    tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
+    ij.ui().show(tracked_image)
+    ij.py.run_macro(macro='run("Make Composite")')
+    time.sleep(99999)
 def get_gpu_memory_use(object):
     # in bytes
     return object.element_size() * object.numel()
