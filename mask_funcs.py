@@ -157,10 +157,10 @@ def get_crop_indices(center, side_length, image_size):
             x_start = x_end - side_length
 
     # Ensure the crop dimensions are valid
-    y_start = max(0, y_start)
-    y_end = min(image_size[0], y_end)
-    x_start = max(0, x_start)
-    x_end = min(image_size[1], x_end)
+    y_start = int(max(0, y_start))
+    y_end = int(min(image_size[0], y_end))
+    x_start = int(max(0, x_start))
+    x_end = int(min(image_size[1], x_end))
 
     return (y_start, y_end, x_start, x_end)
 if __name__ == '__main__':
