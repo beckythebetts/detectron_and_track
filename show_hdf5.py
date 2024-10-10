@@ -41,12 +41,13 @@ def show_separate_channels():
         ij.ui().show('images', ij_image)
     time.sleep(99999)
 
-def show_merged_channels():
+def show_merged_channels(first_frame=0, last_frame=50):
+    print('\nPREPARING MERGED IMAGES')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
-                               for frame in list(f['Images']['Phase'].keys())[:20]], dtype='uint8')
+                               for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
         epi_data = np.array([f['Segmentations']['Epi'][frame][:]
-                               for frame in list(f['Images']['Epi'].keys())[:20]], dtype='uint8')
+                               for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
 
     epi_data[epi_data > 0] = 255
     epi_channel = make_rgb(epi_data)
@@ -57,7 +58,7 @@ def show_merged_channels():
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
 
-def show_tracked_images():
+def show_tracked_images_old():
     print('\nPREPARING TRACKED IMAGES\n')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
@@ -84,20 +85,18 @@ def show_tracked_images():
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
 
-def show_tracked_images_fast():
+def show_tracked_images(first_frame=0, last_frame=50):
     print('\nPREPARING TRACKED IMAGES\n')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
-                               for frame in f['Images']['Phase'].keys()][:500], dtype='uint8')
+                               for frame in f['Images']['Phase'].keys()][first_frame:last_frame], dtype='uint8')
         segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
-                                      for frame in list(f['Segmentations']['Phase'].keys())][:500], dtype='int16')
+                                      for frame in list(f['Segmentations']['Phase'].keys())][firest_frame:last_frame], dtype='int16')
     max_cell_index = np.max(segmentation_data)
-    #colour_dict = {cell_index: np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8') for cell_index in np.arange(1, max_cell_index + 1)}
     LUT = torch.randint(low=10, high=255, size=(max_cell_index+1, 3)).to(device)
     LUT[0] = torch.tensor([0, 0, 0]).to(device)
     rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
     tracked = np.zeros(rgb_phase.shape)
-    #print(tracked.shape)
     for i, (phase_image, segmentation) in enumerate(
             zip(rgb_phase, segmentation_data)):
         segmentation = torch.tensor(segmentation).to(device)
@@ -109,37 +108,11 @@ def show_tracked_images_fast():
         outlines = LUT[outlines]
         phase_image =  (torch.where(outlines>0, outlines, phase_image))
         phase_image = phase_image.cpu().numpy()
-        #print(phase_image.shape)
-        #phase_image[outlines>0] = outlines[outlines>0].int()
         tracked[i] = phase_image
-    #     # def find_mask_boundary(mask):
-    #     #     return find_boundaries(mask, mode='outer')
-    #     # # skimage
-    #     # outlines = Parallel(n_jobs=-1)(delayed(find_mask_boundary)(segmentation==idx) for idx in np.unique(segmentation))
-    #     # plt.matshow(outlines)
-    #     # plt.show()
-    #     # #cv2
-    #     # contours, _ = cv2.findContours(segmentation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    #     # cv2.drawContours(np.zeros_like(segmentation), contours, -1, 255, 1)
-    #     # plt.matshow(outlines)
-    #     # plt.show()
-    #     # #expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
-    #
-    #     #outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
-    #         # print(expanded_segmentation.dtype)
-    #     #print(outlines.shape)
-    # #     for cell_index in torch.unique(segmentation)[1:]:
-    # #         outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
-    # #         phase_image[outline] = colour_dict[cell_index.item()]
-    # #
-    # #     tracked[i] = phase_image.cpu().numpy()
     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
-def get_gpu_memory_use(object):
-    # in bytes
-    return object.element_size() * object.numel()
 
 def main():
     #show_separate_channels()
