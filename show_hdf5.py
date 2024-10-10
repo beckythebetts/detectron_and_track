@@ -96,6 +96,7 @@ def show_tracked_images_fast():
     LUT = torch.randint(low=10, high=255, size=(max_cell_index, 3)).to(device)
     rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
     tracked = np.zeros(rgb_phase.shape)
+    print(tracked.shape)
     for i, (phase_image, segmentation) in enumerate(
             zip(rgb_phase, segmentation_data)):
         segmentation = torch.tensor(segmentation).to(device)
@@ -108,7 +109,7 @@ def show_tracked_images_fast():
         phase_image =  torch.where(outlines>0, outlines, phase_image)
         print(phase_image.shape, phase_image.type)
         #phase_image[outlines>0] = outlines[outlines>0].int()
-    #     tracked[i] = phase_image.cpu().numpy()
+        #tracked[i] = phase_image.cpu().numpy()
     #     # def find_mask_boundary(mask):
     #     #     return find_boundaries(mask, mode='outer')
     #     # # skimage
