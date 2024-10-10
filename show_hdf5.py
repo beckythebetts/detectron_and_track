@@ -99,7 +99,7 @@ def show_tracked_images_fast():
     for i, (phase_image, segmentation) in enumerate(
             zip(rgb_phase, segmentation_data)):
         segmentation = torch.tensor(segmentation).to(device)
-        phase_image = torch.tensor(phase_image).to(device)
+        phase_image = torch.tensor(phase_image).to(device).int()
         sys.stdout.write(
             f'\rFrame {i + 1}')
         sys.stdout.flush()
