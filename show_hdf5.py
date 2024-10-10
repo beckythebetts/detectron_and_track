@@ -137,7 +137,9 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
                              for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
         mask_data = np.array([f['Segmentations']['Phase'][frame][:]
                                for frame in list(f['Segmentations']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
+
     cell_mask = (mask_data == cell_idx)
+    print(np.unique(cell_mask))
     if cell_mask.all() == 0:
         raise Exception(f'Cell of index {cell_idx} not found')
     cell_outline = mask_funcs.mask_outlines(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
