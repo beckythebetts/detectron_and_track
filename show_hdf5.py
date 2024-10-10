@@ -131,9 +131,9 @@ def show_tracked_images(first_frame=0, last_frame=50):
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL {cell_idx}')
     with h5py.File(hdf5_file, 'r') as f:
-        xcentre = np.array([f['Features'][f'Cell{cell_idx:04}']['Morphological Features'][int(framei)]['xcentre'] for framei in
+        xcentre = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['xcentre'] for framei in
                             range(first_frame, last_frame)])
-        ycentre = np.array([f['Features'][f'Cell{cell_idx:04}']['Morphological Features'][int(framei)]['ycentre'] for framei in
+        ycentre = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['ycentre'] for framei in
                             range(first_frame, last_frame)])
         print(xcentre, ycentre)
 
