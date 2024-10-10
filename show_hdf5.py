@@ -142,7 +142,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
     print(np.unique(cell_mask))
     if not cell_mask.any():
         raise Exception(f'Cell of index {cell_idx} not found')
-    cell_outline = mask_funcs.mask_outlines(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
+    cell_outline = mask_funcs.mask_outline(torch.tensor(cell_mask).to(device)).cpu().numpy()
     merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
     merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
     merged_im[:, 1][cell_outline] = 255
