@@ -131,7 +131,8 @@ def show_tracked_images(first_frame=0, last_frame=10):
         tracked[i] = phase_image
     tracked_image = ij.py.to_dataset(tracked, dim_order=['t', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
-    #ij.py.run_macro(macro='run("Make Composite")')
+    ij.py.run_macro(macro='run("Make Composite")')
+    ij.py.run_macro(macro='run("8-bit"')
     time.sleep(99999)
 
 def main():
