@@ -103,6 +103,11 @@ def mask_outline(mask, thickness=3):
     outline = (expanded_mask.byte().squeeze() - mask).bool().to_sparse()
     return outline
 
+def mask_outlines(mask, thickness=3):
+    expanded_mask = F.max_pool2d(mask.float().unsqueeze(0), kernel_size=2*thickness+1, stride=1, padding=thickness).to(torch.int16)
+    outlines = expanded_mask.squeeze() - mask
+    return outlines
+
 # def find_centre(mask):
 #     coords = torch.nonzero(mask)
 #     len = coords.shape[0]
