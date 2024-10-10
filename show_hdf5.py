@@ -106,33 +106,34 @@ def show_tracked_images_fast():
         outlines = mask_funcs.mask_outlines(segmentation).int()
         outlines = LUT[outlines]
         phase_image =  torch.where(outlines>0, outlines, phase_image)
+        print(phase_image.shape, phase_image.type)
         #phase_image[outlines>0] = outlines[outlines>0].int()
-        tracked[i] = phase_image.cpu().numpy()
-        # def find_mask_boundary(mask):
-        #     return find_boundaries(mask, mode='outer')
-        # # skimage
-        # outlines = Parallel(n_jobs=-1)(delayed(find_mask_boundary)(segmentation==idx) for idx in np.unique(segmentation))
-        # plt.matshow(outlines)
-        # plt.show()
-        # #cv2
-        # contours, _ = cv2.findContours(segmentation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        # cv2.drawContours(np.zeros_like(segmentation), contours, -1, 255, 1)
-        # plt.matshow(outlines)
-        # plt.show()
-        # #expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
-
-        #outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
-            # print(expanded_segmentation.dtype)
-        #print(outlines.shape)
-    #     for cell_index in torch.unique(segmentation)[1:]:
-    #         outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
-    #         phase_image[outline] = colour_dict[cell_index.item()]
-    #
     #     tracked[i] = phase_image.cpu().numpy()
-    tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
-    ij.ui().show(tracked_image)
-    ij.py.run_macro(macro='run("Make Composite")')
-    time.sleep(99999)
+    #     # def find_mask_boundary(mask):
+    #     #     return find_boundaries(mask, mode='outer')
+    #     # # skimage
+    #     # outlines = Parallel(n_jobs=-1)(delayed(find_mask_boundary)(segmentation==idx) for idx in np.unique(segmentation))
+    #     # plt.matshow(outlines)
+    #     # plt.show()
+    #     # #cv2
+    #     # contours, _ = cv2.findContours(segmentation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #     # cv2.drawContours(np.zeros_like(segmentation), contours, -1, 255, 1)
+    #     # plt.matshow(outlines)
+    #     # plt.show()
+    #     # #expanded_segmentation = (segmentation.unsqueeze(0) == torch.unique(segmentation).view(-1, 1, 1))
+    #
+    #     #outlines = mask_funcs.mask_outline(expanded_segmentation, thickness=1)
+    #         # print(expanded_segmentation.dtype)
+    #     #print(outlines.shape)
+    # #     for cell_index in torch.unique(segmentation)[1:]:
+    # #         outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
+    # #         phase_image[outline] = colour_dict[cell_index.item()]
+    # #
+    # #     tracked[i] = phase_image.cpu().numpy()
+    # tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
+    # ij.ui().show(tracked_image)
+    # ij.py.run_macro(macro='run("Make Composite")')
+    # time.sleep(99999)
 def get_gpu_memory_use(object):
     # in bytes
     return object.element_size() * object.numel()
