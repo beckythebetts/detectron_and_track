@@ -128,8 +128,6 @@ def show_tracked_images(first_frame=0, last_frame=50):
     #ij.py.run_macro(macro='run("8-bit")')
     time.sleep(99999)
 
-def get_frame(centres, frame_size):
-
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL {cell_idx}')
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
