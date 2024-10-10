@@ -93,7 +93,8 @@ def show_tracked_images_fast():
                                       for frame in list(f['Segmentations']['Phase'].keys())][:3], dtype='int16')
     max_cell_index = np.max(segmentation_data)
     #colour_dict = {cell_index: np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8') for cell_index in np.arange(1, max_cell_index + 1)}
-    LUT = torch.randint(low=10, high=255, size=(max_cell_index, 3)).to(device)
+    LUT = torch.randint(low=10, high=255, size=(max_cell_index+1, 3)).to(device)
+    LUT[0] = [0, 0, 0]
     rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
     tracked = np.zeros(rgb_phase.shape)
     print(tracked.shape)
