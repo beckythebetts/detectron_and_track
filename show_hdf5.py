@@ -125,7 +125,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
     tracked_image = ij.py.to_dataset(tracked, dim_order=['t', 'row', 'col', 'ch'])
     ij.ui().show(tracked_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    ij.py.run_macro(macro='run("8-bit")')
+    #ij.py.run_macro(macro='run("8-bit")')
     time.sleep(99999)
 
 def show_cell(cell_idx, first_frame=0, last_frame=50):
