@@ -88,7 +88,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
         phase_data = np.array([f['Images']['Phase'][frame][:]
                                for frame in f['Images']['Phase'].keys()][first_frame:last_frame], dtype='uint8')
         segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
-                                      for frame in list(f['Segmentations']['Phase'].keys())][firest_frame:last_frame], dtype='int16')
+                                      for frame in list(f['Segmentations']['Phase'].keys())][first_frame:last_frame], dtype='int16')
     max_cell_index = np.max(segmentation_data)
     LUT = torch.randint(low=10, high=255, size=(max_cell_index+1, 3)).to(device)
     LUT[0] = torch.tensor([0, 0, 0]).to(device)
