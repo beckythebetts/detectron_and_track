@@ -129,15 +129,12 @@ def show_tracked_images(first_frame=0, last_frame=50):
     time.sleep(99999)
 
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
-    print(f'\nSHOWING CELL {cell_idx}')
+    print(f'\nSHOWING CELL {cell_idx}, FRAMES {first_frame} to {last_frame}')
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     epi_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     mask_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     with h5py.File(hdf5_file, 'r') as f:
         for frame in range(first_frame, last_frame):
-            sys.stdout.write(
-                f'\rReading frame {frame + 1}')
-            sys.stdout.flush()
             xcentre = np.nan
             framei = frame
             while np.isnan(xcentre):
@@ -160,7 +157,6 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
         # mask_data = np.array([f['Segmentations']['Phase'][frame][xmin:xmax,ymin:ymax]
         #                        for frame, xmin, xmax, ymin, ymax in zip(list(f['Segmentations']['Phase'].keys())[first_frame:last_frame], xmins, xmaxs, ymins, ymaxs)], dtype='uint8')
     cell_mask = (mask_data == cell_idx)
-    print(np.unique(cell_mask))
     if not cell_mask.any():
         raise Exception(f'Cell of index {cell_idx} not found')
     cell_outline = mask_funcs.mask_outline(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
