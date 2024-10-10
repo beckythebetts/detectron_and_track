@@ -7,6 +7,7 @@ import time
 from joblib import Parallel, delayed
 from skimage.segmentation import find_boundaries
 import cv2
+import matplotlib.pyplot as plt
 
 
 import mask_funcs
