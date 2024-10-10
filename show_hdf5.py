@@ -105,7 +105,7 @@ def show_tracked_images_fast():
         sys.stdout.flush()
         outlines = mask_funcs.mask_outlines(segmentation).int()
         outlines = LUT[outlines]
-        phase_image =  torch.where(outlines>0, outline, phase_image)
+        phase_image =  torch.where(outlines>0, outlines, phase_image)
         #phase_image[outlines>0] = outlines[outlines>0].int()
         tracked[i] = phase_image.cpu().numpy()
         # def find_mask_boundary(mask):
