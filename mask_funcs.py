@@ -114,7 +114,55 @@ def mask_outlines(mask, thickness=3):
 #     x_mean = torch.sum(coords[:, 1]) / len
 #     y_mean = torch.sum(coords[:, 0]) / len
 #     return x_mean, y_mean
+def get_crop_indices(center, side_length, image_size):
+    """
+    Get the crop indices for a square crop from an image.
 
+    Parameters:
+        center (tuple): (y, x) coordinates of the center of the crop.
+        side_length (int): Length of the sides of the square crop.
+        image_size (tuple): (height, width) of the original image.
+
+    Returns:
+        tuple: (y_start, y_end, x_start, x_end) indices for cropping.
+    """
+
+    # Calculate half the side length
+    half_length = side_length // 2
+
+    # Determine the crop boundaries
+    y_center, x_center = center
+    y_start = y_center - half_length
+    y_end = y_center + half_length
+    x_start = x_center - half_length
+    x_end = x_center + half_length
+
+    # Adjust boundaries if they exceed image dimensions
+    y_start = max(0, y_start)
+    y_end = min(image_size[0], y_end)
+    x_start = max(0, x_start)
+    x_end = min(image_size[1], x_end)
+
+    # Adjust the center if the crop is adjusted
+    if y_end - y_start < side_length:
+        if y_start == 0:
+            y_end = y_start + side_length
+        else:
+            y_start = y_end - side_length
+
+    if x_end - x_start < side_length:
+        if x_start == 0:
+            x_end = x_start + side_length
+        else:
+            x_start = x_end - side_length
+
+    # Ensure the crop dimensions are valid
+    y_start = max(0, y_start)
+    y_end = min(image_size[0], y_end)
+    x_start = max(0, x_start)
+    x_end = min(image_size[1], x_end)
+
+    return (y_start, y_end, x_start, x_end)
 if __name__ == '__main__':
     #get_centre(np.zeros((5, 5)))
     array_1 = np.array([[0,0], [1,0], [2, 2]])

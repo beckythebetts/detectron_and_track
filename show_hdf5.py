@@ -128,6 +128,8 @@ def show_tracked_images(first_frame=0, last_frame=50):
     #ij.py.run_macro(macro='run("8-bit")')
     time.sleep(99999)
 
+def get_frame(centres, frame_size):
+
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL {cell_idx}')
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
@@ -140,8 +142,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
             while np.isnan(xcentre):
                 xcentre, ycentre = f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(frame)]['xcentre'], f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(frame)]['ycentre']
                 framei -= 1
-            xmin, xmax, ymin, ymax = int(xcentre - (frame_size / 2)), int(xcentre + (frame_size / 2)), int(
-                ycentre - (frame_size / 2)), int(ycentre + (frame_size / 2))
+            ymin, ymax, xmin, xmax = mask_funcs.get_crop_indices((ycentre, xcentre), frame_size, SETTINGS.IMAGE_SIZE)
             phase_data[frame] = np.array(f['Images']['Phase'][f'{int(frame):04}'])[xmin:xmax, ymin:ymax]
             epi_data[frame] = f['Images']['Epi'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
             mask_data[frame] = f['Segmentations']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
