@@ -162,7 +162,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     cell_outline = mask_funcs.mask_outline(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
     merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
     merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
-    merged_im[:, 1][cell_outline] = 255
+    merged_im[:, 0:2][cell_outline] = 255
     merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
@@ -171,6 +171,6 @@ def main():
     #show_separate_channels()
     #show_merged_channels()
     #show_tracked_images()
-    show_cell(50)
+    show_cell(60)
 if __name__ == '__main__':
     main()
