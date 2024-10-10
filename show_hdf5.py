@@ -144,7 +144,6 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
             phase_data[frame] = np.array(f['Images']['Phase'][f'{int(frame):04}'])[xmin:xmax, ymin:ymax]
             epi_data[frame] = f['Images']['Epi'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
             mask_data[frame] = f['Segmentations']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
-
         # xcentres = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['xcentre'] for framei in
         #                     range(first_frame, last_frame)])
         # ycentres = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['ycentre'] for framei in
@@ -157,7 +156,6 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
         #                      for frame, xmin, xmax, ymin, ymax in zip(list(f['Images']['Epi'].keys())[first_frame:last_frame], xmins, xmaxs, ymins, ymaxs)], dtype='uint8')
         # mask_data = np.array([f['Segmentations']['Phase'][frame][xmin:xmax,ymin:ymax]
         #                        for frame, xmin, xmax, ymin, ymax in zip(list(f['Segmentations']['Phase'].keys())[first_frame:last_frame], xmins, xmaxs, ymins, ymaxs)], dtype='uint8')
-
     cell_mask = (mask_data == cell_idx)
     print(np.unique(cell_mask))
     if not cell_mask.any():
@@ -174,6 +172,6 @@ def main():
     #show_separate_channels()
     #show_merged_channels()
     #show_tracked_images()
-    show_cell(10)
+    show_cell(5)
 if __name__ == '__main__':
     main()
