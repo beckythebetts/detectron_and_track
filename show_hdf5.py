@@ -109,7 +109,7 @@ def show_tracked_images_fast():
         outlines = LUT[outlines]
         print(outlines.shape)
         phase_image.long()[outlines>0] = outlines[outlines>0]
-        tracked[i] = phase_image
+        tracked[i] = phase_image.cpu().numpy()
         # def find_mask_boundary(mask):
         #     return find_boundaries(mask, mode='outer')
         # # skimage
