@@ -135,8 +135,8 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
                                for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
         epi_data = np.array([f['Images']['Epi'][frame][:]
                              for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
-        mask_data = np.array([f['Segmentation']['Phase'][frame][:]
-                               for frame in list(f['Segmentation']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
+        mask_data = np.array([f['Segmentations']['Phase'][frame][:]
+                               for frame in list(f['Segmentations']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
     cell_mask = (mask_data == cell_idx)
     cell_outline = mask_funcs.mask_outlines(torch.tensor(cell_mask))
     merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
