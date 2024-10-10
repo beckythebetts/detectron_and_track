@@ -21,8 +21,8 @@ hdf5_file = SETTINGS.DATASET
 ij = imagej.init('2.1.0', mode='interactive')
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def make_rgb(greyscale_im, axis=1):
-    return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=axis)[:, np.newaxis]
+# def make_rgb(greyscale_im, axis=1):
+#     return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=axis)[:, np.newaxis]
 
 # def show_separate_channels(first_frame=0, last_frame=50):
 #     print('\nSHOWING SEPARATE CHANNELS')
@@ -65,45 +65,38 @@ def show_merged_channels(first_frame=0, last_frame=50):
                                for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
         epi_data = np.array([f['Images']['Epi'][frame][:]
                                for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
-
-
-    #merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
-    # only merge red channel (0)
-    #merged_im = make_rgb(phase_data)
     merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
-    print(merged_im.shape)
-    #merged_im[:, 0, 0] = ((phase_data.astype(np.float32)+epi_data.astype(np.float32))/2).astype(np.uint8)
     merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
     merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
-def show_tracked_images_old():
-    print('\nPREPARING TRACKED IMAGES\n')
-    with h5py.File(hdf5_file, 'r') as f:
-        phase_data = np.array([f['Images']['Phase'][frame][:]
-                               for frame in f['Images']['Phase'].keys()][:3], dtype='uint8')
-        segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
-                                      for frame in list(f['Segmentations']['Phase'].keys())][:3], dtype='int16')
-    max_cell_index=np.max(segmentation_data)
-    colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8')).to(device) for
-                   cell_index in np.arange(1, max_cell_index + 1)}
-    rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
-    tracked = np.zeros(rgb_phase.shape)
-    for i, (phase_image, segmentation) in enumerate(
-            zip(torch.tensor(rgb_phase).to(device), torch.tensor(segmentation_data).to(device))):
-        sys.stdout.write(
-            f'\rFrame {i + 1}')
-        sys.stdout.flush()
-        for cell_index in torch.unique(segmentation)[1:]:
-            outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
-            phase_image[outline] = colour_dict[cell_index.item()]
-
-        tracked[i] = phase_image.cpu().numpy()
-    tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
-    ij.ui().show(tracked_image)
-    ij.py.run_macro(macro='run("Make Composite")')
-    time.sleep(99999)
+# def show_tracked_images_old():
+#     print('\nPREPARING TRACKED IMAGES\n')
+#     with h5py.File(hdf5_file, 'r') as f:
+#         phase_data = np.array([f['Images']['Phase'][frame][:]
+#                                for frame in f['Images']['Phase'].keys()][:3], dtype='uint8')
+#         segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
+#                                       for frame in list(f['Segmentations']['Phase'].keys())][:3], dtype='int16')
+#     max_cell_index=np.max(segmentation_data)
+#     colour_dict = {cell_index: torch.tensor(np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8')).to(device) for
+#                    cell_index in np.arange(1, max_cell_index + 1)}
+#     rgb_phase = np.stack((phase_data, phase_data, phase_data), axis=-1)
+#     tracked = np.zeros(rgb_phase.shape)
+#     for i, (phase_image, segmentation) in enumerate(
+#             zip(torch.tensor(rgb_phase).to(device), torch.tensor(segmentation_data).to(device))):
+#         sys.stdout.write(
+#             f'\rFrame {i + 1}')
+#         sys.stdout.flush()
+#         for cell_index in torch.unique(segmentation)[1:]:
+#             outline = mask_funcs.mask_outline(torch.where(segmentation == cell_index.item(), 1, 0), thickness=3)
+#             phase_image[outline] = colour_dict[cell_index.item()]
+#
+#         tracked[i] = phase_image.cpu().numpy()
+#     tracked_image = ij.py.to_dataset(tracked, dim_order=['time', 'row', 'col', 'ch'])
+#     ij.ui().show(tracked_image)
+#     ij.py.run_macro(macro='run("Make Composite")')
+#     time.sleep(99999)
 
 def show_tracked_images(first_frame=0, last_frame=50):
     print('\nPREPARING TRACKED IMAGES\n')
@@ -135,6 +128,23 @@ def show_tracked_images(first_frame=0, last_frame=50):
     ij.py.run_macro(macro='run("8-bit")')
     time.sleep(99999)
 
+def show_cell(cell_idx, first_frame=0, last_frame=50):
+    print(f'\nSHOWING CELL {cell_idx}')
+    with h5py.File(hdf5_file, 'r') as f:
+        phase_data = np.array([f['Images']['Phase'][frame][:]
+                               for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
+        epi_data = np.array([f['Images']['Epi'][frame][:]
+                             for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
+        mask_data = np.array([f['Segmentation']['Phase'][frame][:]
+                               for frame in list(f['Segment']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
+    cell_mask = (mask_data == cell_idx)
+    cell_outline = mask_funcs.mask_outlines(torch.tensor(cell_mask))
+    merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
+    merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
+    merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
+    ij.ui().show(merged_image)
+    ij.py.run_macro(macro='run("Make Composite")')
+    time.sleep(99999)
 def main():
     #show_separate_channels()
     show_merged_channels()
