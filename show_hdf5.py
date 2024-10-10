@@ -99,13 +99,13 @@ def show_tracked_images_fast():
     for i, (phase_image, segmentation) in enumerate(
             zip(rgb_phase, segmentation_data)):
         segmentation = torch.tensor(segmentation).to(device)
-        phase_image = torch.tensor(phase_image).to(device).int()
+        phase_image = torch.tensor(phase_image).to(device)
         sys.stdout.write(
             f'\rFrame {i + 1}')
         sys.stdout.flush()
         outlines = mask_funcs.mask_outlines(segmentation).int()
         outlines = LUT[outlines]
-        phase_image[outlines>0] = outlines[outlines>0]
+        phase_image[outlines>0] = outlines[outlines>0].int()
         tracked[i] = phase_image.cpu().numpy()
         # def find_mask_boundary(mask):
         #     return find_boundaries(mask, mode='outer')
