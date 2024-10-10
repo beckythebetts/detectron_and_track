@@ -141,7 +141,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
             xcentre = np.nan
             framei = frame
             while np.isnan(xcentre):
-                xcentre, ycentre = f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(frame)]['xcentre'], f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(frame)]['ycentre']
+                xcentre, ycentre = f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['xcentre'], f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['ycentre']
                 framei -= 1
             ymin, ymax, xmin, xmax = mask_funcs.get_crop_indices((ycentre, xcentre), frame_size, SETTINGS.IMAGE_SIZE)
             phase_data[frame] = np.array(f['Images']['Phase'][f'{int(frame):04}'])[xmin:xmax, ymin:ymax]
