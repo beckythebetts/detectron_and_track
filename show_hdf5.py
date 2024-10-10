@@ -88,9 +88,9 @@ def show_tracked_images_fast():
     print('\nPREPARING TRACKED IMAGES\n')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
-                               for frame in f['Images']['Phase'].keys()][:50], dtype='uint8')
+                               for frame in f['Images']['Phase'].keys()][:500], dtype='uint8')
         segmentation_data = np.array([f['Segmentations']['Phase'][frame][:]
-                                      for frame in list(f['Segmentations']['Phase'].keys())][:50], dtype='int16')
+                                      for frame in list(f['Segmentations']['Phase'].keys())][:500], dtype='int16')
     max_cell_index = np.max(segmentation_data)
     #colour_dict = {cell_index: np.random.uniform(0, (2 ** 8) - 1, size=3).astype('uint8') for cell_index in np.arange(1, max_cell_index + 1)}
     LUT = torch.randint(low=10, high=255, size=(max_cell_index+1, 3)).to(device)
