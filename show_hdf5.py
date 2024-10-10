@@ -148,7 +148,8 @@ def show_cell(cell_idx, first_frame=0, last_frame=50):
     time.sleep(99999)
 def main():
     #show_separate_channels()
-    show_merged_channels()
+    #show_merged_channels()
     #show_tracked_images()
+    show_cell(3)
 if __name__ == '__main__':
     main()
