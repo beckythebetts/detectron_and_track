@@ -24,22 +24,22 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def make_rgb(greyscale_im, axis=1):
     return np.stack((greyscale_im, greyscale_im, greyscale_im), axis=axis)[:, np.newaxis]
 
-def show_separate_channels(first_frame=0, last_frame=50):
-    print('\nSHOWING SEPARATE CHANNELS')
-    with h5py.File(hdf5_file, 'r') as f:
-        data = np.array([
-            [
-                f['Images'][channel][frame][:]
-                for channel in f['Images'].keys()[first_frame:last_frame]
-            ]
-            for frame in f['Images']['Phase'].keys()[first_frame:last_frame]
-        ], dtype='uint8')
-        ij_image = ij.py.to_java(data)
-        ij.ui().show('images', ij_image)
-    time.sleep(99999)
+# def show_separate_channels(first_frame=0, last_frame=50):
+#     print('\nSHOWING SEPARATE CHANNELS')
+#     with h5py.File(hdf5_file, 'r') as f:
+#         data = np.array([
+#             [
+#                 f['Images'][channel][frame][:]
+#                 for channel in f['Images'].keys()
+#             ]
+#             for frame in f['Images']['Phase'].keys()
+#         ], dtype='uint8')
+#         ij_image = ij.py.to_java(data)
+#         ij.ui().show('images', ij_image)
+#     time.sleep(99999)
 
 def show_merged_channels(first_frame=0, last_frame=50):
-    print('\nPREPARING MERGED IMAGES')
+    print('\nSHOWING MERGED IMAGES')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
                                for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
@@ -112,8 +112,8 @@ def show_tracked_images(first_frame=0, last_frame=50):
     time.sleep(99999)
 
 def main():
-    show_separate_channels()
+    #show_separate_channels()
     #show_merged_channels()
-    #show_tracked_images_fast()
+    show_tracked_images()
 if __name__ == '__main__':
     main()
