@@ -128,13 +128,16 @@ def show_tracked_images(first_frame=0, last_frame=50):
     #ij.py.run_macro(macro='run("8-bit")')
     time.sleep(99999)
 
-def show_cell(cell_idx, first_frame=0, last_frame=10, frame_size=150):
+def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL {cell_idx}')
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     epi_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     mask_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     with h5py.File(hdf5_file, 'r') as f:
         for frame in range(first_frame, last_frame):
+            sys.stdout.write(
+                f'\rReading frame {frame + 1}')
+            sys.stdout.flush()
             xcentre = np.nan
             framei = frame
             while np.isnan(xcentre):
