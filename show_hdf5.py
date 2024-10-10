@@ -50,11 +50,31 @@ def show_merged_channels(first_frame=0, last_frame=50):
     epi_channel = make_rgb(epi_data)
     epi_channel[:,:,1:3] = 0
     merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
+    # only merge red channel (0)
+    # merged_im = make_rgb(phase_data)
+    # merged_im[:, :, 0] = (phase_data).astype(np.float32)+epi_channel[:, :, 0]
     merged_image = ij.py.to_dataset(merged_data, dim_order=['time', 'z', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
     time.sleep(99999)
 
+def show_merged_channels_redo(first_frame=0, last_frame=50):
+    print('\nSHOWING MERGED IMAGES')
+    with h5py.File(hdf5_file, 'r') as f:
+        phase_data = np.array([f['Images']['Phase'][frame][:]
+                               for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
+        epi_data = np.array([f['Segmentations']['Epi'][frame][:]
+                               for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
+
+    epi_data[epi_data > 0] = 255
+    #merged_data = (0.75*(make_rgb(phase_data).astype(np.float32) + 0.25*epi_channel.astype(np.float32))).astype(np.uint8)
+    # only merge red channel (0)
+    merged_im = make_rgb(phase_data)
+    merged_im[:, :, 0] = ((phase_data.astype(np.float32)+epi_data.astype(np.float32))/2).astype(np.uint8)
+    merged_image = ij.py.to_dataset(merged_im, dim_order=['time', 'z', 'ch', 'row', 'col'])
+    ij.ui().show(merged_image)
+    ij.py.run_macro(macro='run("Make Composite")')
+    time.sleep(99999)
 def show_tracked_images_old():
     print('\nPREPARING TRACKED IMAGES\n')
     with h5py.File(hdf5_file, 'r') as f:
