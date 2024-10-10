@@ -92,7 +92,7 @@ def show_phagocytic_events(dataset, save_directory, frame_size=150):
                         while np.isnan(xcentre):
                             xcentre, ycentre = f['Features'][cell]['MorphologicalFeatures'][int(framei)]['xcentre'], f['Features'][cell]['MorphologicalFeatures'][int(framei)]['ycentre']
                             framei -= 1
-                        xmin, xmax, ymin, ymax = int(xcentre-(frame_size/2)), int(xcentre+(frame_size/2)), int(ycentre-(frame_size/2)), int(ycentre+(frame_size/2)),
+                        xmin, xmax, ymin, ymax = int(xcentre-(frame_size/2)), int(xcentre+(frame_size/2)), int(ycentre-(frame_size/2)), int(ycentre+(frame_size/2))
                         phase_image = np.array(f['Images']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax])
                         phase_mask = np.array(f['Segmentations']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax])
                         outline = mask_funcs.mask_outline(torch.where(torch.tensor(phase_mask) == int(cell[-4:]), 1, 0), thickness=2).cpu().numpy()
