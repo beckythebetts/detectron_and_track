@@ -131,31 +131,31 @@ def show_tracked_images(first_frame=0, last_frame=50):
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL {cell_idx}')
     with h5py.File(hdf5_file, 'r') as f:
-        xcentre = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['xcentre'] for framei in
+        xcentres = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['xcentre'] for framei in
                             range(first_frame, last_frame)])
-        ycentre = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['ycentre'] for framei in
+        ycentres = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['ycentre'] for framei in
                             range(first_frame, last_frame)])
-        print(xcentre, ycentre)
+        xmins, xmaxs, ymins, ymaxs = (xcentres-frame_size/2).astype(int), (xcentres+frame_size/2).astype(int), (ycentres-frame_size/2).astype(int), (ycentres+frame_size/2).astype(int)
 
-    #     phase_data = np.array([f['Images']['Phase'][frame][:]
-    #                            for frame in list(f['Images']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
-    #     epi_data = np.array([f['Images']['Epi'][frame][:]
-    #                          for frame in list(f['Images']['Epi'].keys())[first_frame:last_frame]], dtype='uint8')
-    #     mask_data = np.array([f['Segmentations']['Phase'][frame][:]
-    #                            for frame in list(f['Segmentations']['Phase'].keys())[first_frame:last_frame]], dtype='uint8')
-    #
-    # cell_mask = (mask_data == cell_idx)
-    # print(np.unique(cell_mask))
-    # if not cell_mask.any():
-    #     raise Exception(f'Cell of index {cell_idx} not found')
-    # cell_outline = mask_funcs.mask_outline(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
-    # merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
-    # merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
-    # merged_im[:, 1][cell_outline] = 255
-    # merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
-    # ij.ui().show(merged_image)
-    # ij.py.run_macro(macro='run("Make Composite")')
-    # time.sleep(99999)
+        phase_data = np.array([f['Images']['Phase'][frame][xmin:xmax,ymin:ymax]
+                               for frame, xmin, xmax, ymin, ymax in zip(list(f['Images']['Phase'].keys())[first_frame:last_frame], xmins, xmaxs, ymins, ymaxs)], dtype='uint8')
+        epi_data = np.array([f['Images']['Epi'][frame][xmin:xmax,ymin:ymax]
+                             for frame, xmin, xmax, ymin, ymax in zip(list(f['Images']['Epi'].keys())[first_frame:last_frame], xmins, xmaxs, ymins, ymaxs)], dtype='uint8')
+        mask_data = np.array([f['Segmentations']['Phase'][frame][xmin:xmax,ymin:ymax]
+                               for frame, xmin, xmax, ymin, ymax in zip(list(f['Segmentations']['Phase'].keys())[first_frame:last_frame], xmins, xmaxs, ymins, ymaxs)], dtype='uint8')
+
+    cell_mask = (mask_data == cell_idx)
+    print(np.unique(cell_mask))
+    if not cell_mask.any():
+        raise Exception(f'Cell of index {cell_idx} not found')
+    cell_outline = mask_funcs.mask_outline(torch.tensor(cell_mask).byte().to(device)).cpu().numpy()
+    merged_im = np.stack((phase_data, phase_data, phase_data), axis=1)
+    merged_im[:, 0][epi_data > SETTINGS.THRESHOLD] = epi_data[epi_data > SETTINGS.THRESHOLD]
+    merged_im[:, 1][cell_outline] = 255
+    merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
+    ij.ui().show(merged_image)
+    ij.py.run_macro(macro='run("Make Composite")')
+    time.sleep(99999)
 def main():
     #show_separate_channels()
     #show_merged_channels()
