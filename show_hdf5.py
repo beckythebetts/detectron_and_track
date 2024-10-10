@@ -137,7 +137,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
 
 def main():
     #show_separate_channels()
-    show_merged_channels_channels()
+    show_merged_channels()
     #show_tracked_images()
 if __name__ == '__main__':
     main()
