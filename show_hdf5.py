@@ -8,7 +8,7 @@ from joblib import Parallel, delayed
 from skimage.segmentation import find_boundaries
 import cv2
 import matplotlib.pyplot as plt
-import Pandas as pd
+import pandas as pd
 
 
 import mask_funcs
