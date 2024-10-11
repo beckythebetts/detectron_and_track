@@ -119,7 +119,7 @@ def plot_training_data(training_data_values=[0, 2, 4]):
     # plt.savefig(Path('cellpose_Models') / 'training_data_results.png')
 
     im_views = [plt.imread(directory / 'test_with_00' / 'validate' /'00_view.png')[200:800, 200:800] for directory in directories]
-    side_by_side = np.concatenate(im_views, axis=0)
+    side_by_side = np.concatenate(im_views, axis=1)
     plt.matshow(side_by_side)
     plt.show()
 
