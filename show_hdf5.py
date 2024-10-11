@@ -10,6 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 import pandas as pd
 import multiprocessing
+import argparse
 
 
 import mask_funcs
@@ -60,7 +61,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #     ij.py.run_macro(macro='run("Make Composite")')
 #     time.sleep(99999)
 
-def show_merged_channels(first_frame=0, last_frame=50):
+def show_raw_images(first_frame=0, last_frame=50):
     print('\nSHOWING MERGED IMAGES')
     with h5py.File(hdf5_file, 'r') as f:
         phase_data = np.array([f['Images']['Phase'][frame][:]
@@ -130,7 +131,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
     #ij.py.run_macro(macro='run("8-bit")')
     time.sleep(99999)
 
-def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
+def show_cell_images(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL: {cell_idx}, FRAMES: {first_frame} to {last_frame}')
 
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
@@ -189,10 +190,10 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
         axs[-1].set(xlabel='frames')
         plt.show()
 
-def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
+def show_cell(cell_idx, first_frame=0, last_frame=50):
     #open both imagej of cell and feature plot
     multiprocessing.set_start_method('spawn')
-    imagej_thread = multiprocessing.Process(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
+    imagej_thread = multiprocessing.Process(target=show_cell_images, args=(cell_idx, first_frame, last_frame))
     plt_thread = multiprocessing.Process(target=show_feature_plot, args=(cell_idx, first_frame, last_frame))
 
     imagej_thread.start()
@@ -203,9 +204,34 @@ def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest='command', help='Funciton to execute')
+
+    parser_show_raw = subparsers.add_parser('show_raw_images')
+    parser_show_raw.add_argument('first_frame', type=int)
+    parser_show_raw.add_argument('last_frame', type=int)
+
+    parser_show_tracked = subparsers.add_parser('show_tracked_images')
+    parser_show_tracked.add_argument('first_frame', type=int)
+    parser_show_tracked.add_argument('last_frame', type=int)
+
+    parser_show_cell = subparsers.add_parser('show_cell')
+    parser_show_cell.add_argument('cell_idx', type=int)
+    parser_show_cell.add_argument('first_frame', type=int)
+    parser_show_cell.add_argument('last_frame', type=int)
+
+    args = parser.parse_args()
+
+    if args.command == 'show_raw_images':
+        show_raw_images(args.first_frame, args.last_frame)
+    elif args.command == 'show_tracked_images':
+        show_tracked_images(args.first_frame, args.last_frame)
+    elif args.command == 'show_cell':
+        show_cell(args.cell_idx, args.first_frame, args.last_frame)
+
     #show_separate_channels()
     #show_merged_channels()
     #show_tracked_images()
-    display_cell(200)
+    #display_cell(200)
 if __name__ == '__main__':
     main()
