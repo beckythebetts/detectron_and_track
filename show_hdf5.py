@@ -134,7 +134,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     plt.rcParams["font.family"] = 'serif'
     print('\nPLOTTING FEATURES...\n')
     with h5py.File(SETTINGS.DATASET, 'r') as f:
-        data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last:last_frame])
+        data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
         # data = pd.DataFrame(f['Features'][cell][:])
         # print(data)
         fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
