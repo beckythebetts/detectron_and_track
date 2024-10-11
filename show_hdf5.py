@@ -188,7 +188,7 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
 
         fig.suptitle(f'Cell{cell_idx:04}')
         axs[-1].set(xlabel='frames')
-        plt.show()
+        plt.show(block=False)
 
 def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
