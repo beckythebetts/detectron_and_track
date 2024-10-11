@@ -100,7 +100,7 @@ class CellposeKfold:
 
 
 def main():
-    kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation')
+    kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation_0')
     # kfold.split_datasets()
     kfold.train_eval_datasets()
     kfold.get_results()
