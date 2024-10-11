@@ -98,14 +98,29 @@ class CellposeKfold:
         plt.savefig(str(self.directory / 'av_loss_plot.png'))
         plt.clf()
 
+def plot_training_data(training_data_values=[0, 2, 4]):
+    directories = [Path('cellpose_Models') / f'kfold_manula_validation_{i}' for i in training_data_values]
+    means = [pd.read_csv(directory / 'results_means.txt', sep='\t', index_col=0) for directory in directories]
+    stds = [pd.read_csv(directory / 'results_stds.txt', sep='\t', index_col=0) for directory in directories]
 
+    metrics = means[0].columns.values
+    thresholds = means[0].index.values
+
+    plt.rcParams["font.family"] = 'serif'
+    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+    for ax, metric in zip(axs, metrics):
+        for mean, std, value in zip(means, stds, training_data_values):
+            ax.plot(thresholds, mean[metric], label=value)
+            ax.fill_between(thresholds, mean[metric]-std[metric], mean[metric]+std[metric], alpha=0.5, edgecolor=None)
+    plt.show()
 def main():
-    kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation_2')
-    # kfold.split_datasets()
-    kfold.train_eval_datasets()
-    kfold.get_results()
-    kfold.plot_results()
-    kfold.plot_losses()
+    # kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation_2')
+    # # kfold.split_datasets()
+    # kfold.train_eval_datasets()
+    # kfold.get_results()
+    # kfold.plot_results()
+    # kfold.plot_losses()
+    plot_training_data()
 
 if __name__ == '__main__':
     main()
