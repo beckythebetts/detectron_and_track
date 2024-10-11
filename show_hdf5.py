@@ -178,11 +178,11 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
     print(f'\nPLOTTING FEATURES CELL: {cell_idx}, FRAMES: {first_frame} to {last_frame}\n')
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
+        print(data)
         columns = [0, 1, 2, 3, 4, 7]
         fig, axs = plt.subplots(len(columns), sharex=True, figsize=(10, 10))
         for i, col in enumerate(columns):
-            axs[i].plot(data.Index.array, data.iloc[:, col], color='k')
-            print(data.iloc[:, col])
+            axs[i].plot(range(first_frame,last_frame), data.iloc[:, col], color='k')
             axs[i].set(ylabel=data.columns.values.tolist()[col])
             axs[i].grid()
             axs[i].set_xlim(left=first_frame, right=last_frame)
