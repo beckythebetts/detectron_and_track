@@ -206,6 +206,6 @@ def main():
     #show_separate_channels()
     #show_merged_channels()
     #show_tracked_images()
-    display_cell(161)
+    display_cell(200)
 if __name__ == '__main__':
     main()
