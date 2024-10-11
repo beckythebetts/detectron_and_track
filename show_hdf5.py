@@ -179,9 +179,9 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
         data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
         columns = [0, 1, 2, 3, 4, 7]
         fig, axs = plt.subplots(len(columns), sharex=True, figsize=(10, 10))
-        for i in columns:
-            axs[i].plot(data.iloc[:, i], color='k')
-            axs[i].set(ylabel=data.columns.values.tolist()[i])
+        for i, col in enumerate(columns):
+            axs[i].plot(data.iloc[:, col], color='k')
+            axs[i].set(ylabel=data.columns.values.tolist()[col])
             axs[i].grid()
             axs[i].set_xlim(left=first_frame, right=last_frame)
 
