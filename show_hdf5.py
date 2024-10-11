@@ -10,6 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 import pandas as pd
 import threading
+import multiprocessing
 
 
 import mask_funcs
@@ -188,17 +189,28 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
 
         fig.suptitle(f'Cell{cell_idx:04}')
         axs[-1].set(xlabel='frames')
-        plt.show(block=False)
+        plt.show()
+
+# def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
+#     imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
+#     plt_thread = threading.Thread(target=show_feature_plot, args=(cell_idx, first_frame, last_frame))
+#
+#     imagej_thread.start()
+#     plt_thread.start()
+#
+#     imagej_thread.join()
+#     plt_thread.join()
 
 def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
-    imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
-    plt_thread = threading.Thread(target=show_feature_plot, args=(cell_idx, first_frame, last_frame))
+    imagej_thread = multiprocessing.Process(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
+    plt_thread = multiprocessing.Process(target=show_feature_plot, args=(cell_idx, first_frame, last_frame))
 
     imagej_thread.start()
     plt_thread.start()
 
     imagej_thread.join()
     plt_thread.join()
+
 
 def main():
     #show_separate_channels()
