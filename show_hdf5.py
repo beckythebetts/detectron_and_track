@@ -182,6 +182,7 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
         fig, axs = plt.subplots(len(columns), sharex=True, figsize=(10, 10))
         for i, col in enumerate(columns):
             axs[i].plot(data.iloc[:, col], color='k')
+            print(data.iloc[:, col])
             axs[i].set(ylabel=data.columns.values.tolist()[col])
             axs[i].grid()
             axs[i].set_xlim(left=first_frame, right=last_frame)
