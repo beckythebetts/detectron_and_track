@@ -116,7 +116,7 @@ def plot_training_data(training_data_values=[0, 2, 4]):
             ax.set_xlabel('IOU Threshold')
             ax.set_ylabel(metric)
     plt.legend()
-    plt.show()
+    plt.savefig(Path('cellpose_Models') / 'training_data_results.png')
 def main():
     # kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation_2')
     # # kfold.split_datasets()
