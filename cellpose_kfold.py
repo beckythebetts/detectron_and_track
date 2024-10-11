@@ -99,7 +99,7 @@ class CellposeKfold:
         plt.clf()
 
 def plot_training_data(training_data_values=[0, 2, 4]):
-    directories = [Path('cellpose_Models') / f'kfold_manula_validation_{i}' for i in training_data_values]
+    directories = [Path('cellpose_Models') / f'kfold_manual_validation_{i}' for i in training_data_values]
     means = [pd.read_csv(directory / 'results_means.txt', sep='\t', index_col=0) for directory in directories]
     stds = [pd.read_csv(directory / 'results_stds.txt', sep='\t', index_col=0) for directory in directories]
 
