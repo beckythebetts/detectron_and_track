@@ -131,6 +131,23 @@ def show_tracked_images(first_frame=0, last_frame=50):
 
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL {cell_idx}, FRAMES {first_frame} to {last_frame}')
+    plt.rcParams["font.family"] = 'serif'
+    print('\nPLOTTING FEATURES...\n')
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last:last_frame])
+        # data = pd.DataFrame(f['Features'][cell][:])
+        # print(data)
+        fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
+        for i in range(4):
+            axs[i].plot(data.iloc[:, i], color='k')
+            axs[i].set(ylabel=data.columns.values.tolist()[i])
+            axs[i].grid()
+            axs[i].set_xlim(left=first_frame, right=last_frame)
+
+        fig.suptitle(cell)
+        axs[-1].set(xlabel='frames')
+        plt.show()
+    print('\nDISPLAYING CELL...')
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     epi_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     mask_data = np.empty((last_frame-first_frame, frame_size, frame_size))
@@ -170,22 +187,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     ij.py.run_macro(macro='run("Make Composite")')
 
     # also show cellfeature plot?
-    plt.rcParams["font.family"] = 'serif'
-    print('\nPLOTTING FEATURES\n')
-    with h5py.File(SETTINGS.DATASET, 'r') as f:
-        data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorpholigicalFeatures'][first_frame:last:last_frame])
-        # data = pd.DataFrame(f['Features'][cell][:])
-        # print(data)
-        fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
-        for i in range(4):
-            axs[i].plot(data.iloc[:, i], color='k')
-            axs[i].set(ylabel=data.columns.values.tolist()[i])
-            axs[i].grid()
-            axs[i].set_xlim(left=first_frame, right=last_frame)
 
-        fig.suptitle(cell)
-        axs[-1].set(xlabel='frames')
-        plt.show()
         time.sleep(99999)
 def main():
     #show_separate_channels()
