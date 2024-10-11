@@ -138,16 +138,16 @@ def show_cell_images(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     epi_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     mask_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     with h5py.File(hdf5_file, 'r') as f:
-        for frame in range(first_frame, last_frame):
+        for idx, frame in enumerate(range(first_frame, last_frame)):
             xcentre = np.nan
             framei = frame
             while np.isnan(xcentre):
                 xcentre, ycentre = f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['xcentre'], f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['ycentre']
                 framei -= 1
             ymin, ymax, xmin, xmax = mask_funcs.get_crop_indices((ycentre, xcentre), frame_size, SETTINGS.IMAGE_SIZE)
-            phase_data[frame] = np.array(f['Images']['Phase'][f'{int(frame):04}'])[xmin:xmax, ymin:ymax]
-            epi_data[frame] = f['Images']['Epi'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
-            mask_data[frame] = f['Segmentations']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
+            phase_data[idx] = np.array(f['Images']['Phase'][f'{int(frame):04}'])[xmin:xmax, ymin:ymax]
+            epi_data[idx] = f['Images']['Epi'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
+            mask_data[idx] = f['Segmentations']['Phase'][f'{int(frame):04}'][xmin:xmax, ymin:ymax]
         # xcentres = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['xcentre'] for framei in
         #                     range(first_frame, last_frame)])
         # ycentres = np.array([f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][int(framei)]['ycentre'] for framei in
