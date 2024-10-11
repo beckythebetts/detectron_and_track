@@ -188,7 +188,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
 
     # also show cellfeature plot?
 
-        time.sleep(99999)
+    time.sleep(99999)
 def main():
     #show_separate_channels()
     #show_merged_channels()
