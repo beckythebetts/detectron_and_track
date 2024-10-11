@@ -100,23 +100,31 @@ class CellposeKfold:
 
 def plot_training_data(training_data_values=[0, 2, 4]):
     directories = [Path('cellpose_Models') / f'kfold_manual_validation_{i}' for i in training_data_values]
-    means = [pd.read_csv(directory / 'results_means.txt', sep='\t', index_col=0) for directory in directories]
-    stds = [pd.read_csv(directory / 'results_stds.txt', sep='\t', index_col=0) for directory in directories]
+    # means = [pd.read_csv(directory / 'results_means.txt', sep='\t', index_col=0) for directory in directories]
+    # stds = [pd.read_csv(directory / 'results_stds.txt', sep='\t', index_col=0) for directory in directories]
+    #
+    # metrics = means[0].columns.values
+    # thresholds = means[0].index.values
+    #
+    # plt.rcParams["font.family"] = 'serif'
+    # fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+    # for ax, metric in zip(axs, metrics):
+    #     for mean, std, value in zip(means, stds, training_data_values):
+    #         ax.plot(thresholds, mean[metric], label=f'{value} training images')
+    #         ax.fill_between(thresholds, mean[metric]-std[metric], mean[metric]+std[metric], alpha=0.5, edgecolor=None)
+    #         ax.grid(True)
+    #         ax.set_xlabel('IOU Threshold')
+    #         ax.set_ylabel(metric)
+    # plt.legend()
+    # plt.savefig(Path('cellpose_Models') / 'training_data_results.png')
 
-    metrics = means[0].columns.values
-    thresholds = means[0].index.values
+    im_views = [plt.imread(directory / 'test_with_00' / 'validate' /'00_view.png')[200:800, 200:800] for directory in directories]
+    side_by_side = np.concatentate(im_views, axis=0)
+    plt.matshow(side_by_side)
+    plt.show()
 
-    plt.rcParams["font.family"] = 'serif'
-    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
-    for ax, metric in zip(axs, metrics):
-        for mean, std, value in zip(means, stds, training_data_values):
-            ax.plot(thresholds, mean[metric], label=f'{value} training images')
-            ax.fill_between(thresholds, mean[metric]-std[metric], mean[metric]+std[metric], alpha=0.5, edgecolor=None)
-            ax.grid(True)
-            ax.set_xlabel('IOU Threshold')
-            ax.set_ylabel(metric)
-    plt.legend()
-    plt.savefig(Path('cellpose_Models') / 'training_data_results.png')
+
+
 def main():
     # kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation_2')
     # # kfold.split_datasets()
