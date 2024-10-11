@@ -112,6 +112,10 @@ def plot_training_data(training_data_values=[0, 2, 4]):
         for mean, std, value in zip(means, stds, training_data_values):
             ax.plot(thresholds, mean[metric], label=value)
             ax.fill_between(thresholds, mean[metric]-std[metric], mean[metric]+std[metric], alpha=0.5, edgecolor=None)
+            ax.grid(True)
+            ax.set_xlabel('IOU Threshold')
+            ax.set_ylabel(metric)
+    plt.legend()
     plt.show()
 def main():
     # kfold = CellposeKfold(Path('cellpose_Models') / 'kfold_manual_validation_2')
