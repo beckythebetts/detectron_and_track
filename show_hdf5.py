@@ -9,7 +9,6 @@ from skimage.segmentation import find_boundaries
 import cv2
 import matplotlib.pyplot as plt
 import pandas as pd
-import threading
 import multiprocessing
 
 
@@ -178,10 +177,9 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
     print(f'\nPLOTTING FEATURES CELL {cell_idx}, FRAMES {first_frame} to {last_frame}\n')
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
-        # data = pd.DataFrame(f['Features'][cell][:])
-        # print(data)
-        fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
-        for i in range(4):
+        columns = [0, 1, 2, 3, 4, 7]
+        fig, axs = plt.subplots(len(columns), sharex=True, figsize=(10, 10))
+        for i in columns:
             axs[i].plot(data.iloc[:, i], color='k')
             axs[i].set(ylabel=data.columns.values.tolist()[i])
             axs[i].grid()
@@ -191,17 +189,8 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
         axs[-1].set(xlabel='frames')
         plt.show()
 
-# def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
-#     imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
-#     plt_thread = threading.Thread(target=show_feature_plot, args=(cell_idx, first_frame, last_frame))
-#
-#     imagej_thread.start()
-#     plt_thread.start()
-#
-#     imagej_thread.join()
-#     plt_thread.join()
-
 def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
+    #open both imagej of cell and feature plot
     multiprocessing.set_start_method('spawn')
     imagej_thread = multiprocessing.Process(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
     plt_thread = multiprocessing.Process(target=show_feature_plot, args=(cell_idx, first_frame, last_frame))
