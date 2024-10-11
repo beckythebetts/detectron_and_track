@@ -167,11 +167,10 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
-    time.sleep(99999)
+
     # also show cellfeature plot?
     plt.rcParams["font.family"] = 'serif'
     print('\nPLOTTING FEATURES\n')
-    utils.remake_dir(Path(save_as))
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorpholigicalFeatures'][first_frame:last:last_frame])
         # data = pd.DataFrame(f['Features'][cell][:])
@@ -186,7 +185,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
         fig.suptitle(cell)
         axs[-1].set(xlabel='frames')
         plt.show()
-        plt.close()
+        time.sleep(99999)
 def main():
     #show_separate_channels()
     #show_merged_channels()
