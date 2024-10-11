@@ -110,7 +110,7 @@ def plot_training_data(training_data_values=[0, 2, 4]):
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
     for ax, metric in zip(axs, metrics):
         for mean, std, value in zip(means, stds, training_data_values):
-            ax.plot(thresholds, mean[metric], label=value)
+            ax.plot(thresholds, mean[metric], label=f'{value} training images')
             ax.fill_between(thresholds, mean[metric]-std[metric], mean[metric]+std[metric], alpha=0.5, edgecolor=None)
             ax.grid(True)
             ax.set_xlabel('IOU Threshold')
