@@ -131,7 +131,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
     time.sleep(99999)
 
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
-    print(f'\nSHOWING CELL {cell_idx}, FRAMES {first_frame} to {last_frame}')
+    print(f'\nSHOWING CELL: {cell_idx}, FRAMES: {first_frame} to {last_frame}')
 
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     epi_data = np.empty((last_frame-first_frame, frame_size, frame_size))
@@ -174,7 +174,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
 
 def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
     plt.rcParams["font.family"] = 'serif'
-    print(f'\nPLOTTING FEATURES CELL {cell_idx}, FRAMES {first_frame} to {last_frame}\n')
+    print(f'\nPLOTTING FEATURES CELL: {cell_idx}, FRAMES: {first_frame} to {last_frame}\n')
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
         columns = [0, 1, 2, 3, 4, 7]
@@ -206,6 +206,6 @@ def main():
     #show_separate_channels()
     #show_merged_channels()
     #show_tracked_images()
-    display_cell(62)
+    display_cell(74)
 if __name__ == '__main__':
     main()
