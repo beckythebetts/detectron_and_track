@@ -174,7 +174,6 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
 
 def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
     plt.rcParams["font.family"] = 'serif'
-    plt.ion()
     print(f'\nPLOTTING FEATURES CELL {cell_idx}, FRAMES {first_frame} to {last_frame}\n')
     with h5py.File(SETTINGS.DATASET, 'r') as f:
         data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
@@ -190,7 +189,6 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
         fig.suptitle(f'Cell{cell_idx:04}')
         axs[-1].set(xlabel='frames')
         plt.show()
-        plt.pause(0.001)
 
 def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
