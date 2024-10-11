@@ -191,8 +191,8 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
         plt.show()
 
 def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
-    imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, start_frame, last_frame, frame_size))
-    plt_thread = threading.Thread(taget=show_feature_plots, args=(cell_idx, start_frame, last_frame))
+    imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
+    plt_thread = threading.Thread(taget=show_feature_plots, args=(cell_idx, first_frame, last_frame))
 
     imagej_thread.start()
     plt_thread.start()
