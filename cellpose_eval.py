@@ -13,7 +13,8 @@ import utils
 def cellpose_eval(directory, model=SETTINGS.CELLPOSE_MODEL / 'models' / 'model', thresholds=np.arange(0.5, 1.0, 0.05)):
     use_GPU = core.use_gpu()
     io.logger_setup()
-    model = models.CellposeModel(gpu=use_GPU, pretrained_model=str(model))
+    #model = models.CellposeModel(gpu=use_GPU, pretrained_model=str(model))
+    model = models.CellposeModel(gpu=use_GPU, pretrained_model=False, model_type='cyto3')
     im_names = [im.stem[:2] for im in directory.iterdir() if 'im' in im.stem]
     validation_ims = [io.imread(im) for im in directory.iterdir() if 'im' in im.name]
     channels = [0, 0]

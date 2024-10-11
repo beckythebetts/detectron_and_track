@@ -31,7 +31,7 @@ class CellposeKfold:
     def train_eval_datasets(self):
         for dataset_dir in self.directory.iterdir():
             if dataset_dir.name != 'all':
-                cellpose_train.cellpose_train(dataset_dir)
+                #cellpose_train.cellpose_train(dataset_dir)
                 cellpose_eval.cellpose_eval(dataset_dir / 'validate', model=dataset_dir / 'models' / 'model')
 
     def get_results(self):
