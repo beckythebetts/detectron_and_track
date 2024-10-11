@@ -181,7 +181,7 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
         columns = [0, 1, 2, 3, 4, 7]
         fig, axs = plt.subplots(len(columns), sharex=True, figsize=(10, 10))
         for i, col in enumerate(columns):
-            axs[i].plot(range(first_frame, last_frame), data.iloc[:, col], color='k')
+            axs[i].plot(data.Index.array, data.iloc[:, col], color='k')
             print(data.iloc[:, col])
             axs[i].set(ylabel=data.columns.values.tolist()[col])
             axs[i].grid()
