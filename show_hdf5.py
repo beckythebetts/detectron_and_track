@@ -202,6 +202,7 @@ def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
 #     plt_thread.join()
 
 def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
+    multiprocessing.set_start_method('spawn')
     imagej_thread = multiprocessing.Process(target=show_cell, args=(cell_idx, first_frame, last_frame, frame_size))
     plt_thread = multiprocessing.Process(target=show_feature_plot, args=(cell_idx, first_frame, last_frame))
 
