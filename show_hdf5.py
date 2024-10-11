@@ -9,6 +9,7 @@ from skimage.segmentation import find_boundaries
 import cv2
 import matplotlib.pyplot as plt
 import pandas as pd
+import threading
 
 
 import mask_funcs
@@ -131,23 +132,7 @@ def show_tracked_images(first_frame=0, last_frame=50):
 
 def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     print(f'\nSHOWING CELL {cell_idx}, FRAMES {first_frame} to {last_frame}')
-    plt.rcParams["font.family"] = 'serif'
-    print('\nPLOTTING FEATURES...\n')
-    with h5py.File(SETTINGS.DATASET, 'r') as f:
-        data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
-        # data = pd.DataFrame(f['Features'][cell][:])
-        # print(data)
-        fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
-        for i in range(4):
-            axs[i].plot(data.iloc[:, i], color='k')
-            axs[i].set(ylabel=data.columns.values.tolist()[i])
-            axs[i].grid()
-            axs[i].set_xlim(left=first_frame, right=last_frame)
 
-        fig.suptitle(f'Cell{cell_idx:04}')
-        axs[-1].set(xlabel='frames')
-        plt.show()
-    print('\nDISPLAYING CELL...')
     phase_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     epi_data = np.empty((last_frame-first_frame, frame_size, frame_size))
     mask_data = np.empty((last_frame-first_frame, frame_size, frame_size))
@@ -185,14 +170,40 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
     merged_image = ij.py.to_dataset(merged_im, dim_order=['t', 'ch', 'row', 'col'])
     ij.ui().show(merged_image)
     ij.py.run_macro(macro='run("Make Composite")')
-
-    # also show cellfeature plot?
-
     time.sleep(99999)
+
+def show_feature_plot(cell_idx, first_frame=0, last_frame=50):
+    plt.rcParams["font.family"] = 'serif'
+    print(f'\nPLOTTING FEATURES CELL {cell_idx}, FRAMES {first_frame} to {last_frame}\n')
+    with h5py.File(SETTINGS.DATASET, 'r') as f:
+        data = pd.DataFrame(f['Features'][f'Cell{cell_idx:04}']['MorphologicalFeatures'][first_frame:last_frame])
+        # data = pd.DataFrame(f['Features'][cell][:])
+        # print(data)
+        fig, axs = plt.subplots(4, sharex=True, figsize=(10, 10))
+        for i in range(4):
+            axs[i].plot(data.iloc[:, i], color='k')
+            axs[i].set(ylabel=data.columns.values.tolist()[i])
+            axs[i].grid()
+            axs[i].set_xlim(left=first_frame, right=last_frame)
+
+        fig.suptitle(f'Cell{cell_idx:04}')
+        axs[-1].set(xlabel='frames')
+        plt.show()
+
+def display_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
+    imagej_thread = threading.Thread(target=show_cell, args=(cell_idx, start_frame, last_frame, frame_size))
+    plt_thread = threading.Thread(taget=show_feature_plots, args=(cell_idx, start_frame, last_frame))
+
+    imagej_thread.start()
+    plt_thread.start()
+
+    imagej_thread.join()
+    plt_thread.join()
+
 def main():
     #show_separate_channels()
     #show_merged_channels()
     #show_tracked_images()
-    show_cell(62)
+    display_cell(62)
 if __name__ == '__main__':
     main()
