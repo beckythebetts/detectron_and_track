@@ -144,7 +144,7 @@ def show_cell(cell_idx, first_frame=0, last_frame=50, frame_size=150):
             axs[i].grid()
             axs[i].set_xlim(left=first_frame, right=last_frame)
 
-        fig.suptitle(cell)
+        fig.suptitle(f'Cell{cell_idx:04}')
         axs[-1].set(xlabel='frames')
         plt.show()
     print('\nDISPLAYING CELL...')
